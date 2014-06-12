@@ -1,0 +1,19 @@
+citHeader("To cite the 'QCA' package in publications, please use:")
+
+meta <- packageDescription("QCA")
+year <- sub("-.*", "", meta$Date)
+note <- sprintf("R package version %s", meta$Version)
+
+citEntry(entry = "manual",
+         author = personList(as.person("Adrian Dusa"),
+                             as.person("Alrik Thiem")),
+         year = year,
+         title = "QCA: A Package for Qualitative Comparative Analysis",
+         note = note,
+         url = "http://cran.r-project.org/package=QCA",
+         textVersion = paste("Dusa, Adrian and Alrik Thiem", sprintf("(%s).", year),
+                             "QCA: A Package for Qualitative Comparative Analysis.",
+                              paste(note, ".", sep = ""),
+                              "URL: http://cran.r-project.org/package=QCA")
+)
+
