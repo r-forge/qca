@@ -55,6 +55,10 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
         outcome.copy <- outcome
         indata <- data # important before altering the outcome, if multi-value
         
+        names(data) <- toupper(names(data))
+        conditions <- toupper(conditions)
+        outcome <- toupper(outcome)
+        
         if (grepl("[{]", outcome)) { # there is a "{" sign in the outcome's name
             outcome <- unlist(strsplit(outcome, split = ""))
             outcome.value <- as.numeric(outcome[which(outcome == "{") + 1])
