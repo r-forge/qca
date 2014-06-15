@@ -12,6 +12,10 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""), n.cut = 1,
         complete <- FALSE
     }
     
+    names(data) <- toupper(names(data))
+    conditions <- toupper(conditions)
+    outcome <- toupper(outcome)
+    
     outcome.copy <- outcome
     
     initial.data <- data
