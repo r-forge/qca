@@ -46,7 +46,7 @@ function(chart, row.dom = FALSE, min.dis = TRUE, ...) {
             # if (2^nrow(chart)*2 > .Machine$integer.max) {
             if (nrow(chart) > 29) { # in order to prevent cases where integer.max is larger than 32-bit
                 cat("\n")
-                stop("The PI chart is too large to compute all solutions.\n\n", call. = FALSE)
+                stop("The PI chart is too large to identify all models.\n\n", call. = FALSE)
             }
             
             output <- .Call("allSol", k, chart*1, PACKAGE="QCA")
