@@ -1,0 +1,2474 @@
+
+R version 3.1.0 (2014-04-10) -- "Spring Dance"
+Copyright (C) 2014 The R Foundation for Statistical Computing
+Platform: x86_64-apple-darwin13.1.0 (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> pkgname <- "QCA"
+> source(file.path(R.home("share"), "R", "examples-header.R"))
+> options(warn = 1)
+> base::assign(".ExTimings", "QCA-Ex.timings", pos = 'CheckExEnv')
+> base::cat("name\tuser\tsystem\telapsed\n", file=base::get(".ExTimings", pos = 'CheckExEnv'))
+> base::assign(".format_ptime",
++ function(x) {
++   if(!is.na(x[4L])) x[1L] <- x[1L] + x[4L]
++   if(!is.na(x[5L])) x[2L] <- x[2L] + x[5L]
++   options(OutDec = '.')
++   format(x[1L:3L], digits = 7L)
++ },
++ pos = 'CheckExEnv')
+> 
+> ### * </HEADER>
+> library('QCA')
+
+Please cite the QCA package as:
+  Dusa, Adrian and Alrik Thiem (2014). QCA: A Package for Qualitative
+  Comparative Analysis. R package version 1.1-3. URL
+  http://CRAN.R-project.org/package=QCA
+
+A complete BibTeX reference is provided by:
+  citation("QCA")
+
+> 
+> base::assign(".oldSearch", base::search(), pos = 'CheckExEnv')
+> cleanEx()
+> nameEx("allExpressions")
+> ### * allExpressions
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: allExpressions
+> ### Title: Create Implicant Matrices
+> ### Aliases: allExpressions
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # three condition variables with two values each;
+> # first row is empty set
+> allExpressions(noflevels = rep(2, 3))
+
+ 1                
+ 2              0 
+ 3              1 
+ 4         0      
+ 5         0    0 
+ 6         0    1 
+ 7         1      
+ 8         1    0 
+ 9         1    1 
+10    0           
+11    0         0 
+12    0         1 
+13    0    0      
+14    0    0    0 
+15    0    0    1 
+16    0    1      
+17    0    1    0 
+18    0    1    1 
+19    1           
+20    1         0 
+21    1         1 
+22    1    0      
+23    1    0    0 
+24    1    0    1 
+25    1    1      
+26    1    1    0 
+27    1    1    1 
+
+> 
+> # two condition variables with three values each
+> allExpressions(noflevels = rep(3, 2))
+
+ 1           
+ 2         0 
+ 3         1 
+ 4         2 
+ 5    0      
+ 6    0    0 
+ 7    0    1 
+ 8    0    2 
+ 9    1      
+10    1    0 
+11    1    1 
+12    1    2 
+13    2      
+14    2    0 
+15    2    1 
+16    2    2 
+
+> 
+> # arranged differently
+> allExpressions(noflevels = rep(3, 2), arrange = TRUE)
+
+ 1           
+ 2         0 
+ 3         1 
+ 4         2 
+ 5    0      
+ 6    1      
+ 7    2      
+ 8    0    0 
+ 9    0    1 
+10    0    2 
+11    1    0 
+12    1    1 
+13    1    2 
+14    2    0 
+15    2    1 
+16    2    2 
+
+> 
+> # with internal indicator for eliminated values
+> allExpressions(noflevels = rep(3, 2), raw = TRUE)
+
+ 1   -1   -1 
+ 2   -1    0 
+ 3   -1    1 
+ 4   -1    2 
+ 5    0   -1 
+ 6    0    0 
+ 7    0    1 
+ 8    0    2 
+ 9    1   -1 
+10    1    0 
+11    1    1 
+12    1    2 
+13    2   -1 
+14    2    0 
+15    2    1 
+16    2    2 
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("allExpressions", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("calibrate")
+> ### * calibrate
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: calibrate
+> ### Title: Calibrate Crisp and Fuzzy Set Variables
+> ### Aliases: calibrate
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # base variable; random draw from standard normal distribution
+> x <- rnorm(30)
+> 
+> # calibration thresholds
+> th <- quantile(x, seq(from = 0.1, to = 0.9, length = 5))
+> 
+> # calibration of bivalent crisp set variables
+> calibrate(x, thresholds = th[3])
+ [1] 0 0 0 1 1 0 1 1 1 0 1 1 0 0 1 0 0 1 1 1 1 1 0 0 1 0 0 0 0 1
+> 
+> # calibration of trivalent crisp set variables
+> calibrate(x, thresholds = c(th[2], th[4]))
+ [1] 0 1 0 2 1 0 1 2 1 0 2 1 0 0 2 1 1 2 2 1 2 2 1 0 2 1 1 0 0 1
+> 
+> # fuzzy-set calibration (positive end-point concept, linear)
+> plot(x, calibrate(x, type = "fuzzy", thresholds = c(th[1], th[3], th[5])), 
++   ylab = "Fuzzy Set Membership")
+> 
+> # fuzzy-set calibration (positive and corresponding negative
+> # end-point concept, logistic)
+> plot(x, calibrate(x, type = "fuzzy", thresholds = c(th[1], th[3], th[5]), 
++   logistic = TRUE, idm = 0.99), ylab = "Fuzzy Set Membership")
+> points(x, calibrate(x, type = "fuzzy", thresholds = c(th[5], th[3], th[1]),
++   logistic = TRUE, idm = 0.99))
+> 
+> # fuzzy-set calibration (positive end-point concept, ECDF)
+> plot(x, calibrate(x, type = "fuzzy", thresholds = c(th[1], th[3], th[5]), 
++   ecdf = TRUE), ylab = "Fuzzy Set Membership")
+> 
+> # fuzzy-set calibration (negative end-point concept, s-shaped)
+> plot(x, calibrate(x, type = "fuzzy", thresholds = c(th[5], th[3], th[1]), 
++   p = 2, q = 2), ylab = "Fuzzy Set Membership")
+> 
+> # fuzzy-set calibration (positive mid-point concept, triangular)
+> plot(x, calibrate(x, type = "fuzzy", thresholds = th[c(1,2,3,3,4,5)]),
++   ylab = "Fuzzy Set Membership")
+> 
+> # fuzzy-set calibration (negative mid-point concept, bell-shaped)
+> plot(x, calibrate(x, type = "fuzzy", thresholds = th[c(3,2,1,5,4,3)],
++   p = 3, q = 3), ylab = "Fuzzy Set Membership")
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("calibrate", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("createMatrix")
+> ### * createMatrix
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: createMatrix
+> ### Title: Create Configuration and Implicant Matrices
+> ### Aliases: createMatrix
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # a configuration matrix with three bivalent condition variables
+> noflevels <- rep(2, 3)
+> createMatrix(noflevels)
+     [,1] [,2] [,3]
+[1,]    0    0    0
+[2,]    0    0    1
+[3,]    0    1    0
+[4,]    0    1    1
+[5,]    1    0    0
+[6,]    1    0    1
+[7,]    1    1    0
+[8,]    1    1    1
+> 
+> # with logical values
+> createMatrix(noflevels, logical = TRUE)
+      [,1]  [,2]  [,3]
+[1,] FALSE FALSE FALSE
+[2,] FALSE FALSE  TRUE
+[3,] FALSE  TRUE FALSE
+[4,] FALSE  TRUE  TRUE
+[5,]  TRUE FALSE FALSE
+[6,]  TRUE FALSE  TRUE
+[7,]  TRUE  TRUE FALSE
+[8,]  TRUE  TRUE  TRUE
+> 
+> # its implicant matrix ("-1" stands for an eliminated value)
+> createMatrix(noflevels + 1) - 1
+      [,1] [,2] [,3]
+ [1,]   -1   -1   -1
+ [2,]   -1   -1    0
+ [3,]   -1   -1    1
+ [4,]   -1    0   -1
+ [5,]   -1    0    0
+ [6,]   -1    0    1
+ [7,]   -1    1   -1
+ [8,]   -1    1    0
+ [9,]   -1    1    1
+[10,]    0   -1   -1
+[11,]    0   -1    0
+[12,]    0   -1    1
+[13,]    0    0   -1
+[14,]    0    0    0
+[15,]    0    0    1
+[16,]    0    1   -1
+[17,]    0    1    0
+[18,]    0    1    1
+[19,]    1   -1   -1
+[20,]    1   -1    0
+[21,]    1   -1    1
+[22,]    1    0   -1
+[23,]    1    0    0
+[24,]    1    0    1
+[25,]    1    1   -1
+[26,]    1    1    0
+[27,]    1    1    1
+> 
+> # a configuration matrix (the second variable has three values) 
+> noflevels <- c(2, 3, 2)
+> createMatrix(noflevels)
+      [,1] [,2] [,3]
+ [1,]    0    0    0
+ [2,]    0    0    1
+ [3,]    0    1    0
+ [4,]    0    1    1
+ [5,]    0    2    0
+ [6,]    0    2    1
+ [7,]    1    0    0
+ [8,]    1    0    1
+ [9,]    1    1    0
+[10,]    1    1    1
+[11,]    1    2    0
+[12,]    1    2    1
+> 
+> # its implicants matrix
+> createMatrix(noflevels + 1) - 1
+      [,1] [,2] [,3]
+ [1,]   -1   -1   -1
+ [2,]   -1   -1    0
+ [3,]   -1   -1    1
+ [4,]   -1    0   -1
+ [5,]   -1    0    0
+ [6,]   -1    0    1
+ [7,]   -1    1   -1
+ [8,]   -1    1    0
+ [9,]   -1    1    1
+[10,]   -1    2   -1
+[11,]   -1    2    0
+[12,]   -1    2    1
+[13,]    0   -1   -1
+[14,]    0   -1    0
+[15,]    0   -1    1
+[16,]    0    0   -1
+[17,]    0    0    0
+[18,]    0    0    1
+[19,]    0    1   -1
+[20,]    0    1    0
+[21,]    0    1    1
+[22,]    0    2   -1
+[23,]    0    2    0
+[24,]    0    2    1
+[25,]    1   -1   -1
+[26,]    1   -1    0
+[27,]    1   -1    1
+[28,]    1    0   -1
+[29,]    1    0    0
+[30,]    1    0    1
+[31,]    1    1   -1
+[32,]    1    1    0
+[33,]    1    1    1
+[34,]    1    2   -1
+[35,]    1    2    0
+[36,]    1    2    1
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("createMatrix", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("deMorgan")
+> ### * deMorgan
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: deMorgan
+> ### Title: Negate Set-Theoretic Expressions using DeMorgan's Laws
+> ### Aliases: deMorgan is.deMorgan
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # example from Ragin (1987, p.99)
+> deMorgan("AC + B~C")
+
+S1: AC + B~C 
+N1: ~A~B + ~AC + ~B~C 
+
+> 
+> # with different intersection operators
+> deMorgan("A*C + B*~C", prod.split = "*")
+
+S1: A*C + B*~C 
+N1: ~A*~B + ~A*C + ~B*~C 
+
+> deMorgan("A&C + B&~C", prod.split = "&")
+
+S1: A&C + B&~C 
+N1: ~A&~B + ~A&C + ~B&~C 
+
+> 
+> # use solution object of class "qca" returned by eqmcc() function; 
+> # even with multiple solutions
+> data(d.Kro)
+> Kro.sol <- eqmcc(d.Kro, outcome = "WNP", include = "?")
+> deMorgan(Kro.sol)
+
+S1: WS + ES*WM + QU*LP + WM*LP 
+N1: es*lp*ws + qu*wm*ws + lp*wm*ws 
+
+S2: WS + ES*WM + QU*LP + es*LP 
+N2: es*lp*ws + ES*qu*wm*ws + lp*wm*ws 
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("deMorgan", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("demoChart")
+> ### * demoChart
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: demoChart
+> ### Title: Create Prime Implicant Charts
+> ### Aliases: demoChart
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # simple PI chart, formatted using internal function prettyTable();
+> PI <- c("A", "B", "c")
+> CO <- c("ABC", "Abc", "AbC", "aBc")
+> chart <- demoChart(PI, CO)
+> prettyTable(chart)
+
+  ABC Abc AbC aBc
+A  x   x   x   - 
+B  x   -   -   x 
+c  -   x   -   x 
+> 
+> # more complex example
+> PI <- c("AB", "BC", "Ac", "aC", "abd", "bcd")
+> CO <- c("ABCD", "ABCd", "ABcD", "ABcd", "AbcD", "Abcd",
++         "aBCD", "aBCd", "abCD", "abCd", "abcd")
+> chart <- demoChart(PI, CO)
+> prettyTable(chart)
+
+    ABCD ABCd ABcD ABcd AbcD Abcd aBCD aBCd abCD abCd abcd
+AB   x    x    x    x    -    -    -    -    -    -    -  
+BC   x    x    -    -    -    -    x    x    -    -    -  
+Ac   -    -    x    x    x    x    -    -    -    -    -  
+aC   -    -    -    -    -    -    x    x    x    x    -  
+abd  -    -    -    -    -    -    -    -    -    x    x  
+bcd  -    -    -    -    -    x    -    -    -    -    x  
+> 
+> # different intersection operators
+> PI <- c("AZ", "BY", "~CX")
+> CO <- c("AZ*BY*CX", "AZ*~BY*~CX", "AZ*~BY*CX", "~AZ*BY*~CX")
+> prettyTable(demoChart(PI, CO, prod.split = "*"))
+
+    AZ*BY*CX AZ*~BY*~CX AZ*~BY*CX ~AZ*BY*~CX
+AZ     x         x          x         -     
+BY     x         -          -         x     
+~CX    -         x          -         x     
+> 
+> CO <- gsub("*", "&", CO, fixed = TRUE)
+> prettyTable(demoChart(PI, CO, prod.split = "&"))
+
+    AZ&BY&CX AZ&~BY&~CX AZ&~BY&CX ~AZ&BY&~CX
+AZ     x         x          x         -     
+BY     x         -          -         x     
+~CX    -         x          -         x     
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("demoChart", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("eqmcc")
+> ### * eqmcc
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: eqmcc
+> ### Title: Minimization with Enhanced Quine-McCluskey Algorithm
+> ### Aliases: eqmcc is.qca
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # csQCA using Krook (2010)
+> #-------------------------
+> data(d.Kro)
+> head(d.Kro)
+   ES QU WS WM LP WNP
+SE  1  1  1  0  0   1
+FI  1  0  1  0  0   1
+NO  1  1  1  1  1   1
+DK  1  0  1  1  1   1
+NL  1  1  0  1  1   1
+ES  1  1  0  1  0   1
+> 
+> # conservative solution
+> eqmcc(d.Kro, outcome = "WNP")
+
+M1: ES*QU*ws*LP + ES*QU*ws*WM + ES*WS*WM*LP + ES*WS*wm*lp + es*ws*WM*LP <=> WNP
+
+> 
+> # negated outcome, conservative solution
+> eqmcc(d.Kro, outcome = "WNP", neg.out = TRUE)
+
+M1: QU*ws*wm*lp + es*ws*WM*lp + ES*qu*ws*wm*LP <=> wnp
+
+> 
+> # parsimonious solution with details and case names
+> Kro.sp <- eqmcc(d.Kro, outcome = "WNP", include = "?", 
++   details = TRUE, show.cases = TRUE)
+> Kro.sp
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    ES QU WS WM LP OUT n  incl  cases      
+ 3  0  0  0  1  0   0  2  0.000 CA,US      
+ 4  0  0  0  1  1   1  1  1.000 NZ         
+ 9  0  1  0  0  0   0  1  0.000 IT         
+11  0  1  0  1  0   0  4  0.000 AU,GB,FR,IE
+12  0  1  0  1  1   1  1  1.000 DE         
+18  1  0  0  0  1   0  1  0.000 LU         
+21  1  0  1  0  0   1  1  1.000 FI         
+24  1  0  1  1  1   1  1  1.000 DK         
+25  1  1  0  0  0   0  3  0.000 CH,PT,GR   
+26  1  1  0  0  1   1  1  1.000 AT         
+27  1  1  0  1  0   1  1  1.000 ES         
+28  1  1  0  1  1   1  2  1.000 NL,BE      
+29  1  1  1  0  0   1  1  1.000 SE         
+32  1  1  1  1  1   1  2  1.000 NO,IS      
+
+n OUT = 1/0/C: 11/11/0 
+  Total      : 22 
+
+Number of multiple-covered cases: 6 
+
+M1: WS + ES*WM + QU*LP + (WM*LP) <=> WNP 
+M2: WS + ES*WM + QU*LP + (es*LP) <=> WNP 
+
+                        ------------------- 
+          incl   cov.r  cov.u  (M1)   (M2)   cases 
+--------------------------------------------------------------------- 
+1  WS     1.000  0.455  0.182  0.182  0.182  FI; DK; SE; NO,IS 
+2  ES*WM  1.000  0.545  0.091  0.091  0.091  DK; ES; NL,BE; NO,IS 
+3  QU*LP  1.000  0.545  0.091  0.091  0.091  DE; AT; NL,BE; NO,IS 
+--------------------------------------------------------------------- 
+4  WM*LP  1.000  0.636  0.000  0.091         NZ; DE; DK; NL,BE; NO,IS 
+5  es*LP  1.000  0.182  0.000         0.091  NZ; DE 
+--------------------------------------------------------------------- 
+   M1     1.000  1.000 
+   M2     1.000  1.000 
+
+> 
+> # check PI chart
+> Kro.sp$PIchart
+
+          4  12 21 24 26 27 28 29 32
+WS        -  -  x  x  -  -  -  x  x 
+ES*WM     -  -  -  x  -  x  x  -  x 
+QU*LP     -  x  -  -  x  -  x  -  x 
+WM*LP     x  x  -  x  -  -  x  -  x 
+es*LP     x  x  -  -  -  -  -  -  - 
+ES*qu*lp  -  -  x  -  -  -  -  -  - 
+qu*wm*lp  -  -  x  -  -  -  -  -  - 
+
+> 
+> # simplifying assumptions (SAs)
+> Kro.sp$SA
+$S1
+   ES QU WS WM LP
+5   0  0  1  0  0
+6   0  0  1  0  1
+7   0  0  1  1  0
+8   0  0  1  1  1
+10  0  1  0  0  1
+13  0  1  1  0  0
+14  0  1  1  0  1
+15  0  1  1  1  0
+16  0  1  1  1  1
+19  1  0  0  1  0
+20  1  0  0  1  1
+22  1  0  1  0  1
+23  1  0  1  1  0
+30  1  1  1  0  1
+31  1  1  1  1  0
+
+$S2
+   ES QU WS WM LP
+2   0  0  0  0  1
+5   0  0  1  0  0
+6   0  0  1  0  1
+7   0  0  1  1  0
+8   0  0  1  1  1
+10  0  1  0  0  1
+13  0  1  1  0  0
+14  0  1  1  0  1
+15  0  1  1  1  0
+16  0  1  1  1  1
+19  1  0  0  1  0
+20  1  0  0  1  1
+22  1  0  1  0  1
+23  1  0  1  1  0
+30  1  1  1  0  1
+31  1  1  1  1  0
+
+> 
+> # minimized expressions for SAs using fake outcome (FO)
+> for(i in 1:2){
++   print(eqmcc(cbind(Kro.sp$SA[[i]], FO = 1), outcome = "FO"))
++ }  
+
+M1: es*WS + WS*WM*lp + WS*wm*LP + ES*qu*ws*WM + es*QU*wm*LP <=> FO
+
+
+M1: es*WS + WS*WM*lp + WS*wm*LP + es*wm*LP + ES*qu*ws*WM <=> FO
+
+>   
+> # conservative solution with truth table object
+> Kro.tt <- truthTable(d.Kro, outcome = "WNP")
+> Kro.sc <- eqmcc(Kro.tt)
+> Kro.sc
+
+M1: ES*QU*ws*LP + ES*QU*ws*WM + ES*WS*WM*LP + ES*WS*wm*lp + es*ws*WM*LP <=> WNP
+
+> 
+> # fsQCA using Emmenegger (2011)
+> #------------------------------
+> data(d.Emm)
+> head(d.Emm)
+      S    C    L   R   P    V  JSR
+AU 0.00 0.00 0.57 0.2 0.0 1.00 0.14
+AT 0.67 1.00 0.57 1.0 0.8 0.67 0.71
+BE 1.00 0.67 0.43 1.0 1.0 0.67 0.57
+CA 0.00 0.00 0.14 0.2 0.0 1.00 0.14
+DK 0.00 0.67 0.86 0.4 0.4 0.00 0.29
+FI 0.67 1.00 0.71 0.4 0.4 0.00 0.43
+> 
+> # parsimonious solution with details
+> eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9, include = "?", 
++   details = TRUE)
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    S  C  L  R  P  V  OUT n  incl 
+ 2  0  0  0  0  0  1   0  2  0.198
+ 5  0  0  0  1  0  0   0  1  0.581
+10  0  0  1  0  0  1   0  1  0.494
+20  0  1  0  0  1  1   0  2  0.716
+25  0  1  1  0  0  0   0  2  0.839
+27  0  1  1  0  1  0   1  1  0.940
+33  1  0  0  0  0  0   0  2  0.203
+37  1  0  0  1  0  0   1  2  0.977
+47  1  0  1  1  1  0   1  1  1.000
+48  1  0  1  1  1  1   1  1  1.000
+56  1  1  0  1  1  1   1  2  1.000
+57  1  1  1  0  0  0   0  1  0.717
+64  1  1  1  1  1  1   1  1  1.000
+
+n OUT = 1/0/C: 8/11/0 
+  Total      : 19 
+
+M1: SR + (LP) => JSR 
+M2: SR + (Pv) => JSR 
+
+                     ------------------- 
+       incl   cov.r  cov.u  (M1)   (M2)  
+---------------------------------------- 
+1  SR  0.871  0.610  0.231  0.256  0.335 
+---------------------------------------- 
+2  LP  0.979  0.506  0.014  0.152        
+3  Pv  0.950  0.417  0.004         0.142 
+---------------------------------------- 
+   M1  0.883  0.762 
+   M2  0.874  0.752 
+
+> 
+> # intermediate solution
+> Emm.si <- eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9, 
++   include = "?", dir.exp = c(1,1,1,1,1,0), details = TRUE)
+> Emm.si
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    S  C  L  R  P  V  OUT n  incl 
+ 2  0  0  0  0  0  1   0  2  0.198
+ 5  0  0  0  1  0  0   0  1  0.581
+10  0  0  1  0  0  1   0  1  0.494
+20  0  1  0  0  1  1   0  2  0.716
+25  0  1  1  0  0  0   0  2  0.839
+27  0  1  1  0  1  0   1  1  0.940
+33  1  0  0  0  0  0   0  2  0.203
+37  1  0  0  1  0  0   1  2  0.977
+47  1  0  1  1  1  0   1  1  1.000
+48  1  0  1  1  1  1   1  1  1.000
+56  1  1  0  1  1  1   1  2  1.000
+57  1  1  1  0  0  0   0  1  0.717
+64  1  1  1  1  1  1   1  1  1.000
+
+n OUT = 1/0/C: 8/11/0 
+  Total      : 19 
+
+p.sol: SR + LP
+
+M1:    SRv + CLPv + SCRP + SLRP => JSR 
+
+         incl   cov.r  cov.u 
+---------------------------- 
+1  SRv   0.990  0.402  0.152 
+2  CLPv  0.964  0.297  0.138 
+3  SCRP  0.965  0.277  0.041 
+4  SLRP  1.000  0.354  0.027 
+---------------------------- 
+   M1    0.965  0.685 
+
+
+p.sol: SR + Pv
+
+M1:    SRv + CLPv + SCRP + SLRP => JSR 
+
+         incl   cov.r  cov.u 
+---------------------------- 
+1  SRv   0.990  0.402  0.152 
+2  CLPv  0.964  0.297  0.138 
+3  SCRP  0.965  0.277  0.041 
+4  SLRP  1.000  0.354  0.027 
+---------------------------- 
+   M1    0.965  0.685 
+
+> 
+> # are the prime implicants also sufficient for the negation of the outcome?
+> pof(Emm.si$i.sol$C1P1$pims, outcome = "JSR", d.Emm, neg.out = TRUE,
++   relation = "suf")
+
+         incl   cov.r  cov.u 
+---------------------------- 
+1  SRv   0.438  0.198  0.031 
+2  CLPv  0.756  0.259  0.108 
+3  SCRP  0.557  0.178  0.000 
+4  SLRP  0.492  0.193  0.000 
+---------------------------- 
+
+> 
+> # check PI chart for intermediate solution;
+> # C1P1: first conservative and first parsimonious solution
+> Emm.si$i.sol$C1P1$PIchart
+
+      27 37 47 48 56 64
+SRv   -  x  x  -  -  - 
+CLPv  x  -  -  -  -  - 
+SCRP  -  -  -  -  x  x 
+SLRP  -  -  x  x  -  x 
+
+> 
+> # same intermediate solution, but not same SAs
+> identical(rownames(Emm.si$SA$S1), rownames(Emm.si$SA$S2))
+[1] FALSE
+> 
+> # check easy counterfactuals; same
+> (EC1 <- Emm.si$i.sol$C1P1$EC)
+   S C L R P V
+31 0 1 1 1 1 0
+39 1 0 0 1 1 0
+45 1 0 1 1 0 0
+53 1 1 0 1 0 0
+55 1 1 0 1 1 0
+59 1 1 1 0 1 0
+61 1 1 1 1 0 0
+63 1 1 1 1 1 0
+> (EC2 <- Emm.si$i.sol$C1P2$EC)
+   S C L R P V
+31 0 1 1 1 1 0
+39 1 0 0 1 1 0
+45 1 0 1 1 0 0
+53 1 1 0 1 0 0
+55 1 1 0 1 1 0
+59 1 1 1 0 1 0
+61 1 1 1 1 0 0
+63 1 1 1 1 1 0
+> identical(rownames(EC1), rownames(EC2))
+[1] TRUE
+> 
+> # minimized expressions for ECs using fake outcome (FO)
+> eqmcc(cbind(Emm.si$i.sol$C1P1$EC, FO = 1), outcome = "FO")
+
+M1: SCRv + CLRPv + SCLPv + SLRpv + SlRPv <=> FO
+
+> 
+> # plot all four prime implicants of the intermediate solution
+> PIsc <- Emm.si$i.sol$C1P1$pims
+> par(mfrow = c(2, 2))
+> for(i in 1:4){
++  plot(PIsc[, i], d.Emm$JSR, pch = 19, ylab = "JSR",
++   xlab = names(PIsc)[i], xlim = c(0, 1), ylim = c(0, 1),
++   main = paste("Prime Implicant", print(i)))
++  mtext(paste(
++   "Inclusion = ", round(Emm.si$i.sol$C1P1$IC$incl.cov$incl[i], 3),
++   "; Coverage = ", round(Emm.si$i.sol$C1P1$IC$incl.cov$cov.r[i], 3)), 
++   cex = 0.7, line = 0.4)
++  abline(h = 0.5, lty = 2, col = gray(0.5))
++  abline(v = 0.5, lty = 2, col = gray(0.5))
++  abline(0, 1)
++ }
+[1] 1
+[1] 2
+[1] 3
+[1] 4
+> 
+> # mvQCA using Hartmann and Kemmerzell (2010)
+> #-------------------------------------------
+> data(d.HK)
+> head(d.HK)
+   C F T R V PB PBI
+AO 0 2 1 2 1  1   1
+BJ 1 2 1 0 0  1   0
+BW 2 0 0 0 0  0   0
+BF 1 2 2 1 0  1   0
+BI 0 2 2 1 1  1   1
+CF 1 1 2 1 0  1   1
+> 
+> # create vector of condition variables
+> conds <- c("C", "F", "T", "V")
+> 
+> # parsimonious solution, with contradictions included
+> HK.sp <- eqmcc(d.HK, outcome = "PB{1}", conditions = conds,
++   incl.cut0 = 0.4, include = c("?", "C"), details = TRUE)
+> HK.sp
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    C  F  T  V  OUT n  incl 
+11  0  1  2  0   1  2  1.000
+12  0  1  2  1   1  1  1.000
+15  0  2  1  0   1  1  1.000
+16  0  2  1  1   1  1  1.000
+17  0  2  2  0   1  6  1.000
+18  0  2  2  1   1  3  1.000
+19  1  0  0  0   1  1  1.000
+27  1  1  1  0   1  1  1.000
+28  1  1  1  1   1  1  1.000
+29  1  1  2  0   1  4  1.000
+33  1  2  1  0   1  2  1.000
+34  1  2  1  1   1  1  1.000
+35  1  2  2  0   1  7  1.000
+37  2  0  0  0   0  2  0.000
+38  2  0  0  1   0  1  0.000
+39  2  0  1  0   1  1  1.000
+40  2  0  1  1   0  1  0.000
+41  2  0  2  0   1  1  1.000
+45  2  1  1  0   1  1  1.000
+47  2  1  2  0   1  1  1.000
+48  2  1  2  1   C  4  0.500
+53  2  2  2  0   1  3  1.000
+54  2  2  2  1   1  2  1.000
+
+n OUT = 1/0/C: 40/4/4 
+  Total      : 48 
+
+M1: C{1} + T{2} + T{1}*V{0} + (C{0}) => PB{1} 
+M2: C{1} + T{2} + T{1}*V{0} + (F{2}) => PB{1} 
+
+                            ------------------- 
+              incl   cov.r  cov.u  (M1)   (M2)  
+----------------------------------------------- 
+1  C{1}       1.000  0.405  0.048  0.071  0.048 
+2  T{2}       0.941  0.762  0.095  0.214  0.167 
+3  T{1}*V{0}  1.000  0.143  0.048  0.048  0.048 
+----------------------------------------------- 
+4  C{0}       1.000  0.333  0.000  0.024        
+5  F{2}       1.000  0.619  0.000         0.024 
+----------------------------------------------- 
+   M1         0.955  1.000 
+   M2         0.955  1.000 
+
+> 
+> # Venn diagram of solution S1;
+> # first extract PI membership scores
+> PIms <- HK.sp$pims
+> 
+> require(VennDiagram)
+Loading required package: VennDiagram
+Loading required package: grid
+> vennHK.suf <- venn.diagram(
++  x = list(
++   "PB{1}" = which(d.HK$PB == 1),
++   "C{0,1}" = which(PIms[, 1] == 1 | PIms[, 2] == 1),
++   "T{2}" = which(PIms[, 4] == 1),
++   "T{1}*V{0}" = which(PIms[, 5] == 1)),
++  filename = NULL,
++  cex = 2.5, cat.cex = 2, cat.pos = c(180, 180, 0, 0),
++  cat.dist = c(0.4, 0.4, 0.12, 0.12),
++  fill = gray(c(0.3, 0.5, 0.7, 0.9))
++ )
+> grid.draw(vennHK.suf)
+> 
+> # which are the two countries in T{2} but not PB{1}?
+> rownames(d.HK[d.HK$T == 2 & d.HK$PB != 1, ])
+[1] "KE" "ZM"
+> 
+> # minimize contradictions (only one contradiction)
+> eqmcc(d.HK, outcome = "PB{1}", conditions = conds, incl.cut0 = 0.4,
++   explain = "C")
+
+M1: C{2}*F{1}*T{2}*V{1}
+
+> 
+> # intermediate solution with directional expectations:
+> # C{1}, F{1,2}, T{2}, V contribute to OUT = 1
+> HK.si <- eqmcc(d.HK, outcome = "PB{1}", conditions = conds,
++   include = "?", dir.exp = c(1, "1;2", 2, 1), details = TRUE)
+> HK.si
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    C  F  T  V  OUT n  incl 
+11  0  1  2  0   1  2  1.000
+12  0  1  2  1   1  1  1.000
+15  0  2  1  0   1  1  1.000
+16  0  2  1  1   1  1  1.000
+17  0  2  2  0   1  6  1.000
+18  0  2  2  1   1  3  1.000
+19  1  0  0  0   1  1  1.000
+27  1  1  1  0   1  1  1.000
+28  1  1  1  1   1  1  1.000
+29  1  1  2  0   1  4  1.000
+33  1  2  1  0   1  2  1.000
+34  1  2  1  1   1  1  1.000
+35  1  2  2  0   1  7  1.000
+37  2  0  0  0   0  2  0.000
+38  2  0  0  1   0  1  0.000
+39  2  0  1  0   1  1  1.000
+40  2  0  1  1   0  1  0.000
+41  2  0  2  0   1  1  1.000
+45  2  1  1  0   1  1  1.000
+47  2  1  2  0   1  1  1.000
+48  2  1  2  1   0  4  0.500
+53  2  2  2  0   1  3  1.000
+54  2  2  2  1   1  2  1.000
+
+n OUT = 1/0/C: 40/8/0 
+  Total      : 48 
+
+p.sol: C{0} + C{1} + F{2} + T{1}*V{0} + T{2}*V{0}
+
+M1:    C{1}*F{1} + C{1}*F{2} + F{2}*T{2} + C{0}*F{1}*T{2} + C{0}*F{2}*T{1} +
+       C{2}*T{1}*V{0} + C{2}*T{2}*V{0} + (C{1}*T{0}) => PB{1} 
+M2:    C{1}*F{1} + C{1}*F{2} + F{2}*T{2} + C{0}*F{1}*T{2} + C{0}*F{2}*T{1} +
+       C{2}*T{1}*V{0} + C{2}*T{2}*V{0} + (C{1}*V{0}) => PB{1} 
+                                 ------------------- 
+                   incl   cov.r  cov.u  (M1)   (M2)  
+---------------------------------------------------- 
+1  C{1}*F{1}       1.000  0.143  0.024  0.143  0.024 
+2  C{1}*F{2}       1.000  0.238  0.024  0.071  0.024 
+3  F{2}*T{2}       1.000  0.500  0.262  0.262  0.262 
+4  C{0}*F{1}*T{2}  1.000  0.071  0.071  0.071  0.071 
+5  C{0}*F{2}*T{1}  1.000  0.048  0.048  0.048  0.048 
+6  C{2}*T{1}*V{0}  1.000  0.048  0.048  0.048  0.048 
+7  C{2}*T{2}*V{0}  1.000  0.119  0.048  0.048  0.048 
+---------------------------------------------------- 
+8  C{1}*T{0}       1.000  0.024  0.000  0.024        
+9  C{1}*V{0}       1.000  0.357  0.000         0.024 
+---------------------------------------------------- 
+   M1              1.000  0.952 
+   M2              1.000  0.952 
+
+> 
+> # mvQCA using Sager and Andereggen (2012)
+> #----------------------------------------
+> data(d.SA)
+> head(d.SA)
+     FED FIN URB GER HIS COO PRO DIS EXP ACC
+Lung   2   1   0   1   0   1   0   0   0   1
+Pfyn   1   1   0   1   1   1   1   1   1   1
+Sol1   0   1   1   1   1   1   1   1   1   1
+Sol2   0   1   1   1   1   1   1   1   1   1
+ZurW   1   1   1   1   0   0   1   1   1   1
+TrB1   1   1   1   1   0   0   1   1   0   0
+> 
+> # directional expectation of FED{0} leads to non-simplifying
+> # easy counterfactual (see Thiem 2014 for more details)
+> SA.si <- eqmcc(d.SA, outcome = "ACC{1}", conditions = names(d.SA)[1:5],
++   include = "?", dir.exp = c(0,1,0,1,1), details = TRUE)
+> SA.si
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    FED FIN URB GER HIS OUT n  incl 
+ 6   0   0   1   0   1   0  1  0.000
+14   0   1   1   0   1   1  1  1.000
+16   0   1   1   1   1   1  2  1.000
+20   1   0   0   1   1   0  1  0.000
+22   1   0   1   0   1   0  2  0.000
+23   1   0   1   1   0   1  1  1.000
+24   1   0   1   1   1   0  2  0.500
+27   1   1   0   1   0   0  1  0.000
+28   1   1   0   1   1   1  2  1.000
+30   1   1   1   0   1   0  2  0.500
+31   1   1   1   1   0   0  3  0.333
+32   1   1   1   1   1   1  1  1.000
+35   2   0   0   1   0   1  1  1.000
+43   2   1   0   1   0   1  1  1.000
+
+n OUT = 1/0/C: 9/12/0 
+  Total      : 21 
+
+p.sol: FED{2} + FED{0}*FIN{1} + FIN{0}*HIS{0} + FIN{1}*GER{1}*HIS{1}
+
+M1:    FED{0}*FIN{1}*HIS{1} + FED{2}*URB{0}*GER{1} +
+       FED{1}*FIN{0}*GER{1}*HIS{0} + FED{1}*FIN{1}*GER{1}*HIS{1} => ACC{1} 
+
+                                incl   cov.r  cov.u 
+--------------------------------------------------- 
+1  FED{0}*FIN{1}*HIS{1}         1.000  0.250  0.250 
+2  FED{2}*URB{0}*GER{1}         1.000  0.167  0.167 
+3  FED{1}*FIN{0}*GER{1}*HIS{0}  1.000  0.083  0.083 
+4  FED{1}*FIN{1}*GER{1}*HIS{1}  1.000  0.250  0.250 
+--------------------------------------------------- 
+   M1                           1.000  0.750 
+
+> 
+> SA.si$i.sol$C1P1$NSEC
+  FED FIN URB GER HIS
+7   0   0   1   1   0
+> 
+> # tQCA using Ragin and Strand (2008)
+> #-----------------------------------
+> data(d.RS)
+> head(d.RS)
+  P E A S EBA REC
+a 1 1 1 1   1   1
+b 1 1 1 1   1   1
+c 1 1 1 1   0   1
+d 1 1 1 0   1   1
+e 1 1 1 0   1   1
+f 1 1 0 1   -   1
+> 
+> # conservative solution with details and case names;
+> # auxiliary temporal order condition "EBA" automatically excluded 
+> # from parameters of fit
+> eqmcc(d.RS, outcome = "REC", details = TRUE, show.cases = TRUE)
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    P  E  A  S  EBA OUT n  incl  cases
+ 3  0  0  0  0   -   0  3  0.000 o,p,q
+15  0  1  0  0   -   0  1  0.000 n    
+22  0  1  1  1   0   1  1  1.000 m    
+27  1  0  0  0   -   0  1  0.000 l    
+30  1  0  0  1   -   0  3  0.000 i,j,k
+36  1  0  1  1   -   0  2  0.000 g,h  
+42  1  1  0  1   -   1  1  1.000 f    
+44  1  1  1  0   1   1  2  1.000 d,e  
+46  1  1  1  1   0   1  1  1.000 c    
+47  1  1  1  1   1   1  2  1.000 a,b  
+
+n OUT = 1/0/C: 7/10/0 
+  Total      : 17 
+
+Number of multiple-covered cases: 3 
+
+M1: P*E*S + E*A*S*eba + P*E*A*EBA <=> REC
+
+              incl   cov.r  cov.u  cases 
+-------------------------------------------- 
+1  P*E*S      1.000  0.571  0.143  f; c; a,b 
+2  E*A*S*eba  1.000  0.571  0.143  m; c 
+3  P*E*A*EBA  1.000  0.714  0.286  d,e; a,b 
+-------------------------------------------- 
+   M1         1.000  1.000 
+
+> 
+> # QCA path models ("causal chain" in CNA); data from Baumgartner (2009);
+> # note that CNA and QCA results are not always equal because CNA applies a
+> # different concept of the truth table that does not take each configuration's
+> # inclusion score into consideration before minimization
+> #-----------------------------------------------------------------------------
+> d.Bau <- data.frame(
++   U = c(1,1,1,1,0,0,0,0), D = c(1,1,0,0,1,1,0,0),
++   L = c(1,1,1,1,1,1,0,0), G = c(1,0,1,0,1,0,1,0),
++   E = c(1,1,1,1,1,1,1,0),
++   row.names = letters[1:8])
+> head(d.Bau)
+  U D L G E
+a 1 1 1 1 1
+b 1 1 1 0 1
+c 1 0 1 1 1
+d 1 0 1 0 1
+e 0 1 1 1 1
+f 0 1 1 0 1
+> 
+> # with multiple outcomes, no solution details are printed;
+> # "causal-chain structure": (D + U <=> L) * (G + L <=> E)
+> # "common-cause structure": (D + U <=> L) * (G + D + U <=> E)
+> Bau.cna <- eqmcc(d.Bau, outcome = names(d.Bau), relation = "sufnec", 
++   include = "?", min.dis = FALSE)
+> Bau.cna
+
+There is no solution for outcome "U".
+
+There is no solution for outcome "D".
+
+M1: D + U <=> L
+
+There is no solution for outcome "G".
+
+
+M1: G + (L) <=> E 
+M2: G + (D + U) <=> E 
+
+
+> 
+> # get the truth table, solution details and case names for outcome "E"
+> print(Bau.cna$E, details = TRUE, show.cases = TRUE)
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    U  D  L  G  OUT n  incl 
+ 1  0  0  0  0   0  1  0.000
+ 2  0  0  0  1   1  1  1.000
+ 7  0  1  1  0   1  1  1.000
+ 8  0  1  1  1   1  1  1.000
+11  1  0  1  0   1  1  1.000
+12  1  0  1  1   1  1  1.000
+15  1  1  1  0   1  1  1.000
+16  1  1  1  1   1  1  1.000
+
+n OUT = 1/0/C: 7/1/0 
+  Total      : 8 
+
+Number of multiple-covered cases: 3 
+
+M1: G + (L) <=> E 
+M2: G + (D + U) <=> E 
+
+                     ------------------- 
+       incl   cov.r  cov.u  (M1)   (M2)   cases 
+---------------------------------------------------------- 
+1  G   1.000  0.571  0.143  0.143  0.143  g; e; c; a 
+---------------------------------------------------------- 
+2  D   1.000  0.571  0.000         0.143  f; e; b; a 
+3  L   1.000  0.857  0.000  0.429         f; e; d; c; b; a 
+4  U   1.000  0.571  0.000         0.143  d; c; b; a 
+---------------------------------------------------------- 
+   M1  1.000  1.000 
+   M2  1.000  1.000 
+
+> 
+> # QCA with multiple outcomes from multivalent variables
+> #------------------------------------------------------
+> d.mmv <- data.frame(A = c(2,0,0,1,1,1,2,2), B = c(2,2,2,2,1,1,0,0), 
++                     C = c(0,1,0,0,0,2,1,0), D = c(2,1,2,2,3,1,3,0), 
++                     E = c(3,2,3,3,0,1,3,2), 
++   row.names = letters[1:8])
+> head(d.mmv)
+  A B C D E
+a 2 2 0 2 3
+b 0 2 1 1 2
+c 0 2 0 2 3
+d 1 2 0 2 3
+e 1 1 0 3 0
+f 1 1 2 1 1
+> 
+> mmv.s <- eqmcc(d.mmv, outcome = c("D{2}", "E{3}"))
+> mmv.s
+
+M1: B{2}*C{0}*E{3} <=> D{2}
+
+M1: B{2}*C{0}*D{2} + A{2}*B{0}*C{1}*D{3} <=> E{3}
+
+> 
+> # use quotes with curly-bracket notation to access solution component
+> print(mmv.s$"E{3}", details = TRUE, show.cases = TRUE)
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    A  B  C  D  OUT n  incl 
+27  0  2  0  2   1  1  1.000
+30  0  2  1  1   0  1  0.000
+52  1  1  0  3   0  1  0.000
+58  1  1  2  1   0  1  0.000
+63  1  2  0  2   1  1  1.000
+73  2  0  0  0   0  1  0.000
+80  2  0  1  3   1  1  1.000
+99  2  2  0  2   1  1  1.000
+
+n OUT = 1/0/C: 4/4/0 
+  Total      : 8 
+
+Number of multiple-covered cases: 0 
+
+M1: B{2}*C{0}*D{2} + A{2}*B{0}*C{1}*D{3} <=> E{3}
+
+                        incl   cov.r  cov.u  cases 
+---------------------------------------------------- 
+1  B{2}*C{0}*D{2}       1.000  0.750  0.750  c; d; a 
+2  A{2}*B{0}*C{1}*D{3}  1.000  0.250  0.250  g 
+---------------------------------------------------- 
+   M1                   1.000  1.000 
+
+> 
+> # negation of outcome from multivalent variable is disjunction of all other
+> # values; high level of ambiguity (18 models)
+> mmv.s <- eqmcc(d.mmv, outcome = "E{3}", neg.out = TRUE, include = "?",
++  min.dis = FALSE)
+> mmv.s
+
+M01: D{1} + B{0}*C{0} + C{0}*D{3} <=> E{0,1,2} 
+M02: D{1} + A{1}*D{3} + B{0}*C{0} <=> E{0,1,2} 
+M03: D{0} + D{1} + C{0}*D{3} <=> E{0,1,2} 
+M04: D{0} + D{1} + A{1}*D{3} <=> E{0,1,2} 
+M05: B{1} + B{0}*C{0} + B{2}*C{1} <=> E{0,1,2} 
+M06: B{1} + A{0}*C{1} + B{0}*C{0} <=> E{0,1,2} 
+M07: B{1} + D{1} + B{0}*C{0} <=> E{0,1,2} 
+M08: B{1} + D{0} + B{2}*C{1} <=> E{0,1,2} 
+M09: B{1} + D{0} + A{0}*C{1} <=> E{0,1,2} 
+M10: B{1} + D{0} + D{1} <=> E{0,1,2} 
+M11: C{2} + B{0}*C{0} + B{2}*C{1} + C{0}*D{3} <=> E{0,1,2} 
+M12: C{2} + D{0} + A{0}*C{1} + C{0}*D{3} <=> E{0,1,2} 
+M13: C{2} + A{1}*D{3} + B{0}*C{0} + B{2}*C{1} <=> E{0,1,2} 
+M14: C{2} + A{0}*C{1} + B{0}*C{0} + C{0}*D{3} <=> E{0,1,2} 
+M15: C{2} + A{0}*C{1} + A{1}*D{3} + B{0}*C{0} <=> E{0,1,2} 
+M16: C{2} + D{0} + B{2}*C{1} + C{0}*D{3} <=> E{0,1,2} 
+M17: C{2} + D{0} + A{1}*D{3} + B{2}*C{1} <=> E{0,1,2} 
+M18: C{2} + D{0} + A{0}*C{1} + A{1}*D{3} <=> E{0,1,2} 
+
+
+
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("eqmcc", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx()
+
+detaching ‘package:VennDiagram’, ‘package:grid’
+
+> nameEx("factorize")
+> ### * factorize
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: factorize
+> ### Title: Factorize Set-Theoretic Expressions
+> ### Aliases: factorize
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # factorize a union of intersections;
+> # if single letters are used, argument "prod.split" is not needed
+> factorize("AB + AC")
+
+M1: AB + AC 
+
+F1: A(B + C) 
+
+
+> 
+> # but "prod.split" is needed in these cases
+> factorize("one*TWO*four + one*THREE + THREE*four", prod.split = "*")
+
+M1: one*TWO*four + one*THREE + THREE*four 
+
+F1: THREE*(one + four) + one*TWO*four 
+F2: four*(one*TWO + THREE) + one*THREE 
+F3: one*(TWO*four + THREE) + THREE*four 
+
+
+> factorize("~ONE*TWO*~FOUR + ~ONE*THREE + THREE*~FOUR", prod.split = "*")
+
+M1: ~ONE*TWO*~FOUR + ~ONE*THREE + THREE*~FOUR 
+
+F1: THREE*(~ONE + ~FOUR) + ~ONE*TWO*~FOUR 
+F2: ~FOUR*(~ONE*TWO + THREE) + ~ONE*THREE 
+F3: ~ONE*(TWO*~FOUR + THREE) + THREE*~FOUR 
+
+
+> factorize("one&TWO&four + one&THREE + THREE&four", prod.split = "&")
+
+M1: one&TWO&four + one&THREE + THREE&four 
+
+F1: THREE&(one + four) + one&TWO&four 
+F2: four&(one&TWO + THREE) + one&THREE 
+F3: one&(TWO&four + THREE) + THREE&four 
+
+
+> 
+> # factorize solution objects directly
+> data(d.HK)
+> HK.sol <- eqmcc(d.HK, outcome = "PB", conditions = c("C", "F", "T", "V"), 
++   include = c("?"))
+> factorize(HK.sol)
+
+M1: C{0} + C{1} + F{2} + T{1}*V{0} + T{2}*V{0} 
+
+F1: V{0}*(T{1} + T{2}) + C{0} + C{1} + F{2} 
+
+
+> 
+> data(d.Emm)
+> Emm.sol <- eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9)
+> factorize(Emm.sol)
+
+M1: SCRPV + ScLRP + SclRpv + sCLrPv 
+
+F1: v(SclRp + sCLrP) + PRS(CV + cL) 
+F2: LP(ScR + sCrv) + RS(CPV + clpv) 
+F3: RSc(LP + lpv) + CP(SRV + sLrv) 
+F4: RS(CPV + cLP + clpv) + sCLrPv 
+F5: P(SCRV + ScLR + sCLrv) + SclRpv 
+
+
+> 
+> # sort by the largest number of factoring sets
+> factorize(Emm.sol, sort.factorizing = TRUE)
+
+M1: SCRPV + ScLRP + SclRpv + sCLrPv 
+
+F1: PRS(CV + cL) + v(SclRp + sCLrP) 
+F2: RSc(LP + lpv) + CP(SRV + sLrv) 
+F3: RS(CPV + cLP + clpv) + sCLrPv 
+F4: LP(ScR + sCrv) + RS(CPV + clpv) 
+F5: P(SCRV + ScLR + sCLrv) + SclRpv 
+
+
+> 
+> # sort by the largest number of factorized sets
+> factorize(Emm.sol, sort.factorized = TRUE)
+
+M1: SCRPV + ScLRP + SclRpv + sCLrPv 
+
+F1: P(SCRV + ScLR + sCLrv) + SclRpv 
+F2: RS(CPV + cLP + clpv) + sCLrPv 
+F3: v(SclRp + sCLrP) + PRS(CV + cL) 
+F4: LP(ScR + sCrv) + RS(CPV + clpv) 
+F5: CP(SRV + sLrv) + RSc(LP + lpv) 
+
+
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("factorize", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("findSubsets")
+> ### * findSubsets
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: findSubsets
+> ### Title: Find all Subsets of an Implicant
+> ### Aliases: findSubsets
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # three variables with two levels (values) each
+> noflevels <- c(2, 2, 2)
+> 
+> # second row of the implicant matrix corresponding 
+> # to the first value of the rightmost variable
+> getRow(noflevels = noflevels + 1, row.no = 2) - 1
+     [,1] [,2] [,3]
+[1,]   -1   -1    0
+> 
+> # row numbers of the implicant matrix which 
+> # correspond to subsets of this value  
+> (rows <- findSubsets(noflevels = noflevels + 1, 2))
+[1]  5  8 11 14 17 20 23 26
+> 
+> # corresponding matrix representation of these rows 
+> getRow(noflevels = noflevels + 1, row.no = rows) - 1
+     [,1] [,2] [,3]
+[1,]   -1    0    0
+[2,]   -1    1    0
+[3,]    0   -1    0
+[4,]    0    0    0
+[5,]    0    1    0
+[6,]    1   -1    0
+[7,]    1    0    0
+[8,]    1    1    0
+> 
+> # stopping at row 20
+> getRow(noflevels = noflevels + 1, 
++   row.no = findSubsets(noflevels + 1, 2, 20)) - 1
+     [,1] [,2] [,3]
+[1,]   -1    0    0
+[2,]   -1    1    0
+[3,]    0   -1    0
+[4,]    0    0    0
+[5,]    0    1    0
+[6,]    1   -1    0
+> 
+> # reconstruct configurations from prime implicants;
+> # example of "developed formula" from Quine (1952, p. 524)
+> x <- data.frame(createMatrix(rep(3, 4)), row.names = 1:81)
+> x[x[,1] == 0 & x[,2] == 0 & x[,3] == 2 & x[,4] == 1,]
+  X1 X2 X3 X4
+8  0  0  2  1
+> x[x[,1] == 2 & x[,2] == 2 & x[,3] == 2 & x[,4] == 0,]
+   X1 X2 X3 X4
+79  2  2  2  0
+> levels <- rep(3, 4)
+> rows <- c(8, 79)
+> imp <- getRow(levels, findSubsets(levels, rows)) - 1
+> imp
+      [,1] [,2] [,3] [,4]
+ [1,]   -1    0    1    0
+ [2,]   -1    1    1    0
+ [3,]    0   -1    1    0
+ [4,]    0    0    1    0
+ [5,]    0    1    1    0
+ [6,]    1   -1    1    0
+ [7,]    1    0    1    0
+ [8,]    1    1    1    0
+ [9,]    1    1    1    1
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("findSubsets", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("findSupersets")
+> ### * findSupersets
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: findSupersets
+> ### Title: Find all Supersets of an Implicant
+> ### Aliases: findSupersets
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # three variables with two levels (values) each
+> noflevels <- c(2, 2, 2)
+> 
+> # row 14 of the implicant matrix corresponding to the configuration
+> # containing the first value of all variables
+> getRow(noflevels = noflevels + 1, row.no = 14) - 1
+     [,1] [,2] [,3]
+[1,]    0    0    0
+> 
+> # row numbers of the implicant matrix which correspond to supersets 
+> # of this configuration
+> (rows <- findSupersets(noflevels + 1, input.combs = 14))
+[1]  2  4  5 10 11 13 14
+> 
+> # corresponding matrix representation of these rows 
+> getRow(noflevels = noflevels + 1, row.no = rows) - 1
+     [,1] [,2] [,3]
+[1,]   -1   -1    0
+[2,]   -1    0   -1
+[3,]   -1    0    0
+[4,]    0   -1   -1
+[5,]    0   -1    0
+[6,]    0    0   -1
+[7,]    0    0    0
+> 
+> # now for rows 14 and 17
+> getRow(noflevels = noflevels + 1, row.no = c(14, 17)) - 1
+     [,1] [,2] [,3]
+[1,]    0    0    0
+[2,]    0    1    0
+> (rows <- findSupersets(noflevels + 1, input.combs = c(14, 17)))
+ [1]  2  4  5  7  8 10 11 13 14 16 17
+> getRow(noflevels = noflevels + 1, row.no = rows) - 1
+      [,1] [,2] [,3]
+ [1,]   -1   -1    0
+ [2,]   -1    0   -1
+ [3,]   -1    0    0
+ [4,]   -1    1   -1
+ [5,]   -1    1    0
+ [6,]    0   -1   -1
+ [7,]    0   -1    0
+ [8,]    0    0   -1
+ [9,]    0    0    0
+[10,]    0    1   -1
+[11,]    0    1    0
+> 
+> # in matrix representation
+> (input.combs <- getRow(noflevels + 1, row.no = c(14, 17)))
+     [,1] [,2] [,3]
+[1,]    1    1    1
+[2,]    1    2    1
+> findSupersets(noflevels + 1, input.combs = input.combs)
+ [1]  2  4  5  7  8 10 11 13 14 16 17
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("findSupersets", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("findTh")
+> ### * findTh
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: findTh
+> ### Title: Find Calibration Thresholds
+> ### Aliases: findTh
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # 15 random values between 1 and 100 
+> x <- sample(1:100, size = 15)
+> 
+> # split into two groups for csQCA
+> findTh(x)
+[1] 47
+> 
+> # split into three groups for mvQCA
+> findTh(x, groups = 3)
+[1] 47.0 76.5
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("findTh", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("getRow")
+> ### * getRow
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: getRow
+> ### Title: Get Specific Rows from Configuration and Implicant Matrices
+> ### Aliases: getRow
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # all three variables have two values
+> x <- c(2, 2, 2)
+> 
+> # rows from the configuration matrix
+> # 1 1 1
+> getRow(noflevels = x, row.no = 8)
+     [,1] [,2] [,3]
+[1,]    1    1    1
+> 
+> # 0 0 0
+> getRow(noflevels = x, row.no = 0, zerobased = TRUE)
+     [,1] [,2] [,3]
+[1,]    0    0    0
+> 
+> # same as above 
+> getRow(noflevels = x, row.no = 1)
+     [,1] [,2] [,3]
+[1,]    0    0    0
+> 
+> # second variable has three values: 0, 1 and 2
+> x <- c(2, 3, 2)
+> 
+> # 1 2 0
+> getRow(noflevels = x, row.no = 11)
+     [,1] [,2] [,3]
+[1,]    1    2    0
+> 
+> # the empty set in the implicant matrix 
+> getRow(noflevels = x, 1) - 1
+     [,1] [,2] [,3]
+[1,]   -1   -1   -1
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("getRow", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("pof")
+> ### * pof
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: pof
+> ### Title: Compute Set-Relational Parameters of Fit
+> ### Aliases: pof is.pof
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # csQCA using Krook (2010)
+> #-------------------------
+> data(d.Kro)
+> head(d.Kro)
+   ES QU WS WM LP WNP
+SE  1  1  1  0  0   1
+FI  1  0  1  0  0   1
+NO  1  1  1  1  1   1
+DK  1  0  1  1  1   1
+NL  1  1  0  1  1   1
+ES  1  1  0  1  0   1
+> 
+> # first also compute negations
+> x.1 <- d.Kro[, 1:5]
+> x.2 <- 1 - x.1
+> names(x.2) <- tolower(names(x.1))
+> x <- cbind(x.1, x.2)
+>  
+> # necessity parameters of fit for all conditions
+> pof(x, outcome = "WNP", d.Kro)
+
+        incl   cov.r 
+-------------------- 
+ 1  ES  0.818  0.692 
+ 2  QU  0.727  0.500 
+ 3  WS  0.455  1.000 
+ 4  WM  0.727  0.571 
+ 5  LP  0.727  0.889 
+ 6  es  0.182  0.222 
+ 7  qu  0.273  0.500 
+ 8  ws  0.545  0.353 
+ 9  wm  0.273  0.375 
+10  lp  0.273  0.231 
+-------------------- 
+
+> 
+> # for the negated outcome
+> pof(x, outcome = "WNP", d.Kro, neg.out = TRUE)
+
+        incl   cov.r 
+-------------------- 
+ 1  ES  0.364  0.308 
+ 2  QU  0.727  0.500 
+ 3  WS  0.000  0.000 
+ 4  WM  0.545  0.429 
+ 5  LP  0.091  0.111 
+ 6  es  0.636  0.778 
+ 7  qu  0.273  0.500 
+ 8  ws  1.000  0.647 
+ 9  wm  0.455  0.625 
+10  lp  0.909  0.769 
+-------------------- 
+
+> 
+> # sufficiency parameters of fit
+> pof(x, outcome = "WNP", d.Kro, relation = "suf") 
+
+        incl   cov.r  cov.u 
+--------------------------- 
+ 1  ES  0.692  0.818  0.000 
+ 2  QU  0.500  0.727  0.000 
+ 3  WS  1.000  0.455  0.000 
+ 4  WM  0.571  0.727  0.000 
+ 5  LP  0.889  0.727  0.000 
+ 6  es  0.222  0.182  0.000 
+ 7  qu  0.500  0.273  0.000 
+ 8  ws  0.353  0.545  0.000 
+ 9  wm  0.375  0.273  0.000 
+10  lp  0.231  0.273  0.000 
+--------------------------- 
+
+> 
+> # for the negated outcome
+> pof(x, outcome = "WNP", d.Kro, neg.out = TRUE, relation = "suf")
+
+        incl   cov.r  cov.u 
+--------------------------- 
+ 1  ES  0.308  0.364  0.000 
+ 2  QU  0.500  0.727  0.000 
+ 3  WS  0.000  0.000  0.000 
+ 4  WM  0.429  0.545  0.000 
+ 5  LP  0.111  0.091  0.000 
+ 6  es  0.778  0.636  0.000 
+ 7  qu  0.500  0.273  0.000 
+ 8  ws  0.647  1.000  0.000 
+ 9  wm  0.625  0.455  0.000 
+10  lp  0.769  0.909  0.000 
+--------------------------- 
+
+> 
+> # exact binomial tests of sufficiency and necessity inclusion
+> pof(x.1, outcome = "WNP", d.Kro, relation = "suf", inf.test = "binom",
++   incl.cut1 = 0.75, incl.cut0 = 0.5)
+
+       incl   cov.r  cov.u  pval1  pval0 
+---------------------------------------- 
+1  ES  0.692  0.818  0.000  0.416  0.133 
+2  QU  0.500  0.727  0.000  0.027  0.598 
+3  WS  1.000  0.455  0.000  1.000  0.031 
+4  WM  0.571  0.727  0.000  0.112  0.395 
+5  LP  0.889  0.727  0.000  0.925  0.020 
+---------------------------------------- 
+
+> 
+> pof(x.1, outcome = "WNP", d.Kro, inf.test = "binom", incl.cut1 = 0.75,
++   incl.cut0 = 0.5)
+
+       incl   cov.r  pval1  pval0 
+--------------------------------- 
+1  ES  0.818  0.692  0.803  0.033 
+2  QU  0.727  0.500  0.545  0.113 
+3  WS  0.455  1.000  0.034  0.726 
+4  WM  0.727  0.571  0.545  0.113 
+5  LP  0.727  0.889  0.545  0.113 
+--------------------------------- 
+
+> 
+> # fsQCA using Emmenegger (2011)
+> #------------------------------
+> data(d.Emm)
+> head(d.Emm)
+      S    C    L   R   P    V  JSR
+AU 0.00 0.00 0.57 0.2 0.0 1.00 0.14
+AT 0.67 1.00 0.57 1.0 0.8 0.67 0.71
+BE 1.00 0.67 0.43 1.0 1.0 0.67 0.57
+CA 0.00 0.00 0.14 0.2 0.0 1.00 0.14
+DK 0.00 0.67 0.86 0.4 0.4 0.00 0.29
+FI 0.67 1.00 0.71 0.4 0.4 0.00 0.43
+> 
+> # first test for minimally necessary combinations with superSubset(), 
+> # then check whether these combinations are also necessary for the 
+> # negation of the outcome
+> Emm.nr <- superSubset(d.Emm, outcome = "JSR", incl.cut = 0.965, 
++   cov.cut = 0.6)
+> Emm.nr
+
+            incl   cov.r 
+------------------------ 
+1  C+R      0.968  0.722 
+2  S+C      0.968  0.691 
+3  R+P+v    0.975  0.622 
+4  L+R+P    0.994  0.685 
+5  S+L+P    1.000  0.669 
+6  C+L+P+v  0.967  0.609 
+------------------------ 
+
+> 
+> pof(Emm.nr$coms, outcome = "JSR", d.Emm, neg.out = TRUE) 
+
+            incl   cov.r 
+------------------------ 
+1  C+R      0.542  0.364 
+2  S+C      0.626  0.402 
+3  R+P+v    0.742  0.426 
+4  L+R+P    0.657  0.407 
+5  S+L+P    0.721  0.434 
+6  C+L+P+v  0.777  0.440 
+------------------------ 
+
+> 
+> # first derive the conservative solution, then check whether the 
+> # negations of the prime implicants are also sufficient for the outcome 
+> Emm.sc <- eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9, details = TRUE)
+> Emm.sc
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    S  C  L  R  P  V  OUT n  incl 
+ 2  0  0  0  0  0  1   0  2  0.198
+ 5  0  0  0  1  0  0   0  1  0.581
+10  0  0  1  0  0  1   0  1  0.494
+20  0  1  0  0  1  1   0  2  0.716
+25  0  1  1  0  0  0   0  2  0.839
+27  0  1  1  0  1  0   1  1  0.940
+33  1  0  0  0  0  0   0  2  0.203
+37  1  0  0  1  0  0   1  2  0.977
+47  1  0  1  1  1  0   1  1  1.000
+48  1  0  1  1  1  1   1  1  1.000
+56  1  1  0  1  1  1   1  2  1.000
+57  1  1  1  0  0  0   0  1  0.717
+64  1  1  1  1  1  1   1  1  1.000
+
+n OUT = 1/0/C: 8/11/0 
+  Total      : 19 
+
+M1: SCRPV + ScLRP + SclRpv + sCLrPv => JSR
+
+           incl   cov.r  cov.u 
+------------------------------ 
+1  SCRPV   0.960  0.237  0.151 
+2  ScLRP   1.000  0.204  0.055 
+3  SclRpv  0.977  0.172  0.089 
+4  sCLrPv  0.940  0.171  0.171 
+------------------------------ 
+   M1      0.961  0.615 
+
+> 
+> pof(1 - Emm.sc$pims, outcome = "JSR", d.Emm, relation = "suf")
+
+           incl   cov.r  cov.u 
+------------------------------ 
+1  SCRPV   0.528  0.873  0.000 
+2  ScLRP   0.517  0.877  0.000 
+3  SclRpv  0.514  0.886  0.000 
+4  sCLrPv  0.552  0.948  0.000 
+------------------------------ 
+
+> 
+> # parameters of fit for matrix of implicants;
+> # "-1" is the placeholder for an eliminated variable;
+> # e.g.: R*p*V and S*c*L*P*v
+> #      "S"  "C"  "L"  "R"  "P"  "V"
+> #     [,1] [,2] [,3] [,4] [,5] [,6]
+> #[1,]   -1   -1   -1    1    0    1
+> #[2,]    1    0    1   -1    1    0
+> confs <- matrix(c(-1,-1,-1, 1, 0, 1, 
++                    1, 0, 1,-1, 1, 0), nrow = 2, byrow = TRUE)
+> 
+> pof(confs, outcome = "JSR", d.Emm, relation = "suf")
+
+              incl   cov.r  cov.u 
+--------------------------------- 
+1  R*p*V      0.942  0.194  0.141 
+2  S*c*L*P*v  1.000  0.177  0.124 
+--------------------------------- 
+
+> 
+> # or even vectors of line numbers from the implicant matrix
+> pof(c(43, 57), "JSR", d.Emm, relation = "suf")
+
+          incl   cov.r  cov.u 
+----------------------------- 
+1  l*r*P  0.782  0.183  0.100 
+2  L*V    0.898  0.380  0.297 
+----------------------------- 
+
+> 
+> # parameters of fit for a data frame
+> x <- data.frame(A = c(1,1,1,0,1), B = c(1,1,1,0,1),
++                 C = c(0,1,0,0,1), D = c(0,0,1,0,1),
++                 O = c(1,1,1,0,1))
+> 
+> pof(x[, -5], outcome = "O", x)
+
+       incl   cov.r 
+------------------- 
+1  A   1.000  1.000 
+2  B   1.000  1.000 
+3  C   0.500  1.000 
+4  D   0.500  1.000 
+------------------- 
+
+> 
+> # for a single column from that data frame
+> pof(x$A, x$O)
+
+       incl   cov.r 
+------------------- 
+1  A   1.000  1.000 
+------------------- 
+
+> 
+> # for multiple columns from that data frame
+> pof(x[, 1:2], outcome = "O", x)
+
+       incl   cov.r 
+------------------- 
+1  A   1.000  1.000 
+2  B   1.000  1.000 
+------------------- 
+
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("pof", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("solveChart")
+> ### * solveChart
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: solveChart
+> ### Title: Eliminate Redundant Prime Implicants
+> ### Aliases: solveChart
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # simple PI chart, formatted using internal function prettyTable()
+> PI <- c("A", "B", "c", "D") 
+> CO <- c("AbCD", "AbCd", "aBcd", "aBCD") 
+> chart <- demoChart(PI, CO)
+> prettyTable(chart)
+
+  AbCD AbCd aBcd aBCD
+A  x    x    -    -  
+B  -    -    x    x  
+c  -    -    x    -  
+D  x    -    -    x  
+> 
+> # solution:
+> # first or third PI: A + c
+> solveChart(chart)
+     [,1]
+[1,]    1
+[2,]    2
+> 
+> # all non-overlapping solutions: 
+> # first or third PI: A + c
+> # second or third or fourth PI: B + c + D
+> solveChart(chart, min.dis = TRUE)
+     [,1]
+[1,]    1
+[2,]    2
+> 
+> # a more complex example
+> PI <- c("AB", "BC", "Ac", "aC", "abd", "bcd")
+> CO <- c("ABCD", "ABCd", "ABcD", "ABcd", "AbcD", "Abcd",
++         "aBCD", "aBCd", "abCD", "abCd", "abcd")
+> chart <- demoChart(PI, CO)
+> prettyTable(chart)
+
+    ABCD ABCd ABcD ABcd AbcD Abcd aBCD aBCd abCD abCd abcd
+AB   x    x    x    x    -    -    -    -    -    -    -  
+BC   x    x    -    -    -    -    x    x    -    -    -  
+Ac   -    -    x    x    x    x    -    -    -    -    -  
+aC   -    -    -    -    -    -    x    x    x    x    -  
+abd  -    -    -    -    -    -    -    -    -    x    x  
+bcd  -    -    -    -    -    x    -    -    -    -    x  
+> 
+> # AB + Ac + aC + abd
+> # AB + Ac + aC + bcd
+> # BC + Ac + aC + abd
+> # BC + Ac + aC + bcd
+> solveChart(chart)
+     [,1] [,2] [,3] [,4]
+[1,]    1    1    2    2
+[2,]    3    3    3    3
+[3,]    4    4    4    4
+[4,]    5    6    5    6
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("solveChart", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> cleanEx()
+> nameEx("superSubset")
+> ### * superSubset
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: superSubset
+> ### Title: Find Superset and Subset Relations
+> ### Aliases: superSubset
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # csQCA using Krook (2010)
+> #-------------------------
+> data(d.Kro)
+> head(d.Kro)
+   ES QU WS WM LP WNP
+SE  1  1  1  0  0   1
+FI  1  0  1  0  0   1
+NO  1  1  1  1  1   1
+DK  1  0  1  1  1   1
+NL  1  1  0  1  1   1
+ES  1  1  0  1  0   1
+> 
+> # find all minimally necessary combinations with an inclusion score 
+> # of at least 0.9 and coverage score of at least 0.65 
+> Kro.ss <- superSubset(d.Kro, outcome = "WNP", incl.cut = 0.9, 
++   cov.cut = 0.65)
+> Kro.ss
+
+          incl   cov.r 
+---------------------- 
+1  wm+LP  0.909  0.667 
+2  WS+LP  0.909  0.909 
+3  ES+LP  1.000  0.733 
+---------------------- 
+
+> 
+> # Venn diagram of combinations;
+> # first extract membership scores
+> head(Kro.coms <- Kro.ss$coms)
+   wm+LP WS+LP ES+LP
+SE     1     1     1
+FI     1     1     1
+NO     1     1     1
+DK     1     1     1
+NL     1     1     1
+ES     0     0     1
+> 
+> require(VennDiagram)
+Loading required package: VennDiagram
+Loading required package: grid
+> vn.Kro.nec <- venn.diagram(
++  x = list(
++   "WNP" = which(d.Kro$WNP == 1),
++   "wm+LP" = which(Kro.coms[, 1] == 1),
++   "WS+LP" = which(Kro.coms[, 2] == 1),
++   "ES+LP" = which(Kro.coms[, 3] == 1)),
++  filename = NULL,
++  cex = 2.5, cat.cex = 2, cat.pos = c(-10, 10, 0, 0),
++  cat.dist = c(0.25, 0.25, 0.12, 0.12),
++  fill = gray(c(0.3, 0.5, 0.7, 0.9))
++ )
+> grid.draw(vn.Kro.nec)
+> 
+> # mvQCA using Hartmann and Kemmerzell (2010)
+> #-------------------------------------------
+> data(d.HK)
+> head(d.HK)
+   C F T R V PB PBI
+AO 0 2 1 2 1  1   1
+BJ 1 2 1 0 0  1   0
+BW 2 0 0 0 0  0   0
+BF 1 2 2 1 0  1   0
+BI 0 2 2 1 1  1   1
+CF 1 1 2 1 0  1   1
+> 
+> # find all minimally necessary combinations with perfect inclusion
+> HK.ss <- superSubset(d.HK, outcome = "PB", 
++   conditions = c("C", "F", "T", "V"))
+> HK.ss
+
+                        incl   cov.r 
+------------------------------------ 
+1  C{1}+F{2}+T{2}+V{0}  1.000  0.913 
+------------------------------------ 
+
+> 
+> # combination membership scores for all cases (only first ten lines)
+> HK.ss$coms[1:10, , drop = FALSE]
+   C{1}+F{2}+T{2}+V{0}
+AO                   1
+BJ                   1
+BW                   1
+BF                   1
+BI                   1
+CF                   1
+CM                   1
+CV                   1
+TD                   1
+KM                   1
+> 
+> # fsQCA using Emmenegger (2011)
+> #------------------------------
+> data(d.Emm)
+> head(d.Emm)
+      S    C    L   R   P    V  JSR
+AU 0.00 0.00 0.57 0.2 0.0 1.00 0.14
+AT 0.67 1.00 0.57 1.0 0.8 0.67 0.71
+BE 1.00 0.67 0.43 1.0 1.0 0.67 0.57
+CA 0.00 0.00 0.14 0.2 0.0 1.00 0.14
+DK 0.00 0.67 0.86 0.4 0.4 0.00 0.29
+FI 0.67 1.00 0.71 0.4 0.4 0.00 0.43
+> 
+> # find all minimally sufficient combinations with an inclusion score 
+> # of at least 0.9 and coverage score of at least 0.4; also return 
+> # PRI (proportional reduction in inconsistency) scores 
+> Emm.ss <- superSubset(d.Emm, outcome = "JSR", relation = "suf", 
++   incl.cut = 0.9, cov.cut = 0.4, PRI = TRUE)
+> Emm.ss
+
+        incl   PRI    cov.r 
+--------------------------- 
+1  Pv   0.950  0.883  0.417 
+2  RV   0.950  0.904  0.418 
+3  LP   0.979  0.955  0.506 
+4  LR   0.972  0.943  0.582 
+5  CRP  0.932  0.836  0.410 
+6  SRv  0.990  0.983  0.402 
+7  SlR  0.990  0.982  0.401 
+--------------------------- 
+
+> 
+> # same criteria, but for the negation of the outcome
+> Emm.ss.n <- superSubset(d.Emm, outcome = "JSR", neg.out = TRUE, 
++   relation = "suf", incl.cut = 0.9, cov.cut = 0.4, use.tilde = TRUE)
+> Emm.ss.n
+
+           incl   cov.r 
+----------------------- 
+1  ~C~R    0.943  0.586 
+2  ~S~C    0.936  0.519 
+3  ~L~R~P  0.987  0.491 
+4  ~S~L~P  1.000  0.450 
+----------------------- 
+
+> 
+> # plot all four combinations
+> head(Emm.coms <- Emm.ss.n$coms)
+   ~C~R ~S~C ~L~R~P ~S~L~P
+AU 0.80 1.00   0.43   0.43
+AT 0.00 0.00   0.00   0.20
+BE 0.00 0.00   0.00   0.00
+CA 0.80 1.00   0.80   0.86
+DK 0.33 0.33   0.14   0.14
+FI 0.00 0.00   0.29   0.29
+> par(mfrow = c(2, 2))
+> for(i in 1:4){
++  plot(Emm.coms[, i], 1 - d.Emm$JSR, pch = 19, ylab = "~JSR",
++   xlab = names(Emm.coms)[i], xlim = c(0, 1), ylim = c(0, 1),
++   main = paste("Combination", print(i)))
++  mtext(paste(
++   "Inclusion = ", round(Emm.ss.n$incl.cov$incl[i], 3),
++   "; Coverage = ", round(Emm.ss.n$incl.cov$cov[i], 3)), 
++   cex = 0.7, line = 0.4)
++  abline(h = 0.5, lty = 2, col = gray(0.5))
++  abline(v = 0.5, lty = 2, col = gray(0.5))
++  abline(0, 1)
++ }
+[1] 1
+Warning in `$.data.frame`(Emm.ss.n$incl.cov, cov) :
+  Name partially matched in data frame
+[1] 2
+Warning in `$.data.frame`(Emm.ss.n$incl.cov, cov) :
+  Name partially matched in data frame
+[1] 3
+Warning in `$.data.frame`(Emm.ss.n$incl.cov, cov) :
+  Name partially matched in data frame
+[1] 4
+Warning in `$.data.frame`(Emm.ss.n$incl.cov, cov) :
+  Name partially matched in data frame
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("superSubset", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> graphics::par(get("par.postscript", pos = 'CheckExEnv'))
+> cleanEx()
+
+detaching ‘package:VennDiagram’, ‘package:grid’
+
+> nameEx("truthTable")
+> ### * truthTable
+> 
+> flush(stderr()); flush(stdout())
+> 
+> base::assign(".ptime", proc.time(), pos = "CheckExEnv")
+> ### Name: truthTable
+> ### Title: Create a Truth Table
+> ### Aliases: truthTable is.tt
+> ### Keywords: functions
+> 
+> ### ** Examples
+> 
+> # csQCA using Krook (2010)
+> #-------------------------
+> data(d.Kro)
+> head(d.Kro)
+   ES QU WS WM LP WNP
+SE  1  1  1  0  0   1
+FI  1  0  1  0  0   1
+NO  1  1  1  1  1   1
+DK  1  0  1  1  1   1
+NL  1  1  0  1  1   1
+ES  1  1  0  1  0   1
+> 
+> # print truth table
+> truthTable(d.Kro, outcome = "WNP")
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    ES QU WS WM LP OUT n  incl 
+ 3  0  0  0  1  0   0  2  0.000
+ 4  0  0  0  1  1   1  1  1.000
+ 9  0  1  0  0  0   0  1  0.000
+11  0  1  0  1  0   0  4  0.000
+12  0  1  0  1  1   1  1  1.000
+18  1  0  0  0  1   0  1  0.000
+21  1  0  1  0  0   1  1  1.000
+24  1  0  1  1  1   1  1  1.000
+25  1  1  0  0  0   0  3  0.000
+26  1  1  0  0  1   1  1  1.000
+27  1  1  0  1  0   1  1  1.000
+28  1  1  0  1  1   1  2  1.000
+29  1  1  1  0  0   1  1  1.000
+32  1  1  1  1  1   1  2  1.000
+
+> 
+> # print complete truth table, show cases, and first sort by 
+> # inclusion scores, then by number of cases
+> truthTable(d.Kro, outcome = "WNP", complete = TRUE, 
++   show.cases = TRUE, sort.by = c("incl", "n"))
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    ES QU WS WM LP OUT n  incl  cases      
+28  1  1  0  1  1   1  2  1.000 NL,BE      
+32  1  1  1  1  1   1  2  1.000 NO,IS      
+ 4  0  0  0  1  1   1  1  1.000 NZ         
+12  0  1  0  1  1   1  1  1.000 DE         
+21  1  0  1  0  0   1  1  1.000 FI         
+24  1  0  1  1  1   1  1  1.000 DK         
+26  1  1  0  0  1   1  1  1.000 AT         
+27  1  1  0  1  0   1  1  1.000 ES         
+29  1  1  1  0  0   1  1  1.000 SE         
+11  0  1  0  1  0   0  4  0.000 AU,GB,FR,IE
+25  1  1  0  0  0   0  3  0.000 CH,PT,GR   
+ 3  0  0  0  1  0   0  2  0.000 CA,US      
+ 9  0  1  0  0  0   0  1  0.000 IT         
+18  1  0  0  0  1   0  1  0.000 LU         
+ 1  0  0  0  0  0   ?  0    -              
+ 2  0  0  0  0  1   ?  0    -              
+ 5  0  0  1  0  0   ?  0    -              
+ 6  0  0  1  0  1   ?  0    -              
+ 7  0  0  1  1  0   ?  0    -              
+ 8  0  0  1  1  1   ?  0    -              
+10  0  1  0  0  1   ?  0    -              
+13  0  1  1  0  0   ?  0    -              
+14  0  1  1  0  1   ?  0    -              
+15  0  1  1  1  0   ?  0    -              
+16  0  1  1  1  1   ?  0    -              
+17  1  0  0  0  0   ?  0    -              
+19  1  0  0  1  0   ?  0    -              
+20  1  0  0  1  1   ?  0    -              
+22  1  0  1  0  1   ?  0    -              
+23  1  0  1  1  0   ?  0    -              
+30  1  1  1  0  1   ?  0    -              
+31  1  1  1  1  0   ?  0    -              
+
+> 
+> # code configurations with single case as remainders
+> Kro.tt <- truthTable(d.Kro, outcome = "WNP", n.cut = 2, 
++   show.cases = TRUE)
+> Kro.tt
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    ES QU WS WM LP OUT n  incl  cases      
+ 3  0  0  0  1  0   0  2  0.000 CA,US      
+11  0  1  0  1  0   0  4  0.000 AU,GB,FR,IE
+25  1  1  0  0  0   0  3  0.000 CH,PT,GR   
+28  1  1  0  1  1   1  2  1.000 NL,BE      
+32  1  1  1  1  1   1  2  1.000 NO,IS      
+
+> 
+> # print cases that were assigned to remainders based on n.cut
+> Kro.tt$excluded
+   ES QU WS WM LP WNP
+SE  1  1  1  0  0   1
+FI  1  0  1  0  0   1
+DK  1  0  1  1  1   1
+ES  1  1  0  1  0   1
+AT  1  1  0  0  1   1
+NZ  0  0  0  1  1   1
+DE  0  1  0  1  1   1
+LU  1  0  0  0  1   0
+IT  0  1  0  0  0   0
+> 
+> # fsQCA using Emmenegger (2011)
+> #------------------------------
+> data(d.Emm)
+> head(d.Emm)
+      S    C    L   R   P    V  JSR
+AU 0.00 0.00 0.57 0.2 0.0 1.00 0.14
+AT 0.67 1.00 0.57 1.0 0.8 0.67 0.71
+BE 1.00 0.67 0.43 1.0 1.0 0.67 0.57
+CA 0.00 0.00 0.14 0.2 0.0 1.00 0.14
+DK 0.00 0.67 0.86 0.4 0.4 0.00 0.29
+FI 0.67 1.00 0.71 0.4 0.4 0.00 0.43
+> 
+> # code non-remainder configurations with inclusion scores 
+> # between 0.5 and 0.9 as contradictions
+> Emm.tt <- truthTable(d.Emm, outcome = "JSR", incl.cut1 = 0.9, 
++   incl.cut0 = 0.5)
+> Emm.tt
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    S  C  L  R  P  V  OUT n  incl 
+ 2  0  0  0  0  0  1   0  2  0.198
+ 5  0  0  0  1  0  0   C  1  0.581
+10  0  0  1  0  0  1   0  1  0.494
+20  0  1  0  0  1  1   C  2  0.716
+25  0  1  1  0  0  0   C  2  0.839
+27  0  1  1  0  1  0   1  1  0.940
+33  1  0  0  0  0  0   0  2  0.203
+37  1  0  0  1  0  0   1  2  0.977
+47  1  0  1  1  1  0   1  1  1.000
+48  1  0  1  1  1  1   1  1  1.000
+56  1  1  0  1  1  1   1  2  1.000
+57  1  1  1  0  0  0   C  1  0.717
+64  1  1  1  1  1  1   1  1  1.000
+
+> 
+> # truth table based on negated outcome set
+> Emm.tt <- truthTable(d.Emm, outcome = "JSR", neg.out = TRUE, 
++   incl.cut1 = 0.9, incl.cut0 = 0.5)
+> Emm.tt
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    S  C  L  R  P  V  OUT n  incl 
+ 2  0  0  0  0  0  1   1  2  1.000
+ 5  0  0  0  1  0  0   1  1  1.000
+10  0  0  1  0  0  1   1  1  1.000
+20  0  1  0  0  1  1   C  2  0.716
+25  0  1  1  0  0  0   C  2  0.627
+27  0  1  1  0  1  0   C  1  0.714
+33  1  0  0  0  0  0   1  2  1.000
+37  1  0  0  1  0  0   0  2  0.352
+47  1  0  1  1  1  0   0  1  0.458
+48  1  0  1  1  1  1   0  1  0.459
+56  1  1  0  1  1  1   C  2  0.571
+57  1  1  1  0  0  0   1  1  0.950
+64  1  1  1  1  1  1   C  1  0.612
+
+> 
+> # mvQCA using Hartmann and Kemmerzell (2010)
+> #-------------------------------------------
+> data(d.HK)
+> head(d.HK)
+   C F T R V PB PBI
+AO 0 2 1 2 1  1   1
+BJ 1 2 1 0 0  1   0
+BW 2 0 0 0 0  0   0
+BF 1 2 2 1 0  1   0
+BI 0 2 2 1 1  1   1
+CF 1 1 2 1 0  1   1
+> 
+> # code non-remainder configurations with inclusion scores below 1 
+> # but above 0.4 as contradictions 
+> HK.tt <- truthTable(d.HK, outcome = "PB", 
++   conditions = c("C","F","T","V"), incl.cut0 = 0.4)
+> HK.tt
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    C  F  T  V  OUT n  incl 
+11  0  1  2  0   1  2  1.000
+12  0  1  2  1   1  1  1.000
+15  0  2  1  0   1  1  1.000
+16  0  2  1  1   1  1  1.000
+17  0  2  2  0   1  6  1.000
+18  0  2  2  1   1  3  1.000
+19  1  0  0  0   1  1  1.000
+27  1  1  1  0   1  1  1.000
+28  1  1  1  1   1  1  1.000
+29  1  1  2  0   1  4  1.000
+33  1  2  1  0   1  2  1.000
+34  1  2  1  1   1  1  1.000
+35  1  2  2  0   1  7  1.000
+37  2  0  0  0   0  2  0.000
+38  2  0  0  1   0  1  0.000
+39  2  0  1  0   1  1  1.000
+40  2  0  1  1   0  1  0.000
+41  2  0  2  0   1  1  1.000
+45  2  1  1  0   1  1  1.000
+47  2  1  2  0   1  1  1.000
+48  2  1  2  1   C  4  0.500
+53  2  2  2  0   1  3  1.000
+54  2  2  2  1   1  2  1.000
+
+> 
+> # list the number of levels (values)  
+> HK.tt$noflevels
+[1] 3 3 3 2
+> 
+> # which configurations have more than 2 cases?
+> HK.tt$tt[which(HK.tt$tt$n > 2), ]
+   C F T V OUT n incl PRI
+17 0 2 2 0   1 6    1   1
+18 0 2 2 1   1 3    1   1
+29 1 1 2 0   1 4    1   1
+35 1 2 2 0   1 7    1   1
+48 2 1 2 1   C 4  0.5 0.5
+53 2 2 2 0   1 3    1   1
+> 
+> # code output function values in truth table based on 
+> # exact binomial test (condition variable V dropped)
+> HK.tt <- truthTable(d.HK, outcome = "PB", 
++   conditions = c("C","F","T"), incl.cut1 = 0.9, incl.cut0 = 0.4, 
++   show.cases = TRUE, inf.test = c("binom", 0.1))
+> HK.tt
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+pval1: p-value inclusion < 0.9
+pval0: p-value inclusion > 0.4
+
+    C  F  T  OUT n  incl  pval1 pval0 cases                     
+ 6  0  1  2   1  3  1.000 1.000 0.064 RW,ST,SC                  
+ 8  0  2  1   1  2  1.000 1.000 0.160 AO,MZ                     
+ 9  0  2  2   1  9  1.000 1.000 0.000 BI,CV,CD,GQ,ER,ET,GW,LR,SO
+10  1  0  0   1  1  1.000 1.000 0.400 SN                        
+14  1  1  1   1  2  1.000 1.000 0.160 MG,ML                     
+15  1  1  2   1  4  1.000 1.000 0.026 CF,CM,CI,TG               
+17  1  2  1   1  3  1.000 1.000 0.064 BJ,CG,NE                  
+18  1  2  2   1  7  1.000 1.000 0.002 BF,TD,KM,DJ,GA,GN,MR      
+19  2  0  0   0  3  0.000 0.001 1.000 BW,MU,ZW                  
+20  2  0  1   1  2  0.500 0.190 0.640 NA,ZA                     
+21  2  0  2   1  1  1.000 1.000 0.400 GM                        
+23  2  1  1   1  1  1.000 1.000 0.400 MW                        
+24  2  1  2   0  5  0.600 0.081 0.317 KE,NG,SL,TZ,ZM            
+27  2  2  2   1  5  1.000 1.000 0.010 GH,LS,SD,SZ,UG            
+
+> 
+> # tQCA using Ragin and Strand (2008)
+> #-----------------------------------
+> data(d.RS)
+> head(d.RS)
+  P E A S EBA REC
+a 1 1 1 1   1   1
+b 1 1 1 1   1   1
+c 1 1 1 1   0   1
+d 1 1 1 0   1   1
+e 1 1 1 0   1   1
+f 1 1 0 1   -   1
+> 
+> # tQCA truth table with "don't care" values
+> truthTable(d.RS, outcome = "REC")
+
+  OUT: outcome value
+    n: number of cases in configuration
+ incl: sufficiency inclusion score
+
+    P  E  A  S  EBA OUT n  incl 
+ 3  0  0  0  0   -   0  3  0.000
+15  0  1  0  0   -   0  1  0.000
+22  0  1  1  1   0   1  1  1.000
+27  1  0  0  0   -   0  1  0.000
+30  1  0  0  1   -   0  3  0.000
+36  1  0  1  1   -   0  2  0.000
+42  1  1  0  1   -   1  1  1.000
+44  1  1  1  0   1   1  2  1.000
+46  1  1  1  1   0   1  1  1.000
+47  1  1  1  1   1   1  2  1.000
+
+> 
+> 
+> 
+> 
+> base::assign(".dptime", (proc.time() - get(".ptime", pos = "CheckExEnv")), pos = "CheckExEnv")
+> base::cat("truthTable", base::get(".format_ptime", pos = 'CheckExEnv')(get(".dptime", pos = "CheckExEnv")), "\n", file=base::get(".ExTimings", pos = 'CheckExEnv'), append=TRUE, sep="\t")
+> ### * <FOOTER>
+> ###
+> options(digits = 7L)
+> base::cat("Time elapsed: ", proc.time() - base::get("ptime", pos = 'CheckExEnv'),"\n")
+Time elapsed:  2.79 0.05 2.868 0 0 
+> grDevices::dev.off()
+null device 
+          1 
+> ###
+> ### Local variables: ***
+> ### mode: outline-minor ***
+> ### outline-regexp: "\\(> \\)?### [*]+" ***
+> ### End: ***
+> quit('no')
