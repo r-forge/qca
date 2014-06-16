@@ -38,8 +38,9 @@ function(setms, outcome, data, neg.out=FALSE, relation = "nec",
                     data[, outcome] <- ifelse(data[, outcome] == outcome.value, 1, 0)
                 }
                 
-                outcomename <- outcome
-                outcome <- data[, outcome]
+                outcomename <- toupper(outcome)
+                outcome <- data[, toupper(outcome)]
+                
             }
         }
         else if (is.vector(outcome)) {
@@ -371,6 +372,7 @@ function(setms, outcome, data, neg.out=FALSE, relation = "nec",
             }
         }
     }
+    
     
     if (is.vector(mins)) {
         mins <- as.data.frame(mins)
