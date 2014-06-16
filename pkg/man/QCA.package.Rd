@@ -60,8 +60,8 @@ arguments, values and default settings but backward compatibility is generally e
     \tabular{ll}{
     Package: \tab QCA\cr
     Type:    \tab Package\cr
-    Version: \tab 1.1-3\cr
-    Date:    \tab 2014-06-12\cr
+    Version: \tab 1.1-3.1\cr
+    Date:    \tab 2014-06-16\cr
     License: \tab GPL (>= 2)\cr
     }
 }

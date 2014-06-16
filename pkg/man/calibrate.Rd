@@ -104,6 +104,7 @@ A User's Guide}. New York: Springer.
 
 \examples{
 # base variable; random draw from standard normal distribution
+set.seed(30)
 x <- rnorm(30)
 
 # calibration thresholds

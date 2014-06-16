@@ -272,10 +272,10 @@ Kro.sp$PIchart
 Kro.sp$SA
 
 # minimized expressions for SAs using fake outcome (FO)
-for(i in 1:2){
+for(i in 1:2) {
   print(eqmcc(cbind(Kro.sp$SA[[i]], FO = 1), outcome = "FO"))
-}  
-  
+}
+
 # conservative solution with truth table object
 Kro.tt <- truthTable(d.Kro, outcome = "WNP")
 Kro.sc <- eqmcc(Kro.tt)
