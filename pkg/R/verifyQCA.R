@@ -77,6 +77,16 @@ function(data, outcome = "", conditions = c(""), incl.rem = FALSE,
 `verify.tt` <-
 function(data, outcome = "", conditions = c(""), complete = FALSE, show.cases = FALSE, incl.cut1 = 1, incl.cut0 = 1, inf.test) {
     
+    if (class(data) != "data.frame") {
+        cat("\n")
+        stop(paste("You have to provide a data frame, the current \"data\" argument contains an object\n",
+                   "       of class \"", class(data), "\"",
+                   ifelse(class(data) == "sS", ", created by superSubset()", ""),
+                   ifelse(class(data) == "tt", ", created by truthTable()", ""),
+                   ifelse(class(data) == "pof", ", created by pof()", ""),
+        ".\n\n", sep=""), call. = FALSE)
+    }
+    
     if (is.tt(data)) {
         data <- data$initial.data
     }

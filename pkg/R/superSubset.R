@@ -221,7 +221,7 @@ function(data, outcome = "", neg.out = FALSE, conditions = c(""), relation = "ne
     if (PRI) {
         out.list$PRI <- PRI
     }
-    return(structure(out.list, class="ss"))
+    return(structure(out.list, class="sS"))
 }
 
 

@@ -18,7 +18,7 @@
 \alias{print.pof}
 \alias{print.qca}
 \alias{print.mqca}
-\alias{print.ss}
+\alias{print.sS}
 \alias{print.tt}
 \alias{rowDominance}
 \alias{sortVector}

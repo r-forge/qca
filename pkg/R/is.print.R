@@ -26,6 +26,13 @@ function(x) {
 
 
 
+`is.sS` <-
+function(x) {
+    inherits(x, "sS")
+}
+
+
+
 `print.tt` <-
 function(x, ...) {
     
@@ -831,7 +838,7 @@ function(x, ...) {
 
 
 
-`print.ss` <-
+`print.sS` <-
 function(x, ...) {
     other.args <- list(...)
     PRI <- FALSE

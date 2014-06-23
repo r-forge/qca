@@ -1,5 +1,6 @@
 \name{superSubset}
 \alias{superSubset}
+\alias{is.sS}
 
 \title{Find Superset and Subset Relations}
 
@@ -13,6 +14,8 @@ or subset (sufficiency) relation to the outcome with respect to their complexity
 superSubset(data, outcome = "", neg.out = FALSE, conditions = c(""), 
             relation = "nec", incl.cut = 1, cov.cut = 0, 
             use.tilde = FALSE, use.letters = FALSE, ...)
+
+is.sS(x)
 }
 
 \arguments{
@@ -29,6 +32,7 @@ superSubset(data, outcome = "", neg.out = FALSE, conditions = c(""),
   \item{use.letters}{Logical, use simple letters instead of original variable
         names.}
   \item{...}{Other arguments for backward compatibility.}
+  \item{x}{An object of class "sS".}
 }
 
 \details{
