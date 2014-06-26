@@ -1,0 +1,265 @@
+Version 1.1-3
+    o New: number of PIs processable by solveChart() now limited (maximum integer 
+      number that can be treated by the machine)
+    o New: three data sets added (d.AS, d.HMN, d.Kil)
+    o Improved: documentation for various functions
+    o Changed: argument "all.sol" in function eqmcc() renamed to "min.dis" and set
+      to FALSE by default
+    o Changed: argument "inf.test" in eqmcc() placed before "use.tilde" 
+    o Renamed: in output from various functions prefix "S" (solution) renamed to 
+      "M" (model)
+    o Fixed: argument "neg.out" with curly bracket notation in argument "outcome"
+      to function eqmcc() not operative
+    o Fixed: matrix dimensions dropped in function getSolution()
+    o Fixed: case names assigned to incorrect PIs in function 
+      demoChart() under some conditions (thanks to M. Vink)
+
+Version 1.1-2
+    o Fixed: missing data triggered an error message in function truthTable()
+    o Fixed: calibration of negative end-point concepts with logistic function
+      produced incorrect set membership scores (thanks to C. Schneider)
+
+Version 1.1-1
+    o Improved: speed for resolution of PI chart 
+    o Fixed: an error message was generated when fuzzy sets were not normalized
+    o Fixed: prime implicants were joined together for single-column PI charts 
+      by function solveChart() instead of being identified as alternative solutions 
+    o Fixed: PRI column did not print in truth tables when argument PRI = TRUE
+
+Version 1.1-0
+    o New: functionality for analyzing path models with function eqmcc()
+    o New: function deMorgan() computes negations of set expressions    
+    o New: functionality for multivalent outcome sets
+    o New: inference-statistical tests for truth table configurations 
+      (currently only csQCA and mvQCA)
+    o New: additional values "sufnec" and "necsuf" to argument "relation" in 
+      function superSubset()
+    o New: argument "row.dom" in function solveChart() 
+    o Improved: documentation for function eqmcc()
+    o Improved: output structure of eqmcc() with respect to intermediate solutions
+    o Changed: default value to argument "row.dom" of function eqmcc() from TRUE 
+      to FALSE
+    o Changed: argument "row.dom" works independently of argument "all.sol" in 
+      function eqmcc()    
+    o Renamed: arguments "rowdom" and "direxp" in function eqmcc() to "row.dom" 
+      and "dir.exp"
+    o Renamed: values "necessity" (now "nec") and "sufficiency" (now "suf") to 
+      argument "relation" in function superSubset()
+    o Dropped: function readTosmana()
+    o Fixed: when number of solutions was large, printing was not optimal
+    o Fixed: printing of column names (thanks to A. Sevilla)
+    o Fixed: when providing directional expectations, empty "SA" components caused error
+    o Fixed: sometimes redundant solutions were produced when "all.sol = TRUE"
+
+Version 1.0-5
+    o Improved: version of C code for removing redundant PIs
+    o Improved: function pof() now also accepts outcome vector as well as a 
+      name of the outcome set
+    o Improved: multiple solutions from function factorize() now numbered
+    o Improved: C code in view of upcoming R 3.0.0 version
+    o Changed: functions superSubset() and pof() now accept "suf" (along with 
+      "sufficiency") and "nec" ("necessity")
+
+Version 1.0-4
+    o New: argument "all.sol" for functions eqmcc() and solveChart() (thanks to 
+      M. Baumgartner)
+    o Improved: speed for functions superSubset() and truthTable()
+    o Improved: function truthTable() now also calculates number of cases in 
+      remainder configurations
+    o Renamed: arguments in function factorize()
+    o Fixed: in function eqmcc() condition names in uppercase letters were not 
+      treated correctly (thanks to M. Baumgartner)
+    o Fixed: in function truthTable() case names were not assigned correctly 
+      under some circumstances (thanks to M. Gasser)
+
+Version 1.0-3
+    o Fixed: various printing issues
+
+Version 1.0-2
+    o New: argument "neg.out" in functions truthTable() and eqmcc()
+    o Fixed: PRI scores for arguments "relation = "necessity"" and "neg.out = TRUE" 
+      in function superSubset()
+
+Version 1.0-1
+    o Fixed: printing of solutions with only one term was prevented
+
+Version 1.0-0
+    o New: functions eqmcc() and truthTable() now able to process fuzzy sets
+    o New: function pof() computes parameters of fit for variety of input options
+    o New: function findTh() finds thresholds for crisp sets calibrations
+    o New: function calibrate() recodes base variables into crisp and fuzzy sets 
+    o New: function superSubset() for analysing necessity and sufficiency relations
+    o New: logical argument "rowdom" in function eqmcc() controls application of 
+      row dominance principle
+    o New: inclusion ("incl") and proportional reduction in inconsistency scores 
+      ("PRI")
+    o New: truth tables can now be sorted using argument "sort.by"
+    o New: function truthTable() now returns raw truth table with numerical columns
+    o New: printing methods for PI charts (objects of class "pic"), parameters 
+      of fit (class "pof"), results from function superSubset() (class "ss"), 
+      results from function allExpressions() (class "aE") and results from 
+      factorization (class "fctr")
+    o Improved: function eqmcc() automatically determines conditions and outcome 
+      when truth table object passed (object of class "tt") 
+    o Changed: functions prettyTable() and createString() now internalized
+    o Renamed: function findPrimes() to findSubsets()
+    o Dropped: function qmcc() (fully replaced by function eqmcc())
+    o Dropped: truth table columns "freq0" and "freq1" 
+
+Version 0.6-5
+    o Improved: functions qmcc() and eqmcc() now also return (invisibly) PI chart 
+      and initial configurations
+
+Version 0.6-4
+    o Improved: functions qmcc() and eqmcc() now return invisible list with 
+      following components: minimized PIs, number of k PIs necessary to cover 
+      all initial causal combinations in PI chart, final solution(s)
+    o Changed: redundant code from function verify.data() removed 
+    o Changed: error message on failure to solve PI chart (thanks to J. Jarvi)
+
+Version 0.6-3
+    o Fixed: in function factorize(); matrix dropped dimensions
+
+Version 0.6-2
+    o Improved: documentation and citations
+    o Improved: function findPrimes(); empty prime implicants eliminated (first 
+      line in implicant matrix)
+    o Changed: function factorize(); argument "use.letters" replaced by "splitmethod"
+    o Fixed: in function findSubsets(); incorrect calculations for the case of
+      multi-value data
+
+Version 0.6-1
+    o Improved: functions findPrimes() and findSubsets(); argument "noflevels" 
+      must now be specified
+    o Changed: argument "uplow" in function eqmcc() now TRUE by default
+    o Fixed: incorrect multi-value minimization in function eqmcc() when remainders 
+      excluded (thanks to D. Bol)
+
+Version 0.6-0
+    o New: function eqmcc() now accepts multivalent data
+    o New: argument "uplow" in function eqmcc() for printing solutions in 
+      upper/lower case letters
+    o New: artifical dataset "MV" to test multivalent data
+    o Improved: function findPrimes() to accommodate multivalent data
+    o Improved: function createString() to accommodate multivalent data
+    o Improved: function writePrimeimp() to accommodate multivalent data
+    o Improved: function prettyString() using native function strwrap()
+    o Improved: functions qmcc() and eqmcc() using new function prettyString()
+    o Changed: function demoChart(); argument "use.letters" replaced by 
+      "splitmethod"
+    o Changed: function prettyString() now internalized
+
+Version 0.5-4
+    o Dropped: error message when there is only one configuration to explain 
+      (thanks to B. Monroe)
+
+Version 0.5-3
+    o New: Function truthTable() now allows multivalent data in conditions
+    o Fixed: in function truthTable(); columns incorrectly arranged with respect 
+      to outcome values
+
+Version 0.5-2
+    o Fixed: function createMatrix() regarding multivalent data
+    o Fixed: function solveChart(); error when PI chart was too large
+
+Version 0.5-1
+    o Improved: function descriptions
+    o Changed: functions is.tt() and print.tt() now accessible to user
+    o Fixed: function rowDominance2(); matrix dropped dimensions
+    o Fixed: function eqmcc() for complete truth tables (thanks to R. Huang)
+
+Version 0.5-0
+    o Function truthTable() now returns object of class "tt"
+    o New: internal functions is.tt() and print.tt()
+    o Improved: functions qmcc() and eqmcc() now accept truth tables or raw data
+
+Version 0.4-9
+    o Improved: function factorize(); previous version did not detect some
+      combinations
+    o Changed: functions findPrimes() and findSubsets() now at user level
+
+Version 0.4-8
+    o New: internal function findPrimes()
+
+Version 0.4-7
+    o New: internal function findSubsets()
+    o Improved: function eqmcc()
+    o Improved: function truthTable()
+    o Fixed: function rowDominance2()
+
+Version 0.4-6
+    o Improved: eqmcc() now at least twice as fast
+    o Changed: function rowDominance2()
+    o Renamed: function shortqca() to eqmcc()
+
+Version 0.4-5
+    o New: experimental function shortqca(); many times faster than qmcc() for
+      large number of conditions (> 11) and very low memory consumption;
+      works with 16 or 17 conditions
+
+Version 0.4-3
+    o Fixed: in function qmcc() matrix dropped dimensions upon subsetting
+
+Version 0.4-2
+    o New: argument "use.letters" to function demoChart()
+    o Fixed: in function qmcc() data was subset incorrectly
+    o Fixed: in function qmcc() involving argument "show.cases"
+    o Fixed: function verify.truthTable()
+
+Version 0.4-1
+    o New: namespace for "QCA" package
+    o New: argument "diffmat" to function qmcc(); users can now choose to
+      generate difference matrix or not: speed or low memory consumption
+    o Improved: function base3rows() now faster
+    o Improved: function createMatrix() now faster for same number of values in 
+      each condition
+
+Version 0.4-0
+    o New: function base3rows()
+    o Improved: function qmcc(); lower memory consumption;
+      now works with up to 15 conditions in 1GB RAM
+    o Fixed: function writeSolution()
+
+Version 0.3-5
+    o Improved: function qmcc(); does no longer possess argument "tt";
+      now works with up to 13 conditions
+    o Changed: function truthTable()
+
+Version 0.3-1
+    o New: function rowDominance() facilitates solving of large prime implicant 
+      charts
+
+Version 0.3-0
+    o New: function getRow() returns combination of levels for specific row numbers
+    o New: function createMatrix() now accepts multi-value sets
+    o Improved: function qmcc() now 20 times faster
+    o Changed: function createChart() redesigned and internalized
+    o Renamed: function createChart() to demoChart()
+    o Fixed: various problems caused by changes in version 0.2-6
+
+Version 0.2-6
+    o New: "QCA" package does not depend on package "cluster" any more
+
+Version 0.2-5
+    o New: "QCA" package no longer depends on package "combinat"
+    o New: function sortMatrix() in internal functions
+    o New: argument verifications now part of internal functions
+    o New: function readTosmana() for reading Tosmana's XML data files
+    o Improved: documentation for many functions
+    o Changed: function prettyTable()
+    o Changed: minor parts in function truthTable()
+
+Version 0.2-2
+    o New: internal functions; function qmcc() now less cluttered
+    o New: user-level function solveChart(); pulled out of function qmcc()
+    o Improved: allExpressions() now faster
+    o Renamed: function allExpr() now allExpressions()
+
+Version 0.2-1
+    o New: function createMatrix() creates base matrix for truth tables
+    o New: function base3rows()
+    o Fixed: in function writeSolution()
+
+Version 0.2-0
+    o New: function factorize() finds all common factors in Boolean products
+
