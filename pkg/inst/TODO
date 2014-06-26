@@ -1,7 +1,0 @@
-- minimization for multiple outcomes that are not conditions
-- function deMorgan(): negate set-theoretic expressions with multivalent variables
-- inference-statistical tests for fuzzy sets
-- add argument to eqmcc for specifying temporal order
-- sensitivity diagnostics
-- correct error message "Error: All combinations have been included into analysis. The solution is 1. Please check the truth table."
-- reconstruct full truth tables from minimized solutions
