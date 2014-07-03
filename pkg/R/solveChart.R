@@ -36,9 +36,10 @@ function(chart, row.dom = FALSE, min.dis = TRUE, ...) {
         
          # Stop if the matrix with all possible combinations of k PIs has over 2GB of memory
         if ((mem <- nrow(chart)*choose(nrow(chart), k)*8/1024^3) > 2) {
+            errmessage <- paste(paste("Too much memory needed (", round(mem, 1), " GB) to solve the PI chart using combinations of", sep=""),
+                                   k, "out of", nrow(chart), "minimised PIs, with the PI chart having", ncol(chart), "columns.\n\n")
             cat("\n")
-            stop(paste(paste("Too much memory needed (", round(mem, 1), " GB) to solve the PI chart using combinations of", sep=""),
-                             k, "out of", nrow(chart), "minimised PIs.\n\n"), call. = FALSE)
+            stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
         }
         
         if (!min.dis & k < nrow(chart)) {
@@ -46,7 +47,7 @@ function(chart, row.dom = FALSE, min.dis = TRUE, ...) {
             # if (2^nrow(chart)*2 > .Machine$integer.max) {
             if (nrow(chart) > 29) { # in order to prevent cases where integer.max is larger than 32-bit
                 cat("\n")
-                stop("The PI chart is too large to identify all models.\n\n", call. = FALSE)
+                stop(paste(strwrap("The PI chart is too large to identify all models.\n\n", exdent = 7), collapse = "\n", sep=""))
             }
             
             output <- .Call("allSol", k, chart*1, PACKAGE="QCA")
