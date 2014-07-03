@@ -37,8 +37,8 @@ function(chart, row.dom = FALSE, min.dis = TRUE, ...) {
          # Stop if the matrix with all possible combinations of k PIs has over 2GB of memory
         if ((mem <- nrow(chart)*choose(nrow(chart), k)*8/1024^3) > 2) {
             cat("\n")
-            stop(paste(paste("Error: Too much memory needed (", round(mem, 1), " GB) to solve the PI chart using combinations of", sep=""),
-                             k, "PIs out of", nrow(chart), "minimised PIs.\n\n"), call. = FALSE)
+            stop(paste(paste("Too much memory needed (", round(mem, 1), " GB) to solve the PI chart using combinations of", sep=""),
+                             k, "out of", nrow(chart), "minimised PIs.\n\n"), call. = FALSE)
         }
         
         if (!min.dis & k < nrow(chart)) {

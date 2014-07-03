@@ -285,7 +285,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
     
     expressions <- minExpressions(expressions)
     
-    # return(list(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, min.dis=min.dis))
+    #                 return(list(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis))
     c.sol <- p.sol <- getSolution(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis)
     
     mbase <- rev(c(1, cumprod(rev(noflevels + 1))))[-1]
@@ -442,7 +442,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
     
     
     prettyNums <- formatC(seq(length(p.sol$solution.list[[1]])), digits = nchar(length(p.sol$solution.list[[1]])) - 1, flag = 0)
-    names(output$SA) <- paste("S", prettyNums, sep="")
+    names(output$SA) <- paste("M", prettyNums, sep="")
     
     if (!is.null(dir.exp) & all(include != c(""))) {
         
