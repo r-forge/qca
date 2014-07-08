@@ -286,7 +286,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
     expressions <- minExpressions(expressions)
     
     #                 return(list(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis))
-    c.sol <- p.sol <- getSolution(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis)
+    c.sol <- p.sol <- getSolution(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis, ...=...)
     
     mbase <- rev(c(1, cumprod(rev(noflevels + 1))))[-1]
     
@@ -335,7 +335,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
         
         # return(list(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis))
         
-        p.sol <- getSolution(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis)
+        p.sol <- getSolution(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis, ...=...)
         
     }
     
@@ -591,7 +591,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
                     
                     expressions <- minExpressions(expl.matrix.i.sol)
                     
-                    i.sol.index <- getSolution(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis)
+                    i.sol.index <- getSolution(expressions=expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde, inputt=inputt, row.dom=row.dom, initial=initial, min.dis=min.dis, ...=...)
                     
                     i.sol.index$expressions <- i.sol.index$expressions[rowSums(i.sol.index$mtrx) > 0, ]
                     

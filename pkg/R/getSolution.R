@@ -1,5 +1,5 @@
 `getSolution` <-
-function(expressions, collapse, uplow, use.tilde, inputt, row.dom, initial, min.dis) {
+function(expressions, collapse, uplow, use.tilde, inputt, row.dom, initial, min.dis, ...) {
         
     PI <- writePrimeimp(expressions, collapse=collapse, uplow=uplow, use.tilde=use.tilde)
     rownames(expressions) <- PI
@@ -38,7 +38,7 @@ function(expressions, collapse, uplow, use.tilde, inputt, row.dom, initial, min.
         
     # }
     
-    sol.matrix <- solveChart(mtrx, min.dis = min.dis)
+    sol.matrix <- solveChart(mtrx, min.dis = min.dis, ...=...)
     
     sol.matrix <- matrix(rownames(mtrx)[sol.matrix], nrow=nrow(sol.matrix))
     
