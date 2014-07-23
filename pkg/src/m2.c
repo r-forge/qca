@@ -6,7 +6,7 @@
 
 SEXP m2(SEXP goodbad, SEXP valents, SEXP mvector, SEXP mbase, SEXP t1g, SEXP t1b, SEXP rnofl) {
     
-    int *pmvector, *pmbase, *pt1g, *pt1b, *prnofl;
+    int *pmvector, *pmbase, *prnofl; //, *pt1b, *pt1g
     SEXP t1gc, t1bc, t2g, t2b, temp, final, tempfinal, cr, tobj, tl; // cr is current.row; tobj is a temporary object
     int i, j, k, ln, nofconditions, lt1c, lt2, newl, counter, tcounter; //ln is line.number
     int *pt1gc, *pt1bc, *pt2g, *pt2b, *ptemp, *pfinal, *ptempfinal, *pcr, *ptobj, *ptl;
@@ -41,8 +41,8 @@ SEXP m2(SEXP goodbad, SEXP valents, SEXP mvector, SEXP mbase, SEXP t1g, SEXP t1b
     
     pmvector = INTEGER(mvector);
     pmbase = INTEGER(mbase);
-    pt1g = INTEGER(t1g);
-    pt1b = INTEGER(t1b);
+    // pt1g = INTEGER(t1g);
+    // pt1b = INTEGER(t1b);
     ptemp = INTEGER(temp);
     ptempfinal = INTEGER(tempfinal);
     pcr = INTEGER(cr);

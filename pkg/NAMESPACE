@@ -52,3 +52,4 @@ export(.onAttach,
     writePrimeimp,
     writeSolution)
 import(lpSolve)
+importFrom("utils", "packageDescription")

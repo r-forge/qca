@@ -679,7 +679,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
     }
     
     output$relation <- relation
-    output@call <- metacall
+    output$call <- metacall
     
     return(structure(output, class="qca"))
 }

@@ -56,6 +56,8 @@ function (x, type="crisp", thresholds = NA, include = TRUE, logistic = FALSE,
                 }
                 
                 y <- (x < thCR) + 1
+                # y is the index of the position in the vector {-1, 1}
+                
                 result <- 1/(1 + exp(-((x - thCR) * (c(1, -1)[y]*log(idm/(1 - idm))/(c(thIN, thEX)[y] - thCR)))))
                 
                 if (thresholds[1] > thresholds[3]) {
