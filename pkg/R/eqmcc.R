@@ -327,11 +327,8 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
             
         }
         else {
-            print(expressions)
             expressions <- sort(setdiff(findSupersets(noflevels + 1, expl.matrix), findSupersets(noflevels + 1, excl.matrix)))
-            print(expressions)
             expressions <- .Call("removeRedundants", expressions, noflevels, mbase, PACKAGE="QCA")
-            print(expressions)
         }
         
         expressions <- getRow(noflevels + 1, expressions)
