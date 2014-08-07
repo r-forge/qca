@@ -2,8 +2,8 @@ citHeader("Please cite the QCA package as:")
 
 meta <- packageDescription("QCA")
 year <- sub("-.*", "", meta$Date)
-title <- sprintf("%s.", meta$Title)
-note <- sprintf("R Package Version %s.", meta$Version)
+title <- sprintf("%s", meta$Title)
+note <- sprintf("R Package Version %s", meta$Version)
 
 bibentry(bibtype = "Manual",
          author = personList(as.person("Adrian Dusa"),
