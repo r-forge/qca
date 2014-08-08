@@ -31,8 +31,8 @@ This data frame contains 15 rows (cases) and the following 10 columns (variables
 }
 
 \source{
-Cress, Daniel M., and David A. Snow. 2000. The Outcomes of Homeless Mobilization: 
-The Influence of Organization, Disruption, Political Mediation, and Framing. 
+Cress, Daniel M., and David A. Snow. 2000. \dQuote{The Outcomes of Homeless Mobilization: 
+The Influence of Organization, Disruption, Political Mediation, and Framing.} 
 \emph{American Journal of Sociology} 105 (4):1063-104.
 }
 

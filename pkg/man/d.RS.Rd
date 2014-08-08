@@ -29,13 +29,15 @@ This data frame contains 17 rows (cases) and the following 6 columns (variables)
 }
 
 \source{
-Caren, Neal, and Aaron Panofsky. 2005. TQCA: A Technique for Adding Temporality 
-to Qualitative Comparative Analysis. 
+Caren, Neal, and Aaron Panofsky. 2005. \dQuote{TQCA: A Technique for Adding Temporality 
+to Qualitative Comparative Analysis.} 
 \emph{Sociological Methods & Research} 34 (2):147-72.
+DOI: \href{http://dx.doi.org/10.1177/0049124105277197}{10.1177/0049124105277197}.
 
-Ragin, Charles C., and Sarah Ilene Strand. 2008. Using Qualitative Comparative 
-Analysis to Study Causal Order: Comment on Caren and Panofsky (2005). 
+Ragin, Charles C., and Sarah Ilene Strand. 2008. \dQuote{Using Qualitative Comparative 
+Analysis to Study Causal Order: Comment on Caren and Panofsky (2005).} 
 \emph{Sociological Methods & Research} 36 (4):431-41.
+DOI: \href{http://dx.doi.org/10.1177/0049124107313903}{10.1177/0049124107313903}.
 }
 
 \keyword{datasets}

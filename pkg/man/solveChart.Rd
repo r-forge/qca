@@ -37,10 +37,10 @@ function's arguments.
 }
 
 \references{
-McCluskey, Edward J. 1956. Minimization of Boolean Functions. 
+McCluskey, Edward J. 1956. \dQuote{Minimization of Boolean Functions.} 
 \emph{Bell Systems Technical Journal} 35 (6):1417-44.
 
-Quine, Willard V. 1952. The Problem of Simplifying Truth Functions. 
+Quine, Willard V. 1952. \dQuote{The Problem of Simplifying Truth Functions.} 
 \emph{American Mathematical Monthly} 59 (8):521-31.
 }
 

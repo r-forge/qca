@@ -27,8 +27,9 @@ This data frame contains 14 rows (cases) and the following 6 columns (variables)
 }
 
 \source{
-Kilburn, H. Whitt. 2004. Explaining U.S. Urban Regimes.
+Kilburn, H. Whitt. 2004. \dQuote{Explaining U.S. Urban Regimes.}
 \emph{Urban Affairs Review} 39 (5):633-51.
+DOI: \href{http://dx.doi.org/10.1177/1078087403262861}{10.1177/1078087403262861}.
 }
 
 \keyword{datasets}

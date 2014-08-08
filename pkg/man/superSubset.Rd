@@ -97,21 +97,22 @@ direct tests on negated outcomes and/or conditions should be preferred.
 }
     
 \references{
-Bol, Damien, and Francesca Luppi. 2013. Confronting Theories Based on Necessary 
-Relations: Making the Best of QCA Possibilities. 
+Bol, Damien, and Francesca Luppi. 2013. \dQuote{Confronting Theories Based on 
+Necessary Relations: Making the Best of QCA Possibilities.} 
 \emph{Political Research Quarterly} 66 (1):205-10.
+DOI: \href{http://dx.doi.org/10.1177/1065912912468269g}{10.1177/1065912912468269g}.
 
-Emmenegger, Patrick. 2011. Job Security Regulations in Western Democracies: A 
-Fuzzy Set Analysis. 
-\emph{European Journal of Political Research} 50 (3):336-64.
+Emmenegger, Patrick. 2011. \dQuote{Job Security Regulations in Western Democracies: 
+A Fuzzy Set Analysis.} \emph{European Journal of Political Research} 50 (3):336-64.
+DOI: \href{http://dx.doi.org/10.1111/j.1475-6765.2010.01933.x}{10.1111/j.1475-6765.2010.01933.x}.
 
-Hartmann, Christof, and Joerg Kemmerzell. 2010. Understanding Variations in Party 
-Bans in Africa. 
-\emph{Democratization} 17 (4):642-65.
+Hartmann, Christof, and Joerg Kemmerzell. 2010. \dQuote{Understanding Variations 
+in Party Bans in Africa.} \emph{Democratization} 17 (4):642-65.
+DOI: \href{http://dx.doi.org/10.1080/13510347.2010.491189}{10.1080/13510347.2010.491189}.
 
-Krook, Mona Lena. 2010. Women's Representation in Parliament: A Qualitative 
-Comparative Analysis. 
-\emph{Political Studies} 58 (5):886-908.
+Krook, Mona Lena. 2010. \dQuote{Women's Representation in Parliament: A Qualitative 
+Comparative Analysis.} \emph{Political Studies} 58 (5):886-908.
+DOI: \href{http://dx.doi.org/10.1111/j.1467-9248.2010.00833.x}{10.1111/j.1467-9248.2010.00833.x}.
 
 Schneider, Carsten Q., and Claudius Wagemann. 2012. \emph{Set-Theoretic Methods 
 for the Social Sciences: A Guide to Qualitative Comparative Analysis (QCA)}. 

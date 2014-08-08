@@ -19,7 +19,7 @@ This data frame contains 30 rows (cases) and the following 9 columns (variables)
 
 \tabular{rlll}{
 [ , 1] \tab \bold{AU}  \tab outcome:   \tab local autonomy                                                 \cr
-       \tab            \tab            \tab ("1" always, "0" never)                                         \cr
+       \tab            \tab            \tab ("1" always, "0" never)                                        \cr
 [ , 2] \tab \bold{EM}  \tab condition: \tab local communal involvement through direct employment           \cr   
        \tab            \tab            \tab ("1" 100 percent, "0" 0 percent)                               \cr
 [ , 3] \tab \bold{SP}  \tab condition: \tab local direct spending                                          \cr   
@@ -40,10 +40,11 @@ This data frame contains 30 rows (cases) and the following 9 columns (variables)
 }
 
 \source{
-Basurto, Xavier. 2013. Linking Multi-Level Governance to Local Common-Pool 
+Basurto, Xavier. 2013. \dQuote{Linking Multi-Level Governance to Local Common-Pool 
 Resource Theory using Fuzzy-Set Qualitative Comparative Analysis: Insights from 
-Twenty Years of Biodiversity Conservation in Costa Rica. 
+Twenty Years of Biodiversity Conservation in Costa Rica.} 
 \emph{Global Environmental Change} 23 (3):573-87.
+DOI: \href{http://dx.doi.org/10.1016/j.gloenvcha.2013.02.011}{10.1016/j.gloenvcha.2013.02.011}.
 }
 
 \keyword{datasets}

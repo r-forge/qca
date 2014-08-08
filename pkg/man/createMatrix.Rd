@@ -36,11 +36,12 @@ function \code{allExpressions()}.
 }
 
 \references{
-Dusa, Adrian. 2007. \emph{Enhancing Quine-McCluskey}. COMPASSS: WP 2007-49. 
-Available from: http://www.compasss.org/wpseries/Dusa2007b.pdf.
+Dusa, Adrian. 2007. \emph{Enhancing Quine-McCluskey}. COMPASSS: Working Paper 
+2007-49. URL: \url{http://www.compasss.org/wpseries/Dusa2007b.pdf}.
 
-Dusa, Adrian. 2010. A Mathematical Approach to the Boolean Minimization Problem. 
-\emph{Quality & Quantity} 44 (1):99-113.
+Dusa, Adrian. 2010. \dQuote{A Mathematical Approach to the Boolean Minimization 
+Problem.} \emph{Quality & Quantity} 44 (1):99-113.
+DOI: \href{http://dx.doi.org/10.1007/s11135-008-9183-x}{10.1007/s11135-008-9183-x}.
 }
 
 \seealso{\code{\link{allExpressions}}, \code{\link{truthTable}}}

@@ -40,9 +40,9 @@ The row names are the official International Organization for Standardization
 }
 
 \source{
-Hartmann, Christof, and Joerg Kemmerzell. 2010. Understanding Variations in Party 
-Bans in Africa. 
-\emph{Democratization} 17 (4):642-65.
+Hartmann, Christof, and Joerg Kemmerzell. 2010. \dQuote{Understanding Variations 
+in Party Bans in Africa.} \emph{Democratization} 17 (4):642-65.
+DOI: \href{http://dx.doi.org/10.1080/13510347.2010.491189}{10.1080/13510347.2010.491189}.
 }
 
 \keyword{datasets}

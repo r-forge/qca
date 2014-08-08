@@ -41,9 +41,10 @@ This data frame contains 21 rows (cases) and the following 10 columns (variables
 }
 
 \source{
-Sager, Fritz, and Celine Andereggen. 2012. Dealing With Complex Causality in 
-Realist Synthesis: The Promise of Qualitative Comparative Analysis. 
+Sager, Fritz, and Celine Andereggen. 2012. \dQuote{Dealing With Complex Causality 
+in Realist Synthesis: The Promise of Qualitative Comparative Analysis.} 
 \emph{American Journal of Evaluation} 33 (1):60-78.
+DOI: \href{http://dx.doi.org/10.1177/1098214011411574}{10.1177/1098214011411574}.
 }
 
 \keyword{datasets}

@@ -65,13 +65,13 @@ provided in \code{incl.cut0}.
 }
 
 \references{
-Emmenegger, Patrick. 2011. Job Security Regulations in Western Democracies: A 
-Fuzzy Set Analysis. 
-\emph{European Journal of Political Research} 50 (3):336-64.
+Emmenegger, Patrick. 2011. \dQuote{Job Security Regulations in Western Democracies: 
+A Fuzzy Set Analysis.} \emph{European Journal of Political Research} 50 (3):336-64.
+DOI: \href{http://dx.doi.org/10.1111/j.1475-6765.2010.01933.x}{10.1111/j.1475-6765.2010.01933.x}.
 
-Krook, Mona Lena. 2010. Women's Representation in Parliament: A Qualitative 
-Comparative Analysis. 
-\emph{Political Studies} 58 (5):886-908.
+Krook, Mona Lena. 2010. \dQuote{Women's Representation in Parliament: A Qualitative 
+Comparative Analysis.} \emph{Political Studies} 58 (5):886-908.
+DOI: \href{http://dx.doi.org/10.1111/j.1467-9248.2010.00833.x}{10.1111/j.1467-9248.2010.00833.x}.
 }
 
 \seealso{\code{\link{eqmcc}}, \code{\link{superSubset}}}

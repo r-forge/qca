@@ -27,9 +27,9 @@ This data frame contains 14 rows (cases) and the following 7 columns (variables)
 }
 
 \source{
-Schneider, Peter, and Dieter Sadowski. 2010. The Impact of New Public Management 
-Instruments on PhD Education. 
-\emph{Higher Education} 59 (5):543-65. 
+Schneider, Peter, and Dieter Sadowski. 2010. \dQuote{The Impact of New Public 
+Management Instruments on PhD Education.} \emph{Higher Education} 59 (5):543-65.
+DOI: \href{http://dx.doi.org/10.1007/s10734-009-9264-3}{10.1007/s10734-009-9264-3}.
 }
 
 \keyword{datasets}

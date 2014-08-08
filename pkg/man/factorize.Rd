@@ -15,7 +15,7 @@ factorize(expression, prod.split = "", sort.factorizing = FALSE,
 
 \arguments{
   \item{expression}{A string representing a set-theoretic expression or a solution 
-        object of class "qca".}
+        object of class \dQuote{qca}.}
   \item{prod.split}{The intersection (product) operator (if any).}
   \item{sort.factorizing}{Logical, sort results beginning with largest number of 
         factorizing sets.}
@@ -24,8 +24,8 @@ factorize(expression, prod.split = "", sort.factorizing = FALSE,
 }
 
 \details{
-In set theory, the intersection operator "*" is distributive over the union 
-operator "+" such that for any three sets \eqn{a}, \eqn{b} and \eqn{c}, the 
+In set theory, the intersection operator \dQuote{*} is distributive over the union 
+operator \dQuote{+} such that for any three sets \eqn{a}, \eqn{b} and \eqn{c}, the 
 following law holds: \eqn{(a*b) + (a*c) = a*(b + c)}{(a*b) + (a*c) = a*(b + c)} 
 (Hohn 1966, pp.78-80; South 1974, p.12). The \code{factorize()} function finds 
 all possible sets \eqn{a}{a} for any set-theoretic expression. Factorized 
