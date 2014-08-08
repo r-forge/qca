@@ -5,7 +5,7 @@
     title <- meta$Title
     note <- sprintf("R Package Version %s.", meta$Version)
     
-    msg <- paste("Dusa, Adrian and Alrik Thiem.", sprintf("%s.", year),
+    msg <- paste("Dusa, Adrian, and Alrik Thiem.", sprintf("%s.", year),
                  sprintf("%s.", title), note,
                   "URL: http://cran.r-project.org/package=QCA.")
     
