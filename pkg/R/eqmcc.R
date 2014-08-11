@@ -5,7 +5,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
       omit = c(), dir.exp = c(), details = FALSE, show.cases = FALSE, 
       inf.test = c(""), use.tilde = FALSE, use.letters = FALSE, ...) {
     
-    m2 <- FALSE
+    m2 <- FALSE # just a test
     
     metacall <- match.call()
     
