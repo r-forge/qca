@@ -1,8 +1,0 @@
-export(setupfile,
-       splitrows,
-       treatPath,
-       getFiles,
-       getMetadata,
-       getEnter)
-import(XML)
-import(foreign)
