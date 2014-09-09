@@ -5,7 +5,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
       omit = c(), dir.exp = c(), details = FALSE, show.cases = FALSE, 
       inf.test = c(""), use.tilde = FALSE, use.letters = FALSE, ...) {
     
-    m2 <- FALSE # just a test
+    m2 <- FALSE
     
     metacall <- match.call()
     
@@ -168,6 +168,12 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
     excl.matrix <- matrix(as.numeric(excl.matrix), ncol=length(noflevels)) + 1
     
     subset.tt <- tt$tt[, "OUT"] %in% explain
+    
+    if (all(!subset.tt)) {
+        cat("\n")
+        stop(paste("None of the values in OUT is explained. Please check the truth table.\n\n", sep=""), call. = FALSE)
+    }
+    
     inputt <- as.matrix(tt$tt[subset.tt, seq(length(noflevels))])
     rownms <- rownames(inputt)
     inputt <- matrix(as.numeric(inputt), ncol=length(noflevels)) + 1

@@ -7,7 +7,7 @@
     
     msg <- paste("Dusa, Adrian, and Alrik Thiem.", sprintf("%s.", year),
                  sprintf("%s.", title), note,
-                  "URL: http://cran.r-project.org/package=QCA.")
+                  "URL: http://cran.r-project.org/package=QCA")
     
     msg <- paste(strwrap(msg, indent = 2, exdent = 2), collapse = "\n")
     

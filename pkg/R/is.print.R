@@ -581,7 +581,7 @@ function(x, ...) {
     max.chars <- 1
     if (x$relation %in% c("sufficiency", "suf")) {
         if (ncol(incl.cov) > (3 + any(grepl("PRI", colnames(incl.cov))))) {
-            first.printed.row <- paste(c(rep(" ", nchar.rownames + nchar.nrow + 25 - 7*!PRI), rep("-", 7*(ncol(incl.cov) - (2 + valid.cov.u) + !PRI) - 2)), collapse="")
+            first.printed.row <- paste(c(rep(" ", nchar.rownames + nchar.nrow + 25 - 7 * !PRI), rep("-", 7 * (ncol(incl.cov) - (2 + valid.cov.u) + !PRI) - 2)), collapse="")
             max.chars <- nchar(first.printed.row)
         }
     }
@@ -593,7 +593,7 @@ function(x, ...) {
             max.chars <- max.nchar.cases
         }
         
-        sep.row <- paste(rep("-", nchar.rownames + 7*ncol(incl.cov) + ifelse(cases.column, max.nchar.cases, 0) + nchar.nrow), collapse="")
+        sep.row <- paste(rep("-", nchar.rownames + 7 * ncol(incl.cov) + ifelse(cases.column, max.nchar.cases, 0) + nchar.nrow), collapse="")
         
          # then compare again the max.chars with a "normal" length of a line
         if (nchar(sep.row) < line.length) {
@@ -608,7 +608,7 @@ function(x, ...) {
             colnames.row <- cat(paste(c(paste(rep(" ", nchar.rownames + nchar.nrow + 2), collapse=""), format(colnames(incl.cov))), collapse="  "))
             cat(paste(colnames.row, ifelse(cases.column, "  cases", ""), sep=""), "\n")
             
-            sep.row <- paste(rep("-", nchar.rownames + 7*ncol(incl.cov) + ifelse(cases.column, max.nchar.cases + 2, 0) + nchar.nrow + 2), collapse="")
+            sep.row <- paste(rep("-", nchar.rownames + 7 * ncol(incl.cov) + ifelse(cases.column, max.nchar.cases + 2, 0) + nchar.nrow + 2), collapse="")
             cat(sep.row, "\n")
             if (essentials) {
                 for (i in seq(nrow(incl.cov.e))) {
@@ -648,7 +648,7 @@ function(x, ...) {
             }
             
             cat(paste(c(paste(rep(" ", nchar.rownames + nchar.nrow + 2), collapse=""), colnames(incl.cov)), collapse="  "), "\n")
-            sep.row <- paste(rep("-", nchar.rownames + 7*ncol(incl.cov) + nchar.nrow + 2), collapse="")
+            sep.row <- paste(rep("-", nchar.rownames + 7 * ncol(incl.cov) + nchar.nrow + 2), collapse="")
             cat(sep.row, "\n")
             
             if (essentials) {
@@ -717,9 +717,12 @@ function(x, ...) {
             
             if (chunk < chunks) {
                 
-                cat(paste(c("\n", rep(ifelse(chunk == 1, " ", "-"), nchar.rownames + nchar.nrow + 18), rep("-", 7*(ncols - 2) - 2)), collapse=""), "\n")
+                if (ncols > 3) { # quick'n'dirty hack to solve Mattia's printing error
+                    cat(paste(c("\n", rep(ifelse(chunk == 1, " ", "-"), nchar.rownames + nchar.nrow + 18), rep("-", 7 * (ncols - 2) - 2)), collapse=""), "\n")
+                }
+                
                 cat(paste(c(paste(rep(" ", nchar.rownames + nchar.nrow + 2), collapse=""), colnames(incl.cov.temp)), collapse="  "), "\n")
-                sep.row <- paste(rep("-", nchar.rownames + 7*ncol(incl.cov.temp) + nchar.nrow + 2), collapse="")
+                sep.row <- paste(rep("-", nchar.rownames + 7 * ncol(incl.cov.temp) + nchar.nrow + 2), collapse="")
                 cat(sep.row, "\n")
                 
                 if (essentials) {
@@ -743,7 +746,7 @@ function(x, ...) {
                 cat("\n")
             }
             else {
-                max.chars <- nchar.rownames + 7*ncol(incl.cov.temp) + nchar.nrow + 2
+                max.chars <- nchar.rownames + 7 * ncol(incl.cov.temp) + nchar.nrow + 2
                 sep.row <- paste(c(rep("-", max.chars)), collapse="")
                 if (cases.column) {
                     max.chars <- max.chars + max.nchar.cases
@@ -883,7 +886,7 @@ function(x, ...) {
     
     nchar.rownames <- nchar(rownames(incl.cov)[1])
     cat(paste(c(paste(rep(" ", nchar.rownames + nchar(nrow(incl.cov)) + 2), collapse=""), format(colnames(incl.cov))), collapse="  "), "\n")
-    sep.row <- paste(rep("-", nchar.rownames + nchar(nrow(incl.cov)) + ncol(incl.cov)*7 + 2), collapse="")
+    sep.row <- paste(rep("-", nchar.rownames + nchar(nrow(incl.cov)) + 7 * ncol(incl.cov) + 2), collapse="")
     cat(sep.row, "\n")
     
     for (i in seq(nrow(incl.cov))) {

@@ -13,6 +13,9 @@ Version 1.1-3
     o Fixed: matrix dimensions dropped in function getSolution()
     o Fixed: case names assigned to incorrect PIs in function 
       demoChart() under some conditions (thanks to M. Vink)
+    o Fixed: very large pof() objects didn't generated an error on print
+    o Fixed: more informative error message when the truth table didn't contain
+      any explained values (thanks to Mattia Zulianello)
 
 Version 1.1-2
     o Fixed: missing data triggered an error message in function truthTable()

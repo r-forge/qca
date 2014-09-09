@@ -23,8 +23,7 @@ csQCA called \dfn{temporal QCA} (tQCA) is also available (Caren and Panofsky 200
 Ragin and Strand 2008). The \pkg{QCA} package extends these basic variants in 
 different directions by implementing complementary functionality. For example,
 intermediate solutions and summary statistics are also available in mvQCA (Thiem 
-2014a). Note, however, that \dfn{generalized-set QCA} (Thiem 2014b) is not yet 
-available.
+2014a).
 
 As of version 0.4-5, \pkg{QCA} has offered a new function called \code{\link{eqmcc}}
 (\dfn{enhanced Quine-McCluskey}; \emph{e}QMC) that finds exact solutions much 
@@ -52,12 +51,6 @@ documentation files. Please also note that many more data sets for QCA in both r
 and calibrated set format are available on the COMPASSS website at 
 \url{http://www.compasss.org/bibdata.htm}.
 
-If you make use of the \pkg{QCA} package in your work, please acknowledge this, 
-not least for reasons of scientific transparency. The software citation for \pkg{QCA} 
-loads on attaching the package or by using the command \code{citation("QCA")} after
-having attached the package. The aforesaid command also provides a suitable BibTeX 
-entry. The corresponding article citation is Thiem and Dusa (2013b). 
-
 How to make the most of the package's capabilities is demonstrated in detail by 
 Thiem and Dusa (2013c) with examples from political science (note that data sets 
 have been renamed). Later versions of the package than those used in Thiem and 
@@ -65,14 +58,20 @@ Dusa (2013b, 2013c) may feature slightly different functions, arguments, values
 and default settings, but backward compatibility is generally ensured. A general
 comparison of \pkg{QCA}'s features with those of \pkg{fs/QCA} (Ragin and Davey 
 2014) and \pkg{Tosmana} (Cronqvist 2011) is provided by Thiem and Dusa (2013a).
+
+If you make use of the \pkg{QCA} package in your work, please acknowledge this, 
+not least for reasons of scientific transparency. The software citation for \pkg{QCA} 
+loads on attaching the package or by using the command \code{citation("QCA")} after
+having loaded the package. The aforesaid command also provides a suitable BibTeX 
+entry.
 }
 
 \details{
     \tabular{ll}{
     Package: \tab QCA\cr
     Type:    \tab Package\cr
-    Version: \tab 1.1-3.2\cr
-    Date:    \tab 2014-06-23\cr
+    Version: \tab 1.1-3.3\cr
+    Date:    \tab 2014-09-09\cr
     License: \tab GPL (>= 2)\cr
     }
 }
