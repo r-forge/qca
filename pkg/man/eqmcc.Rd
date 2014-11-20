@@ -144,7 +144,7 @@ returned. Note that in some cases, the deactivation of both \code{row.dom} and
 \code{min.dis} may lead to the identification of so many models that they cannot
 be returned. Users should also be aware that \emph{for purposes of causal data
 analysis, neither} \code{row.dom} \emph{nor} \code{min.dis} \emph{should be
-operative}.
+operative} (Thiem 2014b).
 
 The argument \code{omit} can be used to omit any configuration (positive, 
 negative or remainder) from the minimization process. It accepts a vector of row 
@@ -162,7 +162,7 @@ function value, while a dash, "-", indicates that one or the other condition doe
 so. For multivalent variables, multiple values have to be enclosed by double
 quotes and separated by a semicolon (see mvQCA example using Hartmann and Kemmerzell
 (2010) below). In some situations, directional expectations in mvQCA generate easy
-counterfactuals that do not contribute to parsimony (Thiem 2014). These so-called
+counterfactuals that do not contribute to parsimony (Thiem 2014a). These so-called
 non-simplifying easy counterfactuals will not be part of the solution (see mvQCA
 example using Sager and Andereggen (2012) below).
 
@@ -242,9 +242,13 @@ Ragin, Charles C., and Sarah Ilene Strand. 2008. \dQuote{Using Qualitative Compa
 Analysis to Study Causal Order: Comment on Caren and Panofsky (2005).} 
 \emph{Sociological Methods & Research} 36 (4):431-41.
 
-Thiem, Alrik. 2014. \dQuote{Parameters of Fit and Intermediate Solutions in Multi-Value
+Thiem, Alrik. 2014a. \dQuote{Parameters of Fit and Intermediate Solutions in Multi-Value
 Qualitative Comparative Analysis.} \emph{Quality & Quantity}.
 DOI: \href{http://dx.doi.org/10.1007/s11135-014-0015-x}{10.1007/s11135-014-0015-x}.
+
+Thiem, Alrik. 2014b. \dQuote{Navigating the Complexities of Qualitative Comparative 
+Analysis: Case Numbers, Necessity Relations, and Model Ambiguities.} \emph{Evaluation Review}. 
+DOI: \href{http://dx.doi.org/10.1177/0193841x14550863}{10.1177/0193841x14550863}.
 }
 
 \seealso{\code{\link{truthTable}}, \code{\link{factorize}}}
@@ -252,17 +256,17 @@ DOI: \href{http://dx.doi.org/10.1007/s11135-014-0015-x}{10.1007/s11135-014-0015-
 \examples{
 # csQCA using Krook (2010)
 #-------------------------
-data(d.Kro)
-head(d.Kro)
+data(d.represent)
+head(d.represent)
 
 # conservative solution
-eqmcc(d.Kro, outcome = "WNP")
+eqmcc(d.represent, outcome = "WNP")
 
 # negated outcome, conservative solution
-eqmcc(d.Kro, outcome = "WNP", neg.out = TRUE)
+eqmcc(d.represent, outcome = "WNP", neg.out = TRUE)
 
 # parsimonious solution with details and case names
-Kro.sp <- eqmcc(d.Kro, outcome = "WNP", include = "?", 
+Kro.sp <- eqmcc(d.represent, outcome = "WNP", include = "?", 
   details = TRUE, show.cases = TRUE)
 Kro.sp
 
@@ -278,26 +282,26 @@ for(i in 1:2) {
 }
 
 # conservative solution with truth table object
-Kro.tt <- truthTable(d.Kro, outcome = "WNP")
+Kro.tt <- truthTable(d.represent, outcome = "WNP")
 Kro.sc <- eqmcc(Kro.tt)
 Kro.sc
 
 # fsQCA using Emmenegger (2011)
 #------------------------------
-data(d.Emm)
-head(d.Emm)
+data(d.jobsecurity)
+head(d.jobsecurity)
 
 # parsimonious solution with details
-eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9, include = "?", 
+eqmcc(d.jobsecurity, outcome = "JSR", incl.cut1 = 0.9, include = "?", 
   details = TRUE)
 
 # intermediate solution
-Emm.si <- eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9, 
+Emm.si <- eqmcc(d.jobsecurity, outcome = "JSR", incl.cut1 = 0.9, 
   include = "?", dir.exp = c(1,1,1,1,1,0), details = TRUE)
 Emm.si
 
 # are the prime implicants also sufficient for the negation of the outcome?
-pof(Emm.si$i.sol$C1P1$pims, outcome = "JSR", d.Emm, neg.out = TRUE,
+pof(Emm.si$i.sol$C1P1$pims, outcome = "JSR", d.jobsecurity, neg.out = TRUE,
   relation = "suf")
 
 # check PI chart for intermediate solution;
@@ -319,7 +323,7 @@ eqmcc(cbind(Emm.si$i.sol$C1P1$EC, FO = 1), outcome = "FO")
 PIsc <- Emm.si$i.sol$C1P1$pims
 par(mfrow = c(2, 2))
 for(i in 1:4){
- plot(PIsc[, i], d.Emm$JSR, pch = 19, ylab = "JSR",
+ plot(PIsc[, i], d.jobsecurity$JSR, pch = 19, ylab = "JSR",
   xlab = names(PIsc)[i], xlim = c(0, 1), ylim = c(0, 1),
   main = paste("Prime Implicant", print(i)))
  mtext(paste(
@@ -333,14 +337,14 @@ for(i in 1:4){
 
 # mvQCA using Hartmann and Kemmerzell (2010)
 #-------------------------------------------
-data(d.HK)
-head(d.HK)
+data(d.partybans)
+head(d.partybans)
 
 # create vector of condition variables
 conds <- c("C", "F", "T", "V")
 
 # parsimonious solution, with contradictions included
-HK.sp <- eqmcc(d.HK, outcome = "PB{1}", conditions = conds,
+HK.sp <- eqmcc(d.partybans, outcome = "PB{1}", conditions = conds,
   incl.cut0 = 0.4, include = c("?", "C"), details = TRUE)
 HK.sp
 
@@ -351,7 +355,7 @@ PIms <- HK.sp$pims
 require(VennDiagram)
 vennHK.suf <- venn.diagram(
  x = list(
-  "PB{1}" = which(d.HK$PB == 1),
+  "PB{1}" = which(d.partybans$PB == 1),
   "C{0,1}" = which(PIms[, 1] == 1 | PIms[, 2] == 1),
   "T{2}" = which(PIms[, 4] == 1),
   "T{1}*V{0}" = which(PIms[, 5] == 1)),
@@ -363,26 +367,26 @@ vennHK.suf <- venn.diagram(
 grid.draw(vennHK.suf)
 
 # which are the two countries in T{2} but not PB{1}?
-rownames(d.HK[d.HK$T == 2 & d.HK$PB != 1, ])
+rownames(d.partybans[d.partybans$T == 2 & d.partybans$PB != 1, ])
 
 # minimize contradictions (only one contradiction)
-eqmcc(d.HK, outcome = "PB{1}", conditions = conds, incl.cut0 = 0.4,
+eqmcc(d.partybans, outcome = "PB{1}", conditions = conds, incl.cut0 = 0.4,
   explain = "C")
 
 # intermediate solution with directional expectations:
 # C{1}, F{1,2}, T{2}, V contribute to OUT = 1
-HK.si <- eqmcc(d.HK, outcome = "PB{1}", conditions = conds,
+HK.si <- eqmcc(d.partybans, outcome = "PB{1}", conditions = conds,
   include = "?", dir.exp = c(1, "1;2", 2, 1), details = TRUE)
 HK.si
 
 # mvQCA using Sager and Andereggen (2012)
 #----------------------------------------
-data(d.SA)
-head(d.SA)
+data(d.transport)
+head(d.transport)
 
 # directional expectation of FED{0} leads to non-simplifying
 # easy counterfactual (see Thiem 2014 for more details)
-SA.si <- eqmcc(d.SA, outcome = "ACC{1}", conditions = names(d.SA)[1:5],
+SA.si <- eqmcc(d.transport, outcome = "ACC{1}", conditions = names(d.transport)[1:5],
   include = "?", dir.exp = c(0,1,0,1,1), details = TRUE)
 SA.si
 
@@ -390,13 +394,13 @@ SA.si$i.sol$C1P1$NSEC
 
 # tQCA using Ragin and Strand (2008)
 #-----------------------------------
-data(d.RS)
-head(d.RS)
+data(d.graduate)
+head(d.graduate)
 
 # conservative solution with details and case names;
 # auxiliary temporal order condition "EBA" automatically excluded 
 # from parameters of fit
-eqmcc(d.RS, outcome = "REC", details = TRUE, show.cases = TRUE)
+eqmcc(d.graduate, outcome = "REC", details = TRUE, show.cases = TRUE)
 
 # QCA path models ("causal chain" in CNA); data from Baumgartner (2009);
 # note that CNA and QCA results are not always equal because CNA applies a

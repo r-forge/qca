@@ -1,8 +1,7 @@
 - make pof() accept string expressions like "A*B + C => D" and calculate parameters of fit
 - function deMorgan(): negate set-theoretic expressions with multivalent variables
-- correct error message "Error: All combinations have been included into the analysis. Please check the truth table."
 - minimization for multiple outcomes that are not conditions
 - inference-statistical tests for fuzzy sets (check paper by Bear Braumoeller and Eliason and Stryker)
 - add argument to eqmcc for specifying temporal order
-- sensitivity diagnostics
-- reconstruct full truth tables from minimized solutions (call it "develop")
+- sensitivity diagnostics (include function "perturb")
+- reconstruct developed normal functions from normal functions (call it "develop")

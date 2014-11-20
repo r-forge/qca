@@ -23,7 +23,8 @@ csQCA called \dfn{temporal QCA} (tQCA) is also available (Caren and Panofsky 200
 Ragin and Strand 2008). The \pkg{QCA} package extends these basic variants in 
 different directions by implementing complementary functionality. For example,
 intermediate solutions and summary statistics are also available in mvQCA (Thiem 
-2014a).
+2014a). Note that functionality for gsQCA (Thiem, 2014b) is in development but 
+not yet implemented.
 
 As of version 0.4-5, \pkg{QCA} has offered a new function called \code{\link{eqmcc}}
 (\dfn{enhanced Quine-McCluskey}; \emph{e}QMC) that finds exact solutions much 
@@ -41,15 +42,15 @@ see the package's change log file.
 
 Several data sets from various areas of the social science are integrated in 
 \pkg{QCA} so as to facilitate users' familiarization with the package's functionality. 
-Areas currently covered include business, management & organization (\code{\link{d.CZH}}),
-education (\code{\link{d.SS}}), environmental sciences (\code{\link{d.Bas}}),
-evaluation (\code{\link{d.SA}}), legal studies (\code{\link{d.AS}}), political
-science (\code{\link{d.Emm}}, \code{\link{d.HK}}, \code{\link{d.Kro}}), public
-health (\code{\link{d.BWB}}), urban affairs (\code{\link{d.Kil}}), and sociology
-(\code{\link{d.CS}}, \code{\link{d.HMN}}). For more details, see the data sets'
-documentation files. Please also note that many more data sets for QCA in both raw
-and calibrated set format are available on the COMPASSS website at 
-\url{http://www.compasss.org/bibdata.htm}.
+Areas currently covered include business, management & organization (\code{\link{d.stakeholder}}),
+education (\code{\link{d.education}}), environmental sciences (\code{\link{d.biodiversity}}),
+evaluation (\code{\link{d.transport}}), legal studies (\code{\link{d.napoleon}}), 
+political science (\code{\link{d.jobsecurity}}, \code{\link{d.partybans}}, \code{\link{d.represent}}), 
+public health (\code{\link{d.health}}), urban affairs (\code{\link{d.urban}}), 
+and sociology (\code{\link{d.homeless}}, \code{\link{d.socialsecurity}}). For more 
+details, see the data sets' documentation files. Please also note that many more 
+data sets for QCA in both raw and calibrated format are available on the COMPASSS 
+website at \url{http://www.compasss.org/bibdata.htm}.
 
 How to make the most of the package's capabilities is demonstrated in detail by 
 Thiem and Dusa (2013c) with examples from political science (note that data sets 
@@ -63,7 +64,8 @@ If you make use of the \pkg{QCA} package in your work, please acknowledge this,
 not least for reasons of scientific transparency. The software citation for \pkg{QCA} 
 loads on attaching the package or by using the command \code{citation("QCA")} after
 having loaded the package. The aforesaid command also provides a suitable BibTeX 
-entry.
+entry. In addition, please either cite Thiem and Dusa (2013b) or/and Thiem and 
+Dusa (2013c).
 }
 
 \details{

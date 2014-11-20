@@ -13,6 +13,6 @@ bibentry(bibtype = "Manual",
          note = note,
          url = "http://cran.r-project.org/package=QCA",
          textVersion = paste("Dusa, Adrian, and Alrik Thiem", sprintf("%s", year),
-                              title, note, "URL: http://cran.r-project.org/package=QCA", sep = ". ")
+                              title, note, "URL: http://cran.r-project.org/package=QCA.", sep = ". ")
 )
 

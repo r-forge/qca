@@ -48,9 +48,9 @@ is.tt(x)
 
 \details{
 The argument \code{data} requires a suitable data set. Suitable data sets have 
-the following structure: values of 0 and 1 for bivalent crisp set variables, 
-values between 0 and 1 for bivalent fuzzy set variables, and values beginning with 
-0 at increments of 1 for multivalent crisp set variables. The placeholder "-" 
+the following structure: values of 0 and 1 for bivalent crisp-set variables, 
+values between 0 and 1 for bivalent fuzzy-set variables, and values beginning with 
+0 at increments of 1 for multivalent crisp-set variables. The placeholder "-" 
 indicates a "don't care" value in auxiliary conditions that specify temporal order 
 between other substantive conditions in tQCA. These values lead to the exclusion 
 of the auxiliary condition from the computation of parameters of fit. 
@@ -146,19 +146,19 @@ A User's Guide}. New York: Springer.
 \examples{
 # csQCA using Krook (2010)
 #-------------------------
-data(d.Kro)
-head(d.Kro)
+data(d.represent)
+head(d.represent)
 
 # print truth table
-truthTable(d.Kro, outcome = "WNP")
+truthTable(d.represent, outcome = "WNP")
 
 # print complete truth table, show cases, and first sort by 
 # inclusion scores, then by number of cases
-truthTable(d.Kro, outcome = "WNP", complete = TRUE, 
+truthTable(d.represent, outcome = "WNP", complete = TRUE, 
   show.cases = TRUE, sort.by = c("incl", "n"))
 
 # code configurations with single case as remainders
-Kro.tt <- truthTable(d.Kro, outcome = "WNP", n.cut = 2, 
+Kro.tt <- truthTable(d.represent, outcome = "WNP", n.cut = 2, 
   show.cases = TRUE)
 Kro.tt
 
@@ -167,28 +167,28 @@ Kro.tt$excluded
 
 # fsQCA using Emmenegger (2011)
 #------------------------------
-data(d.Emm)
-head(d.Emm)
+data(d.jobsecurity)
+head(d.jobsecurity)
 
 # code non-remainder configurations with inclusion scores 
 # between 0.5 and 0.9 as contradictions
-Emm.tt <- truthTable(d.Emm, outcome = "JSR", incl.cut1 = 0.9, 
+Emm.tt <- truthTable(d.jobsecurity, outcome = "JSR", incl.cut1 = 0.9, 
   incl.cut0 = 0.5)
 Emm.tt
 
 # truth table based on negated outcome set
-Emm.tt <- truthTable(d.Emm, outcome = "JSR", neg.out = TRUE, 
+Emm.tt <- truthTable(d.jobsecurity, outcome = "JSR", neg.out = TRUE, 
   incl.cut1 = 0.9, incl.cut0 = 0.5)
 Emm.tt
 
 # mvQCA using Hartmann and Kemmerzell (2010)
 #-------------------------------------------
-data(d.HK)
-head(d.HK)
+data(d.partybans)
+head(d.partybans)
 
 # code non-remainder configurations with inclusion scores below 1 
 # but above 0.4 as contradictions 
-HK.tt <- truthTable(d.HK, outcome = "PB", 
+HK.tt <- truthTable(d.partybans, outcome = "PB", 
   conditions = c("C","F","T","V"), incl.cut0 = 0.4)
 HK.tt
 
@@ -200,18 +200,18 @@ HK.tt$tt[which(HK.tt$tt$n > 2), ]
 
 # code output function values in truth table based on 
 # exact binomial test (condition variable V dropped)
-HK.tt <- truthTable(d.HK, outcome = "PB", 
+HK.tt <- truthTable(d.partybans, outcome = "PB", 
   conditions = c("C","F","T"), incl.cut1 = 0.9, incl.cut0 = 0.4, 
   show.cases = TRUE, inf.test = c("binom", 0.1))
 HK.tt
 
 # tQCA using Ragin and Strand (2008)
 #-----------------------------------
-data(d.RS)
-head(d.RS)
+data(d.graduate)
+head(d.graduate)
 
 # tQCA truth table with "don't care" values
-truthTable(d.RS, outcome = "REC")
+truthTable(d.graduate, outcome = "REC")
 
 }
 

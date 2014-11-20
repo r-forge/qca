@@ -79,54 +79,54 @@ DOI: \href{http://dx.doi.org/10.1111/j.1467-9248.2010.00833.x}{10.1111/j.1467-92
 \examples{
 # csQCA using Krook (2010)
 #-------------------------
-data(d.Kro)
-head(d.Kro)
+data(d.represent)
+head(d.represent)
 
 # first also compute negations
-x.1 <- d.Kro[, 1:5]
+x.1 <- d.represent[, 1:5]
 x.2 <- 1 - x.1
 names(x.2) <- tolower(names(x.1))
 x <- cbind(x.1, x.2)
  
 # necessity parameters of fit for all conditions
-pof(x, outcome = "WNP", d.Kro)
+pof(x, outcome = "WNP", d.represent)
 
 # for the negated outcome
-pof(x, outcome = "WNP", d.Kro, neg.out = TRUE)
+pof(x, outcome = "WNP", d.represent, neg.out = TRUE)
 
 # sufficiency parameters of fit
-pof(x, outcome = "WNP", d.Kro, relation = "suf") 
+pof(x, outcome = "WNP", d.represent, relation = "suf") 
 
 # for the negated outcome
-pof(x, outcome = "WNP", d.Kro, neg.out = TRUE, relation = "suf")
+pof(x, outcome = "WNP", d.represent, neg.out = TRUE, relation = "suf")
 
 # exact binomial tests of sufficiency and necessity inclusion
-pof(x.1, outcome = "WNP", d.Kro, relation = "suf", inf.test = "binom",
+pof(x.1, outcome = "WNP", d.represent, relation = "suf", inf.test = "binom",
   incl.cut1 = 0.75, incl.cut0 = 0.5)
 
-pof(x.1, outcome = "WNP", d.Kro, inf.test = "binom", incl.cut1 = 0.75,
+pof(x.1, outcome = "WNP", d.represent, inf.test = "binom", incl.cut1 = 0.75,
   incl.cut0 = 0.5)
 
 # fsQCA using Emmenegger (2011)
 #------------------------------
-data(d.Emm)
-head(d.Emm)
+data(d.jobsecurity)
+head(d.jobsecurity)
 
 # first test for minimally necessary combinations with superSubset(), 
 # then check whether these combinations are also necessary for the 
 # negation of the outcome
-Emm.nr <- superSubset(d.Emm, outcome = "JSR", incl.cut = 0.965, 
+Emm.nr <- superSubset(d.jobsecurity, outcome = "JSR", incl.cut = 0.965, 
   cov.cut = 0.6)
 Emm.nr
 
-pof(Emm.nr$coms, outcome = "JSR", d.Emm, neg.out = TRUE) 
+pof(Emm.nr$coms, outcome = "JSR", d.jobsecurity, neg.out = TRUE) 
 
 # first derive the conservative solution, then check whether the 
 # negations of the prime implicants are also sufficient for the outcome 
-Emm.sc <- eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9, details = TRUE)
+Emm.sc <- eqmcc(d.jobsecurity, outcome = "JSR", incl.cut1 = 0.9, details = TRUE)
 Emm.sc
 
-pof(1 - Emm.sc$pims, outcome = "JSR", d.Emm, relation = "suf")
+pof(1 - Emm.sc$pims, outcome = "JSR", d.jobsecurity, relation = "suf")
 
 # parameters of fit for matrix of implicants;
 # "-1" is the placeholder for an eliminated variable;
@@ -138,10 +138,10 @@ pof(1 - Emm.sc$pims, outcome = "JSR", d.Emm, relation = "suf")
 confs <- matrix(c(-1,-1,-1, 1, 0, 1, 
                    1, 0, 1,-1, 1, 0), nrow = 2, byrow = TRUE)
 
-pof(confs, outcome = "JSR", d.Emm, relation = "suf")
+pof(confs, outcome = "JSR", d.jobsecurity, relation = "suf")
 
 # or even vectors of line numbers from the implicant matrix
-pof(c(43, 57), "JSR", d.Emm, relation = "suf")
+pof(c(43, 57), "JSR", d.jobsecurity, relation = "suf")
 
 # parameters of fit for a data frame
 x <- data.frame(A = c(1,1,1,0,1), B = c(1,1,1,0,1),

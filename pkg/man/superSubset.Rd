@@ -127,12 +127,12 @@ A User's Guide}. New York: Springer.
 \examples{
 # csQCA using Krook (2010)
 #-------------------------
-data(d.Kro)
-head(d.Kro)
+data(d.represent)
+head(d.represent)
 
 # find all minimally necessary combinations with an inclusion score 
 # of at least 0.9 and coverage score of at least 0.65 
-Kro.ss <- superSubset(d.Kro, outcome = "WNP", incl.cut = 0.9, 
+Kro.ss <- superSubset(d.represent, outcome = "WNP", incl.cut = 0.9, 
   cov.cut = 0.65)
 Kro.ss
 
@@ -143,7 +143,7 @@ head(Kro.coms <- Kro.ss$coms)
 require(VennDiagram)
 vn.Kro.nec <- venn.diagram(
  x = list(
-  "WNP" = which(d.Kro$WNP == 1),
+  "WNP" = which(d.represent$WNP == 1),
   "wm+LP" = which(Kro.coms[, 1] == 1),
   "WS+LP" = which(Kro.coms[, 2] == 1),
   "ES+LP" = which(Kro.coms[, 3] == 1)),
@@ -156,11 +156,11 @@ grid.draw(vn.Kro.nec)
 
 # mvQCA using Hartmann and Kemmerzell (2010)
 #-------------------------------------------
-data(d.HK)
-head(d.HK)
+data(d.partybans)
+head(d.partybans)
 
 # find all minimally necessary combinations with perfect inclusion
-HK.ss <- superSubset(d.HK, outcome = "PB", 
+HK.ss <- superSubset(d.partybans, outcome = "PB", 
   conditions = c("C", "F", "T", "V"))
 HK.ss
 
@@ -169,18 +169,18 @@ HK.ss$coms[1:10, , drop = FALSE]
 
 # fsQCA using Emmenegger (2011)
 #------------------------------
-data(d.Emm)
-head(d.Emm)
+data(d.jobsecurity)
+head(d.jobsecurity)
 
 # find all minimally sufficient combinations with an inclusion score 
 # of at least 0.9 and coverage score of at least 0.4; also return 
 # PRI (proportional reduction in inconsistency) scores 
-Emm.ss <- superSubset(d.Emm, outcome = "JSR", relation = "suf", 
+Emm.ss <- superSubset(d.jobsecurity, outcome = "JSR", relation = "suf", 
   incl.cut = 0.9, cov.cut = 0.4, PRI = TRUE)
 Emm.ss
 
 # same criteria, but for the negation of the outcome
-Emm.ss.n <- superSubset(d.Emm, outcome = "JSR", neg.out = TRUE, 
+Emm.ss.n <- superSubset(d.jobsecurity, outcome = "JSR", neg.out = TRUE, 
   relation = "suf", incl.cut = 0.9, cov.cut = 0.4, use.tilde = TRUE)
 Emm.ss.n
 
@@ -188,7 +188,7 @@ Emm.ss.n
 head(Emm.coms <- Emm.ss.n$coms)
 par(mfrow = c(2, 2))
 for(i in 1:4){
- plot(Emm.coms[, i], 1 - d.Emm$JSR, pch = 19, ylab = "~JSR",
+ plot(Emm.coms[, i], 1 - d.jobsecurity$JSR, pch = 19, ylab = "~JSR",
   xlab = names(Emm.coms)[i], xlim = c(0, 1), ylim = c(0, 1),
   main = paste("Combination", print(i)))
  mtext(paste(

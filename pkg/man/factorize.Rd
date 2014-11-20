@@ -58,13 +58,13 @@ factorize("~ONE*TWO*~FOUR + ~ONE*THREE + THREE*~FOUR", prod.split = "*")
 factorize("one&TWO&four + one&THREE + THREE&four", prod.split = "&")
 
 # factorize solution objects directly
-data(d.HK)
-HK.sol <- eqmcc(d.HK, outcome = "PB", conditions = c("C", "F", "T", "V"), 
+data(d.partybans)
+HK.sol <- eqmcc(d.partybans, outcome = "PB", conditions = c("C", "F", "T", "V"), 
   include = c("?"))
 factorize(HK.sol)
 
-data(d.Emm)
-Emm.sol <- eqmcc(d.Emm, outcome = "JSR", incl.cut1 = 0.9)
+data(d.jobsecurity)
+Emm.sol <- eqmcc(d.jobsecurity, outcome = "JSR", incl.cut1 = 0.9)
 factorize(Emm.sol)
 
 # sort by the largest number of factoring sets

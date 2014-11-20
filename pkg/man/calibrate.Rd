@@ -43,8 +43,8 @@ produce three crisp sets: 0, 1 and 2.
 For \code{type = "fuzzy"}, this function can generate fuzzy sets by linear, 
 s-shaped, inverted s-shaped and logistic transformation for end-point concepts. 
 It can generate fuzzy sets by trapezoidal, triangular and bell-shaped transformation
-for mid-point concepts (Bojadziev and Bojadziev 2007; Clark et al. 2008; Thiem 
-and Dusa 2013).
+for mid-point concepts (Bojadziev and Bojadziev 2007; Clark et al. 2008; Thiem 2014; 
+Thiem and Dusa 2013).
 
 For calibrating fuzzy sets based on end-point concepts, \code{thresholds} should 
 be specified as a numeric vector \code{c(thEX, thCR, thIN)}, where 
@@ -97,6 +97,11 @@ and Management}. 2nd ed. Hackensack, NJ: World Scientific.
 Clark, Terry D., Jennifer M. Larson, John N. Mordeson, Joshua D. Potter, and 
 Mark J. Wierman. 2008. \emph{Applying Fuzzy Mathematics to Formal Models in Comparative 
 Politics}. Berlin: Springer.
+
+Thiem, Alrik. 2014. \dQuote{Membership Function Sensitivity of Descriptive Statistics 
+in Fuzzy-Set Relations.} \emph{International Journal of Social Research Methodology} 
+17 (6):625-42. 
+DOI: \href{http://dx.doi.org/10.1080/13645579.2013.806118}{10.1080/13645579.2013.806118}.
 
 Thiem, Alrik, and Adrian Dusa. 2013. \emph{Qualitative Comparative Analysis with R: 
 A User's Guide}. New York: Springer.
