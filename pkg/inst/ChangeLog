@@ -1,4 +1,6 @@
 Version 1.1-4
+    o New: function retention() for computing retention probabilities of QCA 
+      baseline solutions
     o Improved: documentation now includes Digital Object Identifier (DOI) links 
       to cited references or direct URL
     o Renamed: all data sets renamed with more meaningful expressions (from author
