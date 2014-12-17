@@ -3,7 +3,7 @@ function(data, outcome = "", conditions = c(""), type = "error",
          assump = "independent", n.cut = 1, incl.cut = 1, p.pert = 0.1,
          n.pert = 1) {
     
-    names(mydata) <- toupper(names(data))
+    names(data) <- toupper(names(data))
     conditions <- toupper(conditions)
     outcome <- toupper(outcome)
     if (any(conditions == "")) {
@@ -74,7 +74,7 @@ function(data, outcome = "", conditions = c(""), type = "error",
                         combs <- combs*choose(cpos[pairsxl[l, j]], allpairs[i, l*2 - 1])
                         combs <- combs*choose(cneg[pairsxl[l, j]], allpairs[i, l*2])
                     }
-                    nofsetsxl <- nofsetsxl + combs*choose(nrow(dat) - sum(cposneg), n.pert - sum(allpairs[i, ]))
+                    nofsetsxl <- nofsetsxl + combs*choose(nrow(data) - sum(cposneg), n.pert - sum(allpairs[i, ]))
                 }
             }
         }
@@ -91,7 +91,7 @@ function(data, outcome = "", conditions = c(""), type = "error",
             nofsetsxl <- calculatePairs(i, n.pert, type = type)
             nofsets <- nofsets + ifelse(i %% 2 == 1, nofsetsxl, -1*nofsetsxl)
         }
-        return(as.vector(1 - nofsets/choose(nrow(dat), n.pert)))
+        return(as.vector(1 - nofsets/choose(nrow(data), n.pert)))
     }
     else if (assump == "independent") {
         pfinal <- 1
