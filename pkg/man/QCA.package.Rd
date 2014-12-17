@@ -64,7 +64,7 @@ If you make use of the \pkg{QCA} package in your work, please acknowledge this,
 not least for reasons of scientific transparency. The software citation for \pkg{QCA} 
 loads on attaching the package or by using the command \code{citation("QCA")} after
 having loaded the package. The aforesaid command also provides a suitable BibTeX 
-entry. In addition, please either cite Thiem and Dusa (2013b) or/and Thiem and 
+entry. You may also consider citing Thiem and Dusa (2013b) or/and Thiem and 
 Dusa (2013c).
 }
 
@@ -72,8 +72,8 @@ Dusa (2013c).
     \tabular{ll}{
     Package: \tab QCA\cr
     Type:    \tab Package\cr
-    Version: \tab 1.1-3.3\cr
-    Date:    \tab 2014-09-09\cr
+    Version: \tab 1.1-4\cr
+    Date:    \tab 2014-11-24\cr
     License: \tab GPL (>= 2)\cr
     }
 }

@@ -103,7 +103,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
         if (!is.null(dir.exp)) {
             names(dir.exp) <- toupper(names(dir.exp))
         }
-        
+        rowsNotMissing <- which(tt$tt$OUT != "?")
     }
     else { # data already is a tt
         chexplain <- c(0, 1)[which(0:1 %in% explain)]
@@ -128,7 +128,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
         conditions <- colnames(recdata)[seq(length(tt$noflevels))]
         outcome <- colnames(recdata)[ncol(recdata)]
         
-        
+        rowsNotMissing <- which(tt$tt$OUT != "?")
         if (any(tt$tt$OUT == "?")) {
             missings <- which(tt$tt$OUT == "?")
             tt$tt <- tt$tt[-missings, ]
@@ -177,7 +177,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
     inputt <- as.matrix(tt$tt[subset.tt, seq(length(noflevels))])
     rownms <- rownames(inputt)
     inputt <- matrix(as.numeric(inputt), ncol=length(noflevels)) + 1
-    inputcases <- tt$cases[tt$cases != ""][subset.tt]
+    inputcases <- tt$cases[rowsNotMissing][subset.tt]
     
     nofcases1 <- sum(tt$tt$n[tt$tt$OUT == 1])
     nofcases0 <- sum(tt$tt$n[tt$tt$OUT == 0])
@@ -642,6 +642,7 @@ function(data, outcome = c(""), neg.out = FALSE, conditions = c(""),
                     tt.rows <- createString(inputt - 1, collapse=collapse, uplow, use.tilde)
                     
                     mtrxlines <- demoChart(rownames(i.sol.index$reduced$expressions), tt.rows, ifelse((use.letters & uplow) | (alreadyletters & uplow), "", "*"))
+                    
                     for (l in seq(length(expr.cases))) {
                         expr.cases[l] <- paste(inputcases[mtrxlines[l, ]], collapse="; ")
                     }
