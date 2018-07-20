@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>factorize. QCA 3.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="
+Adrian Dusa
+">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">QCA 3.3</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Factorize Boolean expressions</h1>
+
+<div class="row">
+    <div class="span8">
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p>This function finds all combinations of common factors in a Boolean expression
+written in SOP - Sum Of Products form.</p>
+  
+    </div>
+    
+    <h2>Usage</h2>
+    <pre><div>factorize(expression, snames = &quot;&quot;, noflevels, pos = FALSE, use.tilde = FALSE, ...)</div></pre>
+    
+    <h2>Arguments</h2>
+    <table>
+        <tr>
+            <td valign="top"><b><code>expression</code></b></td>
+            <td></td><td></td><td></td>
+            <td>A string containing the SOP expression, or an object of class <code>"qca"</code>.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>snames</code></b></td>
+            <td></td><td></td><td></td>
+            <td>A string containing the sets' names, separated by commas.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>noflevels</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Numerical vector containing the number of levels for each set.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>pos</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Logical, if possible factorize using product(s) of sums.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>use.tilde</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Logical, use a tilde to negate the sets.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>...</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Other arguments (mainly for backwards compatibility).</td>
+        </tr>
+    </table>
+
+    <div class="Details">
+      <h2>Details</h2>
+
+      <p></p>
+  
+      <p>Factorization is a process of finding common factors in a Boolean expression,
+written in a SOP - sum of products (or DNF - disjunctive normal form).
+Whenever possible, the factorization can also be performed in a POS - product of sums form.</p>
+  
+      <p>Conjunctions should preferably be indicated with a star <b><code>*</code></b> sign,
+but this is not necessary when conditions have single letters or when the expression is
+expressed in multi-value notation.</p>
+  
+      <p>The number of levels in <b><code>noflevels</code></b> is needed only when negating
+multivalue conditions, and it should complement the <b><code>snames</code></b> argument.</p>
+
+      <p>If <b><code>input</code></b> is an object of class <code>"qca"</code> (the result of the
+<b><code><a href='minimize.html'>minimize()</a></code></b> function), a factorization is performed
+for each of the minimized solutions.</p>
+
+      <p>The argument <b><code>use.tilde</code></b> is automatically activated if the input contains
+a tilde to negate conditions.</p>
+
+
+
+      <p></p>
+  
+    </div>
+
+    <div class="Value">
+      <h2>Value</h2>
+
+      <p><dl>
+A list with two components:</p>
+  
+      <p><table><tr><td>
+  <b>initial</b> </td><td></td>
+<td> The input expression.</td>
+</tr><tr><td>
+  <b>factored</b> </td><td></td>
+<td> All possible factorizations of the input expression.</td>
+</tr></table></p>
+  
+      <p></dl></p>
+  
+    </div>
+
+    <div class="References">
+      <h2>References</h2>
+
+      <p>Ragin, C.C. (1987) <em>The Comparative Method. Moving beyond qualitative
+and quantitative strategies</em>, Berkeley: University of California Press</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples">
+<div class='input'>
+# typical example with redundant conditions
+factorize(&quot;AbcD + AbCd + AbCD + ABCd&quot;)
+</div>
+<div class='output'>
+M1: AbcD + AbCd + AbCD + ABCd
+
+  F1: A(bD + bC + Cd) 
+  F2: ACd + bA(D + C) 
+  F3: AbD + CA(b + d) 
+  F4: Ab(D + C) + ACd 
+  F5: AbD + AC(b + d)
+
+
+<div class='input'>
+# results presented in alphabetical order
+factorize(&quot;one*TWO*four + one*THREE + THREE*four&quot;)
+</div>
+<div class='output'>
+M1: one*TWO*four + one*THREE + THREE*four 
+
+  F1: four*(THREE + one*TWO) + one*THREE 
+  F2: four*THREE + one*(THREE + four*TWO) 
+  F3: four*one*TWO + THREE*(one + four)
+
+
+</div>
+<div class='input'>
+# to preserve a certain order of the set names
+factorize(&quot;one*TWO*four + one*THREE + THREE*four&quot;,
+          snames = &quot;ONE, TWO, THREE, FOUR&quot;)
+</div>
+<div class='output'>
+M1: one*TWO*four + one*THREE + THREE*four 
+
+  F1: one*(THREE + TWO*four) + THREE*four 
+  F2: one*TWO*four + THREE*(one + four) 
+  F3: four*(THREE + one*TWO) + one*THREE
+
+
+</div>
+<div class='input'>
+factorize(&quot;~ONE*TWO*~FOUR + ~ONE*THREE + THREE*~FOUR&quot;,
+          snames = &quot;ONE, TWO, THREE, FOUR&quot;)
+</div>
+<div class='output'>
+M1: ~ONE*TWO*~FOUR + ~ONE*THREE + THREE*~FOUR 
+
+  F1: ~ONE*(THREE + TWO*~FOUR) + THREE*~FOUR 
+  F2: ~ONE*TWO*~FOUR + THREE*(~ONE + ~FOUR) 
+  F3: ~FOUR*(THREE + ~ONE*TWO) + ~ONE*THREE
+
+
+</div>
+<div class='input'>
+# using pos - products of sums
+factorize(&quot;ac + aD + bc + bD&quot;, pos = TRUE)
+</div>
+<div class='output'>
+M1: ac + aD + bc + bD 
+
+  F1: (a + b)(c + D) 
+
+
+</div>
+<div class='input'>
+
+# using an object of class &quot;qca&quot; produced with minimize()
+data(CVF)
+pCVF &lt;- minimize(CVF, outcome = &quot;PROTEST&quot;, incl.cut = 0.8,
+                 include = &quot;?&quot;, use.letters = TRUE)
+
+factorize(pCVF)
+</div>
+<div class='output'>
+M1: e + aBD + ABC + ACD 
+
+  F1: AC(B + D) + e + aBD 
+  F2: B(aD + AC) + e + ACD 
+  F3: D(aB + AC) + e + ABC 
+
+M2: e + aBD + ABd + ACD 
+
+  F1: A(Bd + CD) + e + aBD 
+  F2: B(aD + Ad) + e + ACD 
+  F3: D(aB + AC) + e + ABd 
+
+M3: e + ABC + ACD + BCD 
+
+  F1: AC(B + D) + e + BCD 
+  F2: BC(A + D) + e + ACD 
+  F3: C(AB + AD + BD) + e 
+  F4: CD(A + B) + e + ABC 
+
+M4: e + ABd + ACD + BCD 
+
+  F1: A(Bd + CD) + e + BCD 
+  F2: B(Ad + CD) + e + ACD 
+  F3: CD(A + B) + e + ABd
+
+
+</div>
+<div class='input'>
+
+# using an object of class &quot;deMorgan&quot; produced with negate()
+factorize(negate(pCVF))
+</div>
+<div class='output'>
+M1: AcE + abE + bcE + bdE + adE + cdE 
+
+  F01: E(Ac + ab + bc + bd + ad + cd) 
+  F02: aE(b + d) + E(Ac + bc + bd + cd) 
+  F03: aE(b + d) + bE(c + d) + cE(A + d) 
+  F04: aE(b + d) + bdE + cE(A + b + d) 
+  F05: aE(b + d) + cE(A + b) + dE(b + c) 
+  F06: bE(a + c + d) + E(Ac + ad + cd) 
+  F07: adE + bE(a + c + d) + cE(A + d) 
+  F08: AcE + bE(a + c + d) + dE(a + c) 
+  F09: cE(A + b + d) + E(ab + bd + ad) 
+  F10: adE + bE(a + d) + cE(A + b + d) 
+  F11: abE + cE(A + b + d) + dE(b + a) 
+  F12: dE(b + a + c) + E(Ac + ab + bc) 
+  F13: AcE + bE(a + c) + dE(b + a + c) 
+  F14: abE + cE(A + b) + dE(b + a + c) 
+
+M2: abE + bcE + bdE + adE + AcDE 
+
+  F01: E(ab + bc + bd + ad + AcD) 
+  F02: aE(b + d) + E(bc + bd + AcD) 
+  F03: AcDE + aE(b + d) + bE(c + d) 
+  F04: aE(b + d) + bdE + cE(b + AD) 
+  F05: bE(a + c + d) + E(ad + AcD) 
+  F06: cE(b + AD) + E(ab + bd + ad) 
+  F07: adE + bE(a + d) + cE(b + AD) 
+  F08: abE + cE(b + AD) + dE(b + a) 
+  F09: dE(b + a) + E(ab + bc + AcD) 
+  F10: AcDE + bE(a + c) + dE(b + a) 
+
+M3: cE + abE + adE + bdE 
+
+  F1: E(c + ab + ad + bd) 
+  F2: aE(b + d) + E(c + bd) 
+  F3: bE(a + d) + E(c + ad) 
+  F4: dE(a + b) + E(c + ab) 
+
+M4: abE + acE + adE + bcE + bdE + cDE 
+
+  F01: E(ab + ac + ad + bc + bd + cD) 
+  F02: aE(b + c + d) + E(bc + bd + cD) 
+  F03: aE(b + c + d) + bE(c + d) + cDE 
+  F04: aE(b + c + d) + bdE + cE(b + D) 
+  F05: bE(a + c + d) + E(ac + ad + cD) 
+  F06: aE(c + d) + bE(a + c + d) + cDE 
+  F07: adE + bE(a + c + d) + cE(a + D) 
+  F08: cE(a + b + D) + E(ab + ad + bd) 
+  F09: aE(b + d) + bdE + cE(a + b + D) 
+  F10: adE + bE(a + d) + cE(a + b + D) 
+  F11: abE + cE(a + b + D) + dE(a + b) 
+  F12: dE(a + b) + E(ab + ac + bc + cD) 
+  F13: aE(b + c) + cE(b + D) + dE(a + b) 
+  F14: bE(a + c) + cE(a + D) + dE(a + b)
+
+
+</div></pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>factorize</li>
+    </ul>
+    <ul>
+      <li>functions</li>
+    </ul> -->
+    
+    <h2>Author</h2>
+    
+Adrian Dusa
+
+      
+    <h2>See also</h2>
+    <b><code><a href='SOPexpression.html'>translate</a></code></b>
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>

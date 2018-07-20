@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+<title>recode. QCA 3.3</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="author" content="
+Adrian Dusa
+">
+
+<link href="css/bootstrap.css" rel="stylesheet">
+<link href="css/bootstrap-responsive.css" rel="stylesheet">
+<link href="css/highlight.css" rel="stylesheet">
+<link href="css/staticdocs.css" rel="stylesheet">
+
+<!--[if lt IE 9]>
+  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+<![endif]-->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+  </head>
+
+  <body>
+    <div class="navbar">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="#">QCA 3.3</a>
+      <div class="nav">
+        <ul class="nav">
+          <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <div class="container">
+      <header>
+        
+      </header>
+      
+      <h1>Recode a variable</h1>
+
+<div class="row">
+  <div class="span8">
+    
+    <div class="Description">
+      <h2>Description</h2>
+
+      <p>Recodes a vector (numeric, character or factor) according to a set of rules.
+Similar to the <b><code><a href=''>recode()</a></code></b> function in package
+<b><span class = "pkg">car</span></b>, but more flexible.</p>
+  
+    </div>
+    
+    <h2>Usage</h2>
+    <pre><div>recode(x, rules, cuts, values, ...)</div></pre>
+    
+    <h2>Arguments</h2>
+    <table>
+        <tr>
+            <td valign="top"><b><code>x</code></b></td>
+            <td></td><td></td><td></td>
+            <td>A vector of mode numeric, character or factor.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>rules</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Character string or a vector of character strings for recoding specifications</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>cuts</code></b></td>
+            <td></td><td></td><td></td>
+            <td>A vector of one or more unique cut points.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>values</code></b></td>
+            <td></td><td></td><td></td>
+            <td>A vector of output values.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>...</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Other parameters, for compatibility with other functions such as
+               <b><code><a href=''>recode()</a></code></b> in package <b><span class = "pkg">car</span></b> but also
+               <b><code><a href='https://stat.ethz.ch/R-manual/R-devel/library/base/html/factor.html'>factor()</a></code></b>
+               in package <b><span class = "pkg">base</span></b></td>
+        </tr>
+    </table>
+
+    <div class="Details">
+      <h2>Details</h2>
+
+      <p>Similar to the <b><code><a href=''>recode()</a></code></b> function in package
+<b><span class = "pkg">car</span></b>, the recoding rules are separated by semicolons,
+of the form <b><code>input = output</code></b>, and allow for:</p>
+
+<table>
+    <tr>
+        <td valign="top"><b>a single value</b></td>
+        <td></td><td></td><td></td>
+        <td><b><code>1 = 0</code></b></td>
+    </tr>
+    <tr>
+        <td valign="top"><b>a range of values</b></td>
+        <td></td><td></td><td></td>
+        <td><b><code>2:5 = 1</code></b></td>
+    </tr>
+    <tr>
+        <td valign="top"><b>a range of values</b></td>
+        <td></td><td></td><td></td>
+        <td><b><code>c(6,7,10) = 2</code></b></td>
+    </tr>
+    <tr>
+        <td valign="top"><b><code>else</code></b></td>
+        <td></td><td></td><td></td>
+        <td>everything that is not covered by the previously specified rules</td>
+    </tr>
+</table>
+
+<p></p>
+  
+      <p>Contrary to the <b><code><a href=''>recode()</a></code></b> function in package
+<b><span class = "pkg">car</span></b>, this function allows the <b><code>:</code></b> sequence
+operator (even for factors), so that a rule such as <b><code>c(1,3,5:7)</code></b>, or
+<b><code>c(a,d,f:h)</code></b> would be valid.</p>
+  
+      <p>Actually, since all rules are specified in a string, it really doesn't matter
+if the <b><code>c()</code></b> function is used or not. For compatibility reasons it accepts it, but
+a more simple way to specify a set of rules is <b><code>"1,3,5:7=A; else=B"</code></b></p>
+  
+      <p>Special values <b><code>lo</code></b> and <b><code>hi</code></b> may also appear in the range of values.</p>
+  
+      <p>In the package <span class = "pkg">car</span>, a character <b><code>output</code></b> would have to be quoted,
+like <b><code>"1:2='A'"</code></b> but that is not mandatory is this function, <b><code>"1:2=A"</code></b>
+would do just as well. Output values such as <b><code>"NA"</code></b> or <b><code>"missing"</code></b>
+are converted to <b><code>NA</code></b>.</p>
+  
+      <p>Another difference from the <b><span class = "pkg">car</span></b> package: the output is <b>not</b> automatically
+converted to a factor even if the original variable is a factor. That option is left to the
+user's decision to specify <b><code>as.factor.result</code></b>, defaulted to <b><code>FALSE</code></b>.</p>
+  
+      <p>A capital difference is the treatment of the values not present in the recoding rules. By default,
+package <b><span class = "pkg">car</span></b> copies all those values in the new object, whereas in this package
+the default values are <b><code>NA</code></b> and new values are added only if they are found in the rules.
+Users can choose to copy all other values not present in the recoding rules, by specifically adding
+<b><code>else=copy</code></b> in the rules.</p>
+  
+      <p>Since the two functions have the same name, it is possible that users loading both
+packages to use one instead of the other (depending which package is loaded first).
+In order to preserve functionality, special efforts have been made to ensure this
+function performs exactly as the other one (plus more).</p>
+  
+      <p>In order to minimize possible namespace collisions with package
+<b><span class = "pkg">car</span></b>, special efforts have been invested to ensure
+perfect compatibility with the other <b><code><a href=''>recode()</a></code></b> function. The
+argument <b><code>...</code></b> allows for more arguments specific to the
+<span class = "pkg">car</span> package, such as <b><code>as.factor.result</code></b>,
+<b><code>as.numeric.result</code></b> and <b><code>levels</code></b>. In addition, it
+also accepts <b><code>labels</code></b> and <b><code>ordered</code></b> specific to function
+<b><code><a href='https://stat.ethz.ch/R-manual/R-devel/library/base/html/factor.html'>factor()</a></code></b>
+in package <b><span class = "pkg">base</span></b>.</p>
+  
+      <p>Blank spaces outside category labels are ignored, see the last example.</p>
+  
+      <p><p>It is possible to use <b><code><a href=''>recode()</a></code></b> in a similar
+way to function
+<b><code><a href='https://stat.ethz.ch/R-manual/R-devel/library/base/html/cut.html'>cut()</a></code></b>,
+by specifying a vector of cuts which work for both numeric and character/factor objects. 
+For any number of <b><code>c</code></b> cuts, there should be <b><code>c + 1</code></b> values,
+and if not otherwise specified the argument <b><code>values</code></b> is automatically constructed
+as a sequence of numbers from <b><code>1</code></b> to <b><code>c + 1</code></b>.</p></p>
+  
+      <p>Unlike the function
+<b><code><a href='https://stat.ethz.ch/R-manual/R-devel/library/base/html/cut.html'>cut()</a></code></b>,
+arguments such as <b><code>include.lowest</code></b> or <b><code>right</code></b> are not
+necessary because the final outcome can be changed by tweaking the cut values.</p>
+  
+    </div>
+    
+    <h2 id="examples">Examples</h2>
+    <pre class="examples"><div class='input'>x &lt;- rep(1:3, 3)
+x
+</div>
+<div class='output'>[1] 1 2 3 1 2 3 1 2 3
+</div>
+<div class='input'>
+recode(x, &quot;1:2 = A; else = B&quot;)
+</div>
+<div class='output'>[1] &quot;A&quot; &quot;A&quot; &quot;B&quot; &quot;A&quot; &quot;A&quot; &quot;B&quot; &quot;A&quot; &quot;A&quot; &quot;B&quot;
+</div>
+<div class='input'>
+set.seed(1234)
+x &lt;- factor(sample(letters[1:10], 20, replace = TRUE),
+          levels = letters[1:10])
+x
+</div>
+<div class='output'> [1] b g g g i g a c g f g f c j c i c c b c
+Levels: a b c d e f g h i j
+</div>
+<div class='input'>
+recode(x, &quot;b:d = 1; g:hi = 2; else = NA&quot;) # note the &quot;hi&quot; special value
+</div>
+<div class='output'> [1]  1  2  2  2  2  2 NA  1  2 NA  2 NA  1  2  1  2  1  1  1  1
+</div>
+<div class='input'>
+recode(x, &quot;a, c:f = A; g:hi = B; else = C&quot;, as.factor.result = TRUE)
+</div>
+<div class='output'> [1] C B B B B B A A B A B A A B A B A A C A
+Levels: A B C
+</div>
+<div class='input'>
+recode(x, &quot;a, c:f = 1; g:hi = 2; else = 3&quot;, as.factor.result = TRUE,
+       labels = c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;), ordered = TRUE)
+</div>
+<div class='output'> [1] three two   two   two   two   two   one   one   two   one   two   one  
+[13] one   two   one   two   one   one   three one  
+Levels: one &lt; two &lt; three
+</div>
+<div class='input'>
+set.seed(1234)
+categories &lt;- c(&quot;An&quot;, &quot;example&quot;, &quot;that has&quot;, &quot;spaces&quot;)
+x &lt;- factor(sample(categories, 20, replace = TRUE),
+            levels = categories)
+
+sort(x)
+</div>
+<div class='output'> [1] An       An       An       An       An       example  example  example 
+ [9] example  that has that has that has that has that has that has that has
+[17] that has spaces   spaces   spaces  
+Levels: An example that has spaces
+</div>
+<div class='input'>
+recode(sort(x), &quot;An : &#39;that has&#39; = 1; spaces = 2&quot;)
+</div>
+<div class='output'> [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2
+</div>
+<div class='input'>
+# same thing with
+recode(sort(x), &quot;An : that has = 1; spaces = 2&quot;)
+</div>
+<div class='output'> [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2
+</div>
+<div class='input'>
+# same using cut values
+recode(sort(x), cuts = &quot;that has&quot;)
+</div>
+<div class='output'> [1] 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 2 2 2
+</div>
+<div class='input'>
+# modifying the output values
+recode(sort(x), cuts = &quot;that has&quot;, values = 0:1)
+</div>
+<div class='output'> [1] 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 1
+</div>
+<div class='input'>
+# more treatment of &quot;else&quot; values
+x &lt;- 10:20
+
+# recoding rules don't overlap all existing values, the rest are empty
+recode(x, &quot;8:15=1&quot;)
+</div>
+<div class='output'> [1]  1  1  1  1  1  1 NA NA NA NA NA
+</div>
+<div class='input'>
+# all other values are copied
+recode(x, &quot;8:15=1; else=copy&quot;)
+</div>
+<div class='output'> [1]  1  1  1  1  1  1 16 17 18 19 20
+</div>
+
+</pre>
+  </div>
+  <div class="span4">
+    <!-- <ul>
+      <li>recode</li>
+    </ul>
+    <ul>
+      <li>functions</li>
+    </ul> -->
+      
+    
+    <h2>Author</h2>
+    
+Adrian Dusa
+
+    <h2>See also</h2>
+
+<b><code><a href='https://stat.ethz.ch/R-manual/R-devel/library/base/html/findInterval.html'>findInterval</a></code></b>
+
+    
+  </div>
+</div>
+      
+      <footer>
+      <p class="pull-right"><a href="#">Back to top</a></p>
+<p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
+      </footer>
+    </div>
+  </body>
+</html>
