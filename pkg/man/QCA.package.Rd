@@ -56,7 +56,7 @@ hundreds of times faster than the previous eQMC.
     Package: \tab QCA\cr
     Type:    \tab Package\cr
     Version: \tab 3.3\cr
-    Date:    \tab 2018-07-14\cr
+    Date:    \tab 2018-07-20\cr
     License: \tab GPL (>= 2)\cr
     }
 }
