@@ -1,56 +1,125 @@
-useDynLib(QCA)
+import(shiny)
+import(venn)
+import(fastdigest)
+importFrom("utils", "packageDescription", "remove.packages", "capture.output")
+importFrom("stats", "glm", "predict", "quasibinomial", "binom.test", "cutree", "dist", "hclust", "na.omit", "dbinom", "setNames")
+importFrom("grDevices", "dev.cur", "dev.new", "dev.list")
+importFrom("graphics", "abline", "axis", "box", "mtext", "par", "title", "text")
+importFrom("methods", "is")
+
+useDynLib(QCA, .registration = TRUE)
+
 export(.onAttach,
     allExpressions,
-    base3rows,
+    agteb,
+    alteb,
+    as.panel,
+    asNumeric,
     calibrate,
-    createChart,
+    causalChain,
+    combinations,
+    compute,
     createMatrix,
-    createString,
-    demoChart,
     deMorgan,
-    deMorganLoop,
     eqmcc,
-    eqmccLoop,
+    export,
     factorize,
+    findmin,
+    findRows,
     findSubsets,
     findSupersets,
     findTh,
     fuzzyand,
     fuzzyor,
+    getInfo,
     getRow,
-    getSolution,
-    is.deMorgan,
-    is.pof,
-    is.qca,
-    is.tt,
-    is.sS,
+    getNoflevels,
+    intersection,
+    makeChart,
+    minimize,
+    minimizeLoop,
+    modelFit,
+    negate,
     pof,
-    prettyString,
+    pofind,
     prettyTable,
-    print.aE,
-    print.deMorgan,
-    print.fctr,
-    print.pof,
-    print.qca,
-    print.mqca,
-    print.pic,
-    print.sS,
-    print.tt,
+    recode,
+    rebuild,
+    removeRedundants,
     retention,
-    rowDominance,
+    runGUI,
+    setRownames,
+    setColnames,
+    setDimnames,
     solveChart,
-    sortMatrix,
-    sortVector,
+    sop,
     superSubset,
+    translate,
     truthTable,
+    uninstall,
+    validateNames,
     verify.data,
     verify.dir.exp,
-    verify.expl,
+    verify.minimize,
     verify.inf.test,
     verify.qca,
     verify.mqca,
+    verify.multivalue,
     verify.tt,
+    Xplot,
+    XYplot,
+    
+    possibleNumeric,
+    
+    dashes,
+    hastilde,
+    tilde1st,
+    notilde,
+    trimstr,
+    nec,
+    suf,
+    splitstr,
+    getName,
+    getBigList,
+    splitMainComponents,
+    splitBrackets,
+    removeSingleStars,
+    splitPluses,
+    splitStars,
+    splitTildas,
+    solveBrackets,
+    simplifyList,
+    negateValues,
+    removeDuplicates,
+    getNonChars,
+    splitProducts,
+    insideBrackets,
+    outsideBrackets,
+    curlyBrackets,
+    roundBrackets,
+    
+    getSolution,
+    prettyString,
+    rowDominance,
+    sortMatrix,
+    sortVector,
     writePrimeimp,
-    writeSolution)
-import(lpSolve)
-importFrom("utils", "packageDescription")
+    writeSolution
+)
+
+S3method(print, "aE")
+S3method(print, "chain")
+S3method(print, "deMorgan")
+S3method(print, "factorize")
+S3method(print, "fuzzy")
+S3method(print, "intersection")
+S3method(print, "modelFit")
+S3method(print, "mqca")
+S3method(print, "panel")
+S3method(print, "pic")
+S3method(print, "pof")
+S3method(print, "qca")
+S3method(print, "sS")
+S3method(print, "translate")
+S3method(print, "tt")
+

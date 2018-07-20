@@ -1,282 +1,257 @@
+# Copyright (c) 2018, Adrian Dusa
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, in whole or in part, are permitted provided that the
+# following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * The names of its contributors may NOT be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL ADRIAN DUSA BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 `factorize` <- 
-function(expression, prod.split="", sort.factorizing=FALSE, sort.factorized=FALSE) {
-    
-    factor.function <- function(trimmed.string) {
-        
-        my.string <- trimmed.string
-        
-        # create a list with all prime implicants split by literals
-        if (prod.split == "" & grepl("~", paste(trimmed.string, collapse = ""))) {
-            
-            list.my.string <- sapply(trimmed.string, strsplit, split = "")
-            
-            list.my.string <- lapply(list.my.string, function(x) {
-                tildas <- x == "~"
-                if (any(tildas)) {
-                    x[which(tildas) + 1] <- paste("~", x[which(tildas) + 1], sep="")
-                    x <- x[-which(tildas)]
+function(input, snames = "", noflevels, pos = FALSE, use.tilde = FALSE, ...) {
+    other.args <- list(...)
+    if (any(names(other.args) == "tilde")) {
+        use.tilde <- other.args$tilde
+    }
+    pasteit <- function(mat, comrows, cols, comvals) {
+        if (!missing(cols)) {
+            temp <- mat[comrows, -cols, drop = FALSE]
+            if (mv) {
+                cf <- paste(colnames(mat)[cols], "{", comvals, "}", sep = "")
+                rowsf <- lapply(seq(nrow(temp)), function(x) {
+                    fname <- colnames(temp)
+                    x <- temp[x, ]
+                    return(paste(fname, "{", x, "}", sep = "")[x >= 0])
+                })
+            }
+            else if (use.tilde) {
+                cf <- paste(ifelse(comvals == 0, "~", ""), colnames(mat)[cols], sep = "")
+                rowsf <- lapply(seq(nrow(temp)), function(x) {
+                    x <- temp[x, ]
+                    return(paste(ifelse(x == 0, "~", ""), names(x), sep = "")[x >= 0])
+                })
+            }
+            else {
+                for (i in seq(length(cols))) {
+                    if (comvals[i] == 0) {
+                        colnames(mat)[cols[i]] <- tolower(colnames(mat)[cols[i]])
+                    }
                 }
-                return(x)
-            })
+                cf <- colnames(mat)[cols]
+                rowsf <- lapply(seq(nrow(temp)), function(x) {
+                    x <- temp[x, ]
+                    nms <- names(x)
+                    nms[x == 0] <- tolower(nms[x == 0])
+                    return(nms[x >= 0])
+                })
+            }
+            trowsf <- table(unlist(rowsf))
+            if (any(trowsf == length(rowsf))) {
+                c2 <- names(trowsf)[trowsf == length(rowsf)]
+                cf <- c(cf, c2[c2 != ""])
+                rowsf <- lapply(rowsf, setdiff, c2)
+            }
+            rowsf1 <- rowsf[rowsf != ""]
+            rowsf[rowsf != ""] <- rowsf1[order(match(toupper(gsub("[^A-Za-z]", "", rowsf1)), snames))]
+            rowsf <- sapply(rowsf, paste, collapse = collapse)
+            rowsf <- unique(setdiff(rowsf, ""))
+            if (all(nchar(unique(rowsf)) == 1)) {
+                tblchar <- table(toupper(rowsf))
+                if (any(tblchar > 1)) {
+                    for (ch in names(tblchar)[tblchar > 1]) {
+                        rowsf <- rowsf[-which(toupper(rowsf) == ch)]
+                    }
+                }
+            }
+            rowsf <- paste(rowsf, collapse = " + ")
+            cf <- paste(cf[order(match(toupper(gsub("[^A-Za-z]", "", cf)), snames))], collapse = collapse)
+            pasted <- paste(cf, rowsf, sep="@")
         }
         else {
-            list.my.string <- sapply(trimmed.string, strsplit, prod.split)
-        }
-        
-         # create a matrix with all combinations of prime implicants to be compared for similar literals
-        all.combs <- createMatrix(rep(2, length(list.my.string)))
-        all.combs <- all.combs[rowSums(all.combs) > 1, , drop=FALSE]
-        all.combs <- col(all.combs) * as.vector(all.combs)
-        
-        
-         # create a list with matched literals between prime implicants
-        if (nrow(all.combs) > 1) {
-         
-            match.list <- as.list(apply(all.combs, 1, function(x) {
-                x <- list.my.string[x[x > 0]]
-                y <- table(unlist(x))
-                return(names(y)[y == length(x)])
-            }))
-            names(match.list) <- lapply(match.list, paste, collapse=collapse)
-        }
-        else {
-            match.list <- table(unlist(list.my.string))
-            match.list <- list(names(match.list)[match.list == length(list.my.string)])
-            names(match.list) <- lapply(match.list, paste, collapse=collapse)
-        }
-        
-        if (length(match.list) > 0) {
-             # see wich comparisons didn't yield similar literals
-            null.branches <- unlist(lapply(match.list, function(x) all(is.na(x))))
-             # erase those branches from the list
-            match.list <- match.list[!null.branches]
-            if (length(match.list) > 0) {
-                
-                if (nrow(all.combs) > 1) {
-                     # and from all combinations
-                    all.combs <- all.combs[!null.branches, , drop=FALSE]
-                }
-                
-                if (sort.factorizing) {
-                    sort.factorized <- FALSE
-                    lengths.vector <- as.numeric(unlist(lapply(match.list, length)))
-                    match.list <- match.list[rev(order(lengths.vector))]
-                    all.combs <- all.combs[rev(order(lengths.vector)), ]
-                }
-                
-                 # prepare a vector showing which columns from all.combs have been used
-                 # to extract common.factor factors
-                selected.rows <- rep(FALSE, nrow(all.combs))
-                complex.list <- vector("list", length(selected.rows))
-                
-               
-                extract <- function(match.list, all.combs, complex.list, my.string.index) {
-                    initial.index <- my.string.index
-                    for (i in 1:length(match.list)) {
-                        common.factor <- match.list[[i]]
-                         # see which other branches contain all common.factor literals from the current branch
-                        similar.branches <- unlist(lapply(match.list[-i], function (x) all(common.factor %in% x)))
-                        
-                        if (any(similar.branches)) {
-                             # see which are the other similar branches
-                            similar.index <- seq(length(match.list))[-i][similar.branches]
-                             # see which are the prime implicants with similar common.factor factors
-                            my.string.index <- sort(unique(c(all.combs[c(i, similar.index), ])))
-                            my.string.index <- my.string.index[my.string.index > 0]
-                        }
-                        else {
-                             # see which are the prime implicants with similar common factors
-                            my.string.index <- all.combs[i, ]
-                            my.string.index <- my.string.index[my.string.index > 0]
-                        }
-                            
-                         # paste the other literals from each index, separated by " + "
-                        sol <- paste(sapply(my.string.index, function(x) {
-                                paste(list.my.string[[x]][!list.my.string[[x]] %in% common.factor], collapse=collapse)
-                                }), collapse=" + ")
-                        
-                        common.factor <- paste(match.list[[i]], collapse=collapse)
-                        
-                         # then combine everything having the common.factor in front of the paranthesys
-                        factor.sol <- paste(common.factor, collapse, "(", sol, ")", sep="")
-                        selected.rows <- apply(all.combs, 1, function(x) any(x %in% my.string.index))
-                        
-                        if (!is.null(initial.index)) my.string.index <- sort(unique(c(initial.index, my.string.index)))
-                        
-                        if (sum(!selected.rows) == 0) {
-                             # no other comparison can be made; add all other prime implicants that have not been used
-                            if (length(my.string[-my.string.index]) > 0) {
-                                    factor.sol <- paste(factor.sol, paste(my.string[-my.string.index], collapse=" + "), sep=" + ")
-                            }
-                            names(complex.list)[i] <- factor.sol
-                            complex.list[[i]] <- factor.sol
-                        }
-                        else {
-                            sift <- function(x, y, z) {
-                                sift.list <- list(match.list=NULL, all.combs=NULL)
-                                sift.list[[1]] <- x[!z]
-                                sift.list[[2]] <- y[which(!z), , drop=FALSE]
-                                sift.list
-                            }
-                            sift.list <- sift(match.list, all.combs, selected.rows)
-                            
-                            names(complex.list)[i] <- factor.sol
-                            complex.list[[i]] <- vector("list", length(sift.list$match.list))
-                            complex.list[[i]] <- Recall(sift.list$match.list, sift.list$all.combs, complex.list[[i]], my.string.index)
-                        }
-                    }
-                    return(complex.list)
-                }
-                
-                
-                my.string.index <- NULL
-                complex.list <- extract(match.list, all.combs, complex.list, my.string.index)
-                
-                final.solution <- unique(names(unlist(complex.list)))
-                
-                if (length(final.solution) > 1) {
-                    final.solution.list <- strsplit(final.solution, "\\.")
-                    
-                    if (sort.factorized) {
-                        order.vector <- order(unlist(lapply(lapply(final.solution.list, "[", 1), nchar)), decreasing=TRUE)
-                        final.solution.list <- final.solution.list[order.vector]
-                        final.solution <- final.solution[order.vector]
-                    }
-                    
-                    all.combs <- as.matrix(combn(length(final.solution.list), 2))
-                    
-                    match.list <- apply(all.combs, 2, function(x) {
-                         # compare only solutions with the same length
-                        if (length(final.solution.list[[x[1]]]) == length(final.solution.list[[x[2]]])) {
-                             # return x (the indices from final.solution) if all items are equivalent
-                            if (all(final.solution.list[[x[1]]] %in% final.solution.list[[x[2]]])) x
-                        }
-                    })
-                    
-                    # see if there are any null branches
-                    null.branches <- unlist(lapply(match.list, is.null))
-                    
-                    if (!all(null.branches)) {
-                         # remove those branches from match.list
-                        match.list <- match.list[-which(null.branches)]
-                         # the remaining branches contain equivalent (duplicated) solutions
-                        equivalent.solutions <- unlist(lapply(match.list, "[", 2))
-                         # remove equivalent solutions from final.solution
-                        final.solution <- final.solution[-equivalent.solutions]
-                    }
-                    
-                    final.solution <- gsub("\\.", " + ", final.solution)
-                    
-                }
-                return(final.solution)
+            if (mv) {
+                pasted <- paste(sapply(seq(nrow(mat)), function(x) {
+                    x <- mat[x, ]
+                    paste(paste(names(x), "{", x, "}", sep = "")[x >= 0], collapse = collapse)
+                }), collapse = " + ")
+            }
+            else if (use.tilde) {
+                pasted <- paste(sapply(seq(nrow(mat)), function(x) {
+                    colns <- colnames(mat)
+                    colns[mat[x, ] == 0] <- paste("~", colns[mat[x, ] == 0], sep="")
+                    paste(colns[mat[x, ] >= 0], collapse = collapse)
+                }), collapse = " + ")
+            }
+            else {
+                pasted <- paste(sapply(seq(nrow(mat)), function(x) {
+                    colns <- colnames(mat)
+                    colns[mat[x, ] == 0] <- tolower(colns[mat[x, ] == 0])
+                    paste(colns[mat[x, ] >= 0], collapse = collapse)
+                }), collapse = " + ")
             }
         }
-        else {
-            return(NULL)
-        }
+        return(pasted)
     }
-    
-    
-    getNonChars <- function(x) {
-        # split by "+", incluging the trimming of the white space
-        x <- gsub("^[[:space:]]+|[[:space:]]+$", "", unlist(strsplit(x, "\\+")))
-        z <- vector(mode="list", length=length(x))
-        for (i in seq(length(x))) {
-            z[[i]] <- strsplit(gsub("[[:alnum:]]", "", x[i]), "+")[[1]]
-        }
-        z <- gsub("\\~", "", unique(unlist(z)))
-        
-        return(z[-which(z == "")])
-    }
-    
-    collapse <- prod.split
-    if (prod.split != "") prod.split <- paste("\\", prod.split, sep="")
-    
-    if (is.qca(expression)) {
-        collapse <- prod.split <- expression$opts$collapse
-        if (prod.split != "") prod.split <- paste("\\", prod.split, sep="")
-        if ("i.sol" %in% names(expression)) {
-            result <- list(i.sol=vector("list", length=length(expression$i.sol)))
-            for (i in seq(length(expression$i.sol))) {
-                names(result$i.sol) <- paste(names(expression$i.sol), "S", sep="")
-                result$i.sol[[i]] <- lapply(expression$i.sol[[i]]$solution, factor.function)
-                names(result$i.sol[[i]]) <- unlist(lapply(expression$i.sol[[i]]$solution, paste, collapse=" + "))
+    getFacts <- function(mat) {
+        cfound <- FALSE
+        result <- list()
+        for (cc in seq(ncol(mat))) {
+            allcols <- combinations(ncol(mat), cc)
+            for (cols in seq(ncol(allcols))) {
+                temp <- mat[, allcols[, cols], drop = FALSE]
+                uniq <- unique(temp)
+                uniq <- uniq[apply(uniq, 1, function(x) all(x >= 0)), , drop = FALSE]
+                if (nrow(uniq) > 0) {
+                    for (i in seq(nrow(uniq))) {
+                        rows <- logical(nrow(mat))
+                        comrows <- apply(temp, 1, function(x) { all(x == unname(uniq[i, ])) })
+                        if (sum(comrows) > 1) {
+                            cfound <- TRUE
+                            rows <- rows | comrows
+                            pasted <- pasteit(mat, comrows, allcols[, cols], unname(uniq[i, ]))
+                            if (sum(rows) < nrow(mat)) {
+                                result[[length(result) + 1]] <- Recall(mat[!rows, , drop = FALSE])
+                                names(result)[length(result)] <- pasted
+                            }
+                            else {
+                                result <- list(NA)
+                                names(result) <- pasted
+                            }
+                        }
+                    }
+                }
             }
         }
-        else {
-            result <- lapply(expression$solution, function(x) {
-                if (length(x) > 1) {
-                    return(factor.function(x))
+        if (!cfound) {
+            result <- list(NA)
+            names(result) <- pasteit(mat)
+        }
+        return(result)
+    }
+    getSol <- function(sol, collapse, pos) {
+        pospos <- FALSE
+        sol <- lapply(unique(lapply(sol, sort)), function(x) {
+            x <- strsplit(x, split = "@")
+            if (pos) {
+                tbl <- table(unlist(x))
+                if (any(tbl > 1)) {
+                    tbl <- names(tbl)[tbl > 1]
+                    checked <- logical(length(x))
+                    common <- vector(mode = "list", length(tbl))
+                    names(common) <- tbl
+                    for (i in seq(length(tbl))) {
+                        for (j in seq(length(x))) {
+                            if (!checked[j]) {
+                                if (any(x[[j]] == tbl[i])) {
+                                    common[[i]] <- c(common[[i]], setdiff(x[[j]], tbl[i]))
+                                    checked[j] <- TRUE
+                                }
+                            }
+                        }
+                        common[[i]] <- sort(common[[i]])
+                    }
+                    common <- paste(as.vector(sapply(seq(length(common)), function(x) {
+                        sort(c(paste("(", paste(common[[x]], collapse = " + "), ")", sep = ""),
+                               paste("(", paste(tbl[x], collapse = " + "), ")", sep="")))
+                    })), collapse = collapse)
+                    x <- x[!checked]
+                    if (length(x) > 0) {
+                        common <- paste(c(common, sapply(x[order(match(toupper(gsub("[^A-Za-z]", "", x)), snames))], paste, collapse = collapse)), collapse = " + ")
+                    }
+                    return(common)
                 }
                 else {
-                    return(NULL)
+                    x <- sort(sapply(x, function(y) {
+                        if (length(y) == 1) {
+                            return(y)
+                        }
+                        paste(y[1], collapse, "(", y[2], ")", sep="")
+                    }))
                 }
-            })
-            names(result) <- unlist(lapply(expression$solution, paste, collapse=" + "))
-        }
-    }
-    else if (is.deMorgan(expression)) {
-        
-        if (names(expression)[1] == "S1") {
-            result <- lapply(expression, function(x) {
-                factor.function(x[[2]])
-            })
-            
-            names(result) <- unlist(lapply(expression, function(x) {
-                paste(x[[2]], collapse = " + ")
-            }))
-        }
-        else {
-            result <- list(lapply(expression, function(x) {
-                int.result <- lapply(x, function(y) {
-                    factor.function(y[[2]])
-                })
-                
-                names(int.result) <- unlist(lapply(x, function(y) {
-                    paste(y[[2]], collapse = " + ")
+            }
+            else {
+                x <- sort(sapply(x, function(y) {
+                    if (length(y) == 1) {
+                        return(y)
+                    }
+                    paste(y[1], collapse, "(", y[2], ")", sep="")
                 }))
-                
-                return(int.result)
+            }
+            return(x)
+        })
+        sol <- unlist(lapply(unique(sol), function(x) {
+            paste(x, collapse = " + ")
+        }))
+        return(sol)
+    }
+    isol <- NULL
+    if (methods::is(input, "qca")) {
+        collapse <- input$options$collapse
+        noflevels <- input$tt$noflevels
+        snames <- input$tt$options$conditions
+        if (input$options$use.letters) {
+            snames <- LETTERS[seq(length(snames))]
+        }
+        if (is.element("i.sol", names(input))) {
+            elengths <- unlist(lapply(input$i.sol, function(x) length(x$solution)))
+            isol <- paste(rep(names(input$i.sol), each = elengths), unlist(lapply(elengths, seq)), sep = "-")
+            input <- unlist(lapply(input$i.sol, function(x) {
+                lapply(x$solution, paste, collapse = " + ")
             }))
-            names(result) <- "i.sol"
-            names(result$i.sol) <- paste(names(result$i.sol), "N", sep="")
-        }
-        
-    }
-    else if (is.character(expression) & length(expression) == 1) {
-        trimst <- function(string) gsub("^[[:space:]]+|[[:space:]]+$", "", string)
-        trimmed.str <- trimst(unlist(strsplit(expression, "\\+")))
-        
-        
-        
-        if (prod.split != "") {
-            if (!grepl(prod.split, expression)) {
-                cat("\n")
-                stop("The product operator \"", prod.split, "\" was not found.\n\n", call. = FALSE)
-            }
         }
         else {
-            nonchars <- getNonChars(trimmed.str)
-            if (length(nonchars) > 0) {
-                if (length(nonchars) > 1) {
-                    cat("\n")
-                    stop(paste("Multiple non alphanumeric characters found: \"", paste(nonchars, collapse=""), "\".\n\n", sep=""), call. = FALSE)
-                }
-                collapse <- nonchars
-                prod.split <- paste("\\", nonchars, sep="")
-            }
-        }
-        
-        if (length(trimmed.str) == 1) {
-            result <- list(expression)
-            names(result) <- expression
-        }
-        else {
-            result <- list(factor.function(trimmed.str))
-            names(result) <- expression
+            input <- unlist(lapply(input$solution, paste, collapse = " + "))
         }
     }
-    
-    return(structure(result, class="fctr"))
+    else if (methods::is(input, "deMorgan")) {
+        if (any(attributes(input) == "snames")) {
+            snames <- attr(input, "snames")
+        }
+    }
+    factorizeit <- function(x, snames, noflevels) {
+        x <- sop(x, snames = snames, noflevels = noflevels)
+        trexp <- translate(x, snames = snames, noflevels = noflevels)
+        snames <- colnames(trexp)
+        getSol(lapply(
+            names(unlist(getFacts(trexp))),
+            function(x) {
+                unlist(strsplit(x, split = "[.]"))
+            }
+        ), collapse = collapse, pos = pos)
+    }
+    if (is.character(input)) {
+        if (!identical(snames, "")) {
+            snames <- splitstr(snames)
+        }
+        collapse <- ifelse(any(grepl("[*]", input)), "*", "")
+        mv <- any(grepl("[{]", unlist(input)))
+        if (!use.tilde & any(hastilde(unlist(input)))) {
+            use.tilde <- TRUE
+        }
+        result <- lapply(input, factorizeit, snames = snames, noflevels = noflevels)
+        names(result) <- unname(input)
+        if (!identical(snames, "")) {
+            attr(result, "snames") <- snames
+        }
+        if (!is.null(isol)) {
+            attr(result, "isol") <- isol
+        }
+        class(result) <- c("character", "factorize")
+        return(result)
+    }
 }
-

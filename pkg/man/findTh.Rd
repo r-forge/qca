@@ -2,51 +2,76 @@
 
 \alias{findTh}
 
-\title{Find Calibration Thresholds}
+\title{Find calibration thresholds}
 
 \description{
-This function finds calibration thresholds for splitting base variables into the 
-desired number of groups using cluster analysis.
+The purpose of this function is to automatically find calibration thresholds
+for a numerical causal condition, to be split into separate groups.
 }
 
 \usage{
-findTh(x, groups = 2, hclustm = "complete", distm = "euclidean")
+findTh(x, n = 1, hclustm = "complete", distm = "euclidean", ...)
 }
 
 \arguments{
-  \item{x}{An interval or ratio-scaled base variable.}
-  \item{groups}{A vector of integers with the desired number of groups.}
+  \item{x}{A numerical causal condition.}
+  \item{n}{The number of thresholds to find.}
   \item{hclustm}{The agglomeration (clustering) method to be used.}
   \item{distm}{The distance measure to be used.}
+  \item{...}{Other arguments (mainly for backwards compatibility).}
 }
 
 \details{
-For more details about argument \code{groups}, see \code{?cutree}. For more 
-details about argument \code{hclustm}, see \code{?hclust}. For more details 
-about argument \code{distm}, see \code{?dist}.
+The process of calibration into crisp sets assumes expert knowledge about the
+best threshold(s) that separate the raw data into the most meaningful
+groups.
+
+In the absence of such knowledge, an automatic procedure might help grouping
+the raw data according to statistical clustering techniques.
+
+The number of groups to split depends on the number of thresholds: one
+thresholds splits into two groups, two thresholds splits into three groups etc.
+
+For more details about how many groups can be formed with how many thresholds,
+see \code{?cutree}.
+
+More details about the clustering techniques used in this function are found
+using \code{?hclust}, and also more details about different distance measures
+can be found with \code{?dist}. This function uses their default values.
+
 }
 
 \value{
-A numeric vector of suggested threshold(s) for dividing base variables 
-into the desired number of groups.
+A numeric vector of length \bold{\code{n}}.
 }
 
-\note{Default values from the \code{hclust()} method and the \code{dist()} method 
-are used for both the distance measure \code{distm} and the clustering method 
-\code{hclustm}.
+\author{
+Adrian Dusa
 }
 
-\seealso{\code{\link{cutree}}, \code{\link{hclust}}, \code{\link{dist}}}
+
+\seealso{\code{\link[stats]{cutree}}, \code{\link[stats]{hclust}}, \code{\link[stats]{dist}}}
 
 \examples{
-# 15 random values between 1 and 100 
-x <- sample(1:100, size = 15)
 
-# split into two groups for csQCA
-findTh(x)
+# hypothetical list of country GDPs
+gdp <- c(460, 500, 900, 2000, 2100, 2400, 15000, 16000, 20000)
 
-# split into three groups for mvQCA
-findTh(x, groups = 3)
+
+# find one threshold to separate into two groups
+findTh(gdp)
+# 8700
+
+
+# find two thresholds to separate into two groups
+findTh(gdp, n = 2)
+# 8700 18000
+
+
+# using different clustering methods
+findTh(gdp, n = 2, hclustm = "ward.D2", distm = "canberra")
+# 1450 8700
+
 }
 
 \keyword{functions}

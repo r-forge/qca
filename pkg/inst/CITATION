@@ -1,18 +1,13 @@
-citHeader("Please cite the QCA package as:")
+citHeader("To cite this package in publications, please use:")
 
-meta <- packageDescription("QCA")
-year <- sub("-.*", "", meta$Date)
-title <- sprintf("%s", meta$Title)
-note <- sprintf("R Package Version %s", meta$Version)
-
-bibentry(bibtype = "Manual",
-         author = personList(as.person("Adrian Dusa"),
-                             as.person("Alrik Thiem")),
-         year = year,
-         title = title,
-         note = note,
-         url = "http://cran.r-project.org/package=QCA",
-         textVersion = paste("Dusa, Adrian, and Alrik Thiem", sprintf("%s", year),
-                              title, note, "URL: http://cran.r-project.org/package=QCA.", sep = ". ")
+citEntry(entry = "Book",
+    author      = personList(as.person("Adrian Dusa")),
+    year        = "2019",
+    title       = "QCA with R. A Comprehensive Resource",
+    address     = "New York",
+    publisher   = "Springer International Publishing",
+    textVersion = paste("Dusa, Adrian (2019).",
+                        "QCA with R. A Comprehensive Resource.",
+                        "Springer International Publishing.")
 )
 

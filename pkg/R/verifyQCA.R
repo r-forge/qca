@@ -1,83 +1,131 @@
+# Copyright (c) 2018, Adrian Dusa
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without
+# modification, in whole or in part, are permitted provided that the
+# following conditions are met:
+#     * Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#     * Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#     * The names of its contributors may NOT be used to endorse or promote products
+#       derived from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+# ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL ADRIAN DUSA BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
 `verify.data` <-
-function(data, outcome = "", conditions = c("")) {
-     # check if the data has column names
+function(data, outcome = "", conditions = "") {
+    if (!is.data.frame(data)) {
+        cat("\n")
+        stop(simpleError("The input data should be a data frame.\n\n"))
+    }
     if (is.null(colnames(data))) {
         cat("\n")
-        stop("Please specify the column names for your data.\n\n")
+        stop(simpleError("Please specify the column names for your data.\n\n"))
     }
-    
-     # check the outcome specified by the user
-    if (nchar(outcome) == 0) {
+    if (identical(outcome, "")) {
         cat("\n")
-        stop("You haven't specified the outcome set.\n\n")
+        stop(simpleError("The outcome set is not specified.\n\n"))
     }
-    else if (! outcome %in% colnames(data)) {
+    if (! outcome %in% colnames(data)) {
         cat("\n")
-        stop("The outcome's name is not correct.\n\n")
+        stop(simpleError("The name of the outcome is not correct.\n\n"))
     }
-    
-    # subset the data with the conditions specified
-    if (length(conditions) > 1) {
+    if (!identical(conditions, "")) {
         if (outcome %in% conditions) {
             cat("\n")
-            stop('Variable "', outcome, '" cannot be both outcome _and_ condition!\n\n')
+            stop(simpleError(paste0("Variable \"", outcome, "\" cannot be both outcome _and_ condition!\n\n")))
         }
         if (!all(conditions %in% names(data))) {
             cat("\n")
-            stop("The conditions' names are not correct.\n\n")
+            stop(simpleError("The conditions' names are not correct.\n\n"))
         }
-    }
-    else if (nchar(conditions) > 0) {
-        if (outcome %in% conditions) {
+        if (any(duplicated(conditions))) {
             cat("\n")
-            stop('Variable "', outcome, '" cannot be both outcome _and_ condition!\n\n')
-        }
-        else {
-            cat("\n")
-            stop("Cannot find a solution with only one causal condition.\n\n")
+            stop(simpleError("Duplicated conditions.\n\n"))
         }
     }
-}
-
-         
-         
-`verify.expl` <-
-function(data, outcome = "", conditions = c(""), incl.rem = FALSE,
-         expl.1 = FALSE, expl.0 = FALSE, expl.ctr = FALSE, expl.mo = FALSE,
-         incl.1 = FALSE, incl.0 = FALSE, incl.ctr = FALSE, incl.mo = FALSE,
-         quiet = FALSE, details = FALSE, chart = FALSE, use.letters = TRUE,
-         show.cases = FALSE, diffmatrix=TRUE) {
-    
-    # check if all cases have been included in analysis
-    if ((expl.0 | incl.0) & (expl.1 | incl.1) & (expl.ctr | incl.ctr) & incl.rem) {
-        cat("\n")
-        stop("You have included all cases in the analysis!\n\n")
-    }
-    
-     # if more than 26 conditions (plus one outcome), we cannot use letters
-    if (use.letters & ncol(data) > 27) {
-        cat("\n")
-        stop("Cannot use letters. There are more than 26 conditions.\n\n")
-    }
-    
-    # check if the user specifies something to explain
-    if (sum(expl.0, expl.1, expl.ctr) == 0 ) {
-        cat("\n")
-        stop("You have not specified what to explain.\n\n")
-    }
-    
-    # checking for complete data (without missings)
     if (any(is.na(data))) {
+        checked <- sapply(data, function(x) any(is.na(x)))
         cat("\n")
-        stop("Missing data found; this is not (yet) supported.\n\n")
+        stop(paste("Missing values in the data are not allowed. Please check columns:\n",
+             paste(names(checked)[checked], collapse = ", "), "\n\n", sep=""), call. = FALSE)
     }
 }
-
-
+`verify.qca` <-
+function(data) {
+    if (is.data.frame(data)) {
+        if (is.null(colnames(data))) {
+            cat("\n")
+            stop(simpleError("The dataset doesn't have any columns names.\n\n"))
+        }
+        checkNumUncal <- lapply(data, function(x) {
+            x <- setdiff(x, c("-", "dc", "?"))
+            pn <- possibleNumeric(x)
+            uncal <- mvuncal <- FALSE
+            if (pn) {
+                y <- asNumeric(x)
+                if (any(y > 1) & any(abs(y - round(y)) >= .Machine$double.eps^0.5)) {
+                    uncal <- TRUE
+                }
+                if (length(seq(0, max(y))) > 20) {
+                    mvuncal <- TRUE
+                }
+            }
+            return(c(pn, uncal, mvuncal))
+        })
+        checknumeric <- sapply(checkNumUncal, "[[", 1)
+        checkuncal <- sapply(checkNumUncal, "[[", 2)
+        checkmvuncal <- sapply(checkNumUncal, "[[", 3)
+        if (!all(checknumeric)) {
+            cat("\n")
+            notnumeric <- colnames(data)[!checknumeric]
+            errmessage <- paste("The causal condition",
+                                ifelse(length(notnumeric) == 1, " ", "s "),
+                                paste(notnumeric, collapse=", "),
+                                ifelse(length(notnumeric) == 1, " is ", " are "),
+                                "not numeric.", sep="")
+            stop(simpleError(paste(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""), "\n\n", sep = "")))
+        }
+        if (any(checkuncal)) {
+            cat("\n")
+            uncalibrated <- colnames(data)[checkuncal]
+            errmessage <- paste("Uncalibrated data.\n",
+            "Fuzzy sets should have values bound to the interval [0 , 1] and all other sets should be crisp.\n",
+            "Please check the following condition", ifelse(length(uncalibrated) == 1, "", "s"), ":\n",
+            paste(uncalibrated, collapse = ", "), sep="")
+            stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
+        }
+        if (any(checkmvuncal)) {
+            cat("\n")
+            uncalibrated <- colnames(data)[checkmvuncal]
+            errmessage <- paste("Possibly uncalibrated data.\n",
+            "Multivalue conditions with more than 20 levels are unlikely to be (properly) calibrated.\n",
+            "Please check the following condition", ifelse(length(uncalibrated) == 1, "", "s"), ":\n",
+            paste(uncalibrated, collapse = ", "), sep="")
+            stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
+        }
+    }
+    else if (is.vector(data)) {
+        if (!possibleNumeric(data)) {
+            cat("\n")
+            stop(simpleError("Non numeric input.\n\n"))
+        }
+    }
+}
 `verify.tt` <-
-function(data, outcome = "", conditions = c(""), complete = FALSE, show.cases = FALSE, incl.cut1 = 1, incl.cut0 = 1, inf.test) {
-    
-    if (class(data) != "data.frame") {
+function(data, outcome = "", conditions = "", complete = FALSE, show.cases = FALSE, ic1 = 1, ic0 = 1, inf.test) {
+    if (!inherits(data, "data.frame")) {
         cat("\n")
         errmessage <- paste("You have to provide a data frame, the current \"data\" argument contains an object\n",
                    "       of class \"", class(data), "\"",
@@ -85,212 +133,156 @@ function(data, outcome = "", conditions = c(""), complete = FALSE, show.cases = 
                    ifelse(class(data) == "tt", ", created by truthTable()", ""),
                    ifelse(class(data) == "pof", ", created by pof()", ""),
                    ".\n\n", sep="")
-        stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+        stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
     }
-    
-    if (is.tt(data)) {
+    if (methods::is(data, "tt")) {
         data <- data$initial.data
     }
-    
-    if (nchar(outcome) == 0) {
+    if (identical(outcome, "")) {
         cat("\n")
-        stop("You haven't specified the outcome set.\n\n")
+        stop(simpleError("You haven't specified the outcome set.\n\n"))
     }
-    else if (! outcome %in% colnames(data)) {
+    if (!is.element(outcome, colnames(data))) {
         cat("\n")
-        stop("The outcome's name is not correct.\n\n")
+        stop(simpleError("The outcome's name is not correct.\n\n"))
     }
-    
-     # subset the data with the conditions specified
-    if (length(conditions) > 1) {
-        if (outcome %in% conditions) {
-            cat("\n")
-            stop('"', outcome, '" cannot be both outcome _and_ condition!\n\n')
+    if (!identical(conditions, "")) {
+        if (length(conditions) == 1 & is.character(conditions)) {
+            conditions <- splitstr(conditions)
         }
-        if (!all(conditions %in% colnames(data))) {
+        if (is.element(outcome, conditions)) {
             cat("\n")
-            stop("The conditions' names are not correct.\n\n")
-        }
-    }
-    else if (nchar(conditions) > 0) {
-        cat("\n")
-        stop("Cannot create a truth table with only one condition.\n\n")
-    }
-    
-    # checking for complete data (without missings)
-    if (any(is.na(data))) {
-        cat("\n")
-        stop("Missing data found; this is not (yet) supported.\n\n")
-    }
-    
-    # checking for the two including cut-offs
-    if (any(c(incl.cut1, incl.cut0) < 0) | any(c(incl.cut1, incl.cut0) > 1)) {
-        cat("\n")
-        stop("The including cut-off(s) should be bound to the interval [0, 1].\n\n")
-    }
-    
-    if (incl.cut0 > incl.cut1 & incl.cut0 < 1) {
-        cat("\n")
-        stop("incl.cut0 cannot be greater than incl.cut1.\n\n")
-    }
-    
-    data <- data[, c(conditions, outcome)]
-    
-    data <- as.data.frame(lapply(data, function(x) {
-        x <- as.character(x)
-        x[x %in% c("-", "dc")] <- -1
-        return(as.numeric(x))
-    }))
-    
-    if (any(data[, conditions] > 1 & data[, conditions] %% 1 > 0)) {
-        cat("\n")
-        errmessage <- "Uncalibrated data.\nFuzzy sets should have values bound to the interval [0 , 1] and all other values should be crisp.\n\n"
-        stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
-    }
-    
-    verify.inf.test(inf.test, data)
-}
-
-
-`verify.qca` <-
-function(data, outcome = "", conditions = c(""), explain = c(""),
-         include = c(""), use.letters = FALSE) {
-
-     # check if the data has column names
-    if (is.null(colnames(data))) {
-        cat("\n")
-        stop("Please specify the column names for your data.\n\n")
-    }
-    
-     # check the outcome specified by the user
-    if (nchar(outcome) == 0) {
-        cat("\n")
-        stop("You haven't specified the outcome set.\n\n")
-    }
-    else if (! outcome %in% colnames(data)) {
-        cat("\n")
-        stop("The outcome's name is not correct.\n\n")
-    }
-    
-     # check if the user specifies something to explain
-    if (all(explain == c(""))) {
-        cat("\n")
-        stop("You have not specified what to explain.\n\n")
-    }
-    
-     # check if the user specifies something to explain
-    if (!all(explain %in% c(0, 1, "C"))) {
-        cat("\n")
-        stop("You should explain either 0, 1, or \"C\".\n\n")
-    }
-    
-    chexplain <- c(0, 1)[which(0:1 %in% explain)]
-    chinclude <- c(0, 1)[which(0:1 %in% include)]
-    if (length(chinclude) > 0) {
-        if (any(chinclude != chexplain)) {
-            chinclude <- chinclude[which(chinclude != chexplain)]
-            cat("\n")
-            errmessage <- paste("You cannot include ", chinclude, " since you want to explain ", chexplain, ".\n\n", sep="")
-            stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
-        }
-    }
-    
-     # check if explain has both 1 and 0
-    if (length(chexplain) == 2) {
-        cat("\n")
-        stop("Combination to be explained not allowed.\n\n")
-    }
-    
-    if (!all(include %in% c("?", "0", "1", "C"))) {
-        cat("\n")
-        errmessage <- "You can only include one or more of the following: \"?\", \"C\", \"0\" and \"1\".\n\n"
-        stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
-    }
-    
-    
-    # subset the data with the conditions specified
-    if (length(conditions) > 1) {
-        if (outcome %in% conditions) {
-            cat("\n")
-            stop('Variable "', outcome, '" cannot be both outcome _and_ condition!\n\n')
+            stop(simpleError(paste0("Variable \"", outcome, "\" cannot be both outcome _and_ condition!\n\n")))
         }
         if (!all(conditions %in% names(data))) {
             cat("\n")
-            stop("The conditions' names are not correct.\n\n")
+            stop(simpleError("The conditions' names are not correct.\n\n"))
+        }
+        if (any(duplicated(conditions))) {
+            cat("\n")
+            stop(simpleError("Duplicated conditions.\n\n"))
         }
     }
-    else if (length(conditions) == 1) {
-        if (outcome == conditions) {
-            cat("\n")
-            stop('Variable "', outcome, '" cannot be both outcome _and_ condition!\n\n')
+    else {
+        conditions <- colnames(data)
+        conditions <- setdiff(conditions, outcome)
+    }
+    if (any(is.na(data))) {
+        checked <- sapply(data, function(x) any(is.na(x)))
+        cat("\n")
+        stop(simpleError(paste("Missing values in the data are not allowed. Please check columns:\n",
+             paste(names(checked)[checked], collapse = ", "), "\n\n", sep="")))
+    }
+    if (any(c(ic1, ic0) < 0) | any(c(ic1, ic0) > 1)) {
+        cat("\n")
+        stop(simpleError("The including cut-off(s) should be bound to the interval [0, 1].\n\n"))
+    }
+    data <- data[, c(conditions, outcome)]
+    data <- as.data.frame(lapply(data, function(x) {
+        x <- as.character(x)
+        x[x %in% c("-", "dc", "?")] <- -1
+        return(asNumeric(x))
+    }))
+    verify.qca(data)
+    verify.inf.test(inf.test, data)
+}
+`verify.minimize` <-
+function(data, outcome = "", conditions = "", explain = "",
+         include = "", use.letters = FALSE) {
+    verify.data(data, outcome = outcome, conditions = conditions)
+    if (all(explain == "")) {
+        cat("\n")
+        stop(simpleError("You have not specified what to explain.\n\n"))
+    }
+    if (any(explain == 0)) {
+        cat("\n")
+        stop(simpleError("Negative output configurations cannot be explained.\n\n"))
+    }
+    if (any(include == 0)) {
+        cat("\n")
+        stop(simpleError("Negative output configurations cannot be included in the minimization.\n\n"))
+    }
+    if (length(setdiff(explain, c(1, "C"))) > 0) {
+        cat("\n")
+        stop(simpleError("Only the positive output configurations and/or contradictions can be explained.\n\n"))
+    }
+    if (length(setdiff(include, c("?", "C", ""))) > 0) {
+        cat("\n")
+        stop(simpleError("Only the remainders and/or the contradictions can be included in the minimization.\n\n"))
+    }
+    if (is.element("C", explain) & is.element("C", include)) {
+        cat("\n")
+        stop(simpleError("Contradictions are either explained or included, but not both.\n\n"))
+    }
+    if (!identical(conditions, "")) {
+        if (length(conditions) == 1 & is.character(conditions)) {
+            conditions <- splitstr(conditions)
         }
-        else {
+        if (is.element(outcome, conditions)) {
             cat("\n")
-            stop("Cannot find a solution with only one causal condition.\n\n")
+            stop(simpleError(paste0("\"", outcome, "\" cannot be both outcome _and_ condition.\n\n")))
+        }
+        if (!all(is.element(conditions, names(data)))) {
+            cat("\n")
+            stop(simpleError("The conditions' names are not correct.\n\n"))
         }
     }
-    
-     # if more than 26 conditions (plus one outcome), we cannot use letters
     if (use.letters & ncol(data) > 27) {
         cat("\n")
-        stop("Cannot use letters. There are more than 26 conditions.\n\n")
+        stop(simpleError("Cannot use letters. There are more than 26 conditions.\n\n"))
     }
-    
-    # checking for complete data (without missings)
     if (any(is.na(data))) {
+        checked <- sapply(data, function(x) any(is.na(x)))
         cat("\n")
-        stop("Missing data found; this is not (yet) supported.\n\n")
+        stop(simpleError(paste("Missing values in the data are not allowed. Please check columns:\n",
+             paste(names(checked)[checked], collapse = ", "), "\n\n", sep="")))
     }
 }
-
-
-
 `verify.dir.exp` <-
-function(data, outcome, conditions, dir.exp = c()) {
-    
-    # checking the directional expectations
-    if (is.null(dir.exp)) {
+function(data, outcome, conditions, dir.exp = "") {
+    if (identical(dir.exp, "")) {
         return(dir.exp)
     }
     else {
-        
-        # delc is dir.exp.list.complete
         delc <- vector("list", length = length(conditions))
         names(delc) <- conditions
-        
         for (i in seq(length(delc))) {
-            # sometimes a condition cand have 0, 1 and "-" as values
-            # see RagStr$EBA, which is also treated as a factor by default, in R
-            
             values <- sort(unique(data[, conditions[i]]))
             if (is.factor(values)) {
                 values <- as.character(values)
             }
-            
-            max.value <- values[length(values)]
-            
-            if (max.value != "-") {
-                delc[[i]] <- rep(0, length(seq(0, as.numeric(max.value))))
-                names(delc[[i]]) <- seq(0, as.numeric(max.value))
+            values <- setdiff(values, c("-", "dc", "?"))
+            if (possibleNumeric(values)) {
+                values <- asNumeric(values)
+                if (any(values %% 1 > 0)) { 
+                    max.value <- 1
+                }
+                else {
+                    max.value <- max(values)
+                }
             }
+            else {
+                max.value <- values[length(values)]
+            }
+            delc[[i]] <- rep(0, as.numeric(max.value) + 1)
+            names(delc[[i]]) <- seq(0, as.numeric(max.value))
         }
-        
+        if (length(dir.exp) == 1 & is.character(dir.exp)) {
+            dir.exp <- splitstr(dir.exp)
+        }
         if (length(dir.exp) != length(conditions)) {
             cat("\n")
-            stop("Number of expectations does not match number of conditions.\n\n")
+            stop(simpleError("Number of expectations does not match number of conditions.\n\n"))
         }
-        
-        # del is dir.exp.list
         del <- strsplit(as.character(dir.exp), split=";")
-        
         if (!is.null(names(dir.exp))) {
             if (length(names(dir.exp)) != length(conditions)) {
                 cat("\n")
-                stop("All directional expectations should have names, or none at all.\n\n")
+                stop(simpleError("All directional expectations should have names, or none at all.\n\n"))
             }
             else if (length(setdiff(names(dir.exp), conditions)) > 0) {
                 cat("\n")
-                stop("Incorect names of the directional expectations.\n\n")
+                stop(simpleError("Incorect names of the directional expectations.\n\n"))
             }
             names(del) <- names(dir.exp)
             del <- del[conditions]
@@ -298,23 +290,17 @@ function(data, outcome, conditions, dir.exp = c()) {
         else {
             names(del) <- conditions
         }
-        
         for (i in seq(length(del))) {
-            
-            values <- strsplit(del[[i]], split = "")
-            values <- unlist(lapply(values, function(x) {
-                paste(x[x != " "], collapse = "")
-            }))
-            
+            values <- del[[i]]
             if (all(values %in% c("-", "dc"))) {
-                delc[[i]] <- -1
+                delc[[i]][names(delc[[i]])] <- 0
             }
             else {
                 values <- setdiff(values, c("-", "dc"))
                 if (length(setdiff(values, names(delc[[i]])) > 0)) {
                     cat("\n")
                     errmessage <- paste("Values specified in the directional expectations do not appear in the data, for condition \"", conditions[i], "\".\n\n", sep="")
-                    stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+                    stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
                 }
                 else {
                     delc[[i]][as.character(values)] <- 1
@@ -324,125 +310,149 @@ function(data, outcome, conditions, dir.exp = c()) {
         return(delc)
     }
 }
-
-
-
-
-
 `verify.mqca` <-
-function(data, outcome = "", conditions = c("")) {
-    
-    mvoutcome <- grepl("[{]", outcome) # there is a "{" sign in the outcome names
-    outcome.value <- rep(-1, length(outcome))
-    
+function(allargs) {
+    data <- allargs$input
+    outcome <- splitstr(allargs$outcome)
+    mvoutcome <- grepl("[{]", outcome) 
     if (any(mvoutcome)) {
-        outcome.copy <- outcome
-        
-        outcome.copy <- strsplit(outcome.copy, split = "")
-        outcome.name <- outcome.value <- vector(mode="list", length=length(outcome))
-        
-        for (i in seq(length(outcome.copy))) {
-            if (mvoutcome[i]) {
-                outcome.value[[i]] <- as.numeric(outcome.copy[[i]][which(outcome.copy[[i]] == "{") + 1])
-                outcome.name[[i]] <- paste(outcome.copy[[i]][seq(1, which(outcome.copy[[i]] == "{") - 1)], collapse="")
-            }
-            else {
-                outcome.value[[i]] <- -1
-                outcome.name[[i]] <- outcome[i]
-            }
-        }
-        
-        outcome <- unlist(outcome.name)
-        
-        if (length(intersect(outcome, names(data))) < length(outcome)) {
+        outcome.value <- curlyBrackets(outcome)
+        outcome <- curlyBrackets(outcome, outside = TRUE)
+        if (length(setdiff(outcome, names(data))) > 0) {
             outcome <- setdiff(outcome, names(data))
             cat("\n")
             errmessage <- paste("Outcome(s) not present in the data: \"", paste(outcome, collapse="\", \""), "\".\n\n", sep="")
-            stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+            stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
         }
-        
         for (i in seq(length(outcome))) {
             if (mvoutcome[i]) {
-                if (!any(unique(data[, outcome.name[[i]]]) == outcome.value[[i]])) {
+                mvnot <- setdiff(splitstr(outcome.value[i]), unique(data[, outcome[i]]))
+                if (length(mvnot) > 0) {
                     cat("\n")
-                    errmessage <- paste("The value {", outcome.value[[i]], "} does not exist in the outcome \"", outcome.name[[i]], "\".\n\n", sep="")
-                    stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+                    errmessage <- sprintf("Value(s) %s not found in the outcome \"%s\".\n\n", paste(mvnot, collapse = ","), outcome[i])
+                    stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
                 }
             }
         }
-        
-        outcome.value <- unlist(outcome.value)
     }
     else {
-        
-        if (length(intersect(outcome, names(data))) < length(outcome)) {
+        if (length(setdiff(outcome, names(data))) > 0) {
             outcome <- setdiff(outcome, names(data))
             cat("\n")
             errmessage <- paste("Outcome(s) not present in the data: \"", paste(outcome, collapse="\", \""), "\".\n\n", sep="")
-            stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+            stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
         }
-        
         fuzzy.outcome <- apply(data[, outcome, drop=FALSE], 2, function(x) any(x %% 1 > 0))
-        
-        # Test if outcomes are in fact multi-valent, even if the user did not specify that 
         if (any(!fuzzy.outcome)) {
             outcome.copy <- outcome[!fuzzy.outcome]
-            
             for (i in outcome.copy) {
                 valents <- unique(data[, i])
                 if (!all(valents %in% c(0, 1))) {
                     cat("\n")
                     errmessage <- paste("Please specify the value of outcome variable \"", i, "\" to explain.\n\n", sep = "")
-                    stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+                    stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
                 }
             }
         }
-        
     }
-    
-    if (all(conditions == c(""))) {
+    conditions <- allargs$conditions
+    if (is.null(conditions)) {
         conditions <- names(data)
     }
-    
-    
-    
+    else {
+        conditions <- splitstr(conditions)
+    }
     if (length(setdiff(outcome, conditions)) > 0) {
         outcome <- setdiff(outcome, conditions)
         cat("\n")
         errmessage <- paste("Outcome(s) not present in the conditions' names: \"", paste(outcome, collapse="\", \""), "\".\n\n", sep="")
-        stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+        stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
     }
-    
-    invisible(return(list(mvoutcome = mvoutcome, outcome = outcome, outcome.value = outcome.value, conditions = conditions)))
-    
 }
-
-
-
-
 `verify.inf.test` <- function(inf.test, data) {
     if (all(inf.test != "")) {
         if (inf.test[1] != "binom") {
             cat("\n")
-            stop("For the moment only \"binom\"ial testing for crisp data is allowed.\n\n")
+            stop(simpleError("For the moment only \"binom\"ial testing for crisp data is allowed.\n\n"))
         }
         else {
             fuzzy <- apply(data, 2, function(x) any(x %% 1 > 0))
             if (any(fuzzy)) {
                 cat("\n")
                 errmessage <- "The binomial test only works with crisp data.\n\n"
-                stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+                stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
             }
         }
-        
         if (length(inf.test) > 1) {
             alpha <- as.numeric(inf.test[2])
             if (is.na(alpha) | alpha < 0 | alpha > 1) {
                 cat("\n")
                 errmessage <- "The second value of inf.test should be a number between 0 and 1.\n\n"
-                stop(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep=""))
+                stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
             }
         }
     }
 }
-
+`verify.multivalue` <- function(expression, snames = "", noflevels, data) {
+    if (length(unlist(gregexpr("[{]+", expression))) != length(unlist(gregexpr("[}]+", expression)))) {
+        cat("\n")
+        stop(simpleError("Incorrect expression, opened and closed brackets don't match.\n\n"))
+    }
+    tempexpr <- gsub("[*|,|;|(|)]", "", expression)
+    pp <- unlist(strsplit(tempexpr, split="[+]"))
+    insb <- curlyBrackets(gsub("[*|(|)]", "", expression))
+    tempexpr <- curlyBrackets(tempexpr, outside=TRUE)
+    if (length(insb) != length(tempexpr)) {
+        cat("\n")
+        stop(simpleError("Incorrect expression, some snames don't have brackets.\n\n"))
+    }
+    if (any(grepl("[a-zA-Z]", gsub("[,|;]", "", insb)))) {
+        cat("\n")
+        stop(simpleError("Invalid {multi}values, levels should be numeric.\n\n"))
+    }
+    conds <- sort(unique(toupper(notilde(curlyBrackets(pp, outside = TRUE)))))
+    if (missing(data)) {
+        if (missing(noflevels)) {
+            if (any(hastilde(expression))) {
+                cat("\n")
+                stop(simpleError("Negating a multivalue condition requires the number of levels.\n\n"))
+            }
+        }
+        else {
+            if (identical(snames, "")) {
+                cat("\n")
+                stop(simpleError("Cannot verify the number of levels without the set names.\n\n"))
+            }
+            snames <- splitstr(snames)
+            noflevels <- splitstr(noflevels)
+            if (length(snames) != length(noflevels)) {
+                cat("\n")
+                stop(simpleError("Length of the set names differs from the length of the number of levels.\n\n"))
+            }
+            for (i in seq(length(tempexpr))) {
+                if (!is.element(notilde(tempexpr[i]), snames)) {
+                    cat("\n")
+                    stop(simpleError(sprintf("Condition %s not present in the set names.\n\n", tempexpr[i])))
+                }
+                if (max(asNumeric(splitstr(insb[i]))) > noflevels[match(notilde(tempexpr[i]), snames)] - 1) {
+                    cat("\n")
+                    stop(simpleError(sprintf("Levels outside the number of levels for condition %s.\n\n", tempexpr[i])))
+                }
+            }
+        }
+    }
+    else { 
+        if (identical(snames, "")) {
+            if (length(setdiff(conds, colnames(data))) > 0) {
+                cat("\n")
+                stop(simpleError("Parts of the expression don't match the column names from \"data\" argument.\n\n"))
+            }
+        }
+    }
+    if (!identical(snames, "")) {
+        if (length(setdiff(conds, toupper(splitstr(snames)))) > 0) {
+            cat("\n")
+            stop(simpleError("Parts of the expression don't match the set names from \"snames\" argument.\n\n"))
+        }
+    }
+}
