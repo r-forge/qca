@@ -34,7 +34,7 @@ function(input, noflevels, stop, ...) {
         }
     stop <- ifelse(missing(stop), prod(noflevels), stop)
     result <- lapply(input, function(x) {
-        .Call("findSubsets", x, noflevels - 1, rev(c(1, cumprod(rev(noflevels))))[-1], stop, PACKAGE="QCA")
+        .Call("C_findSubsets", x, noflevels - 1, rev(c(1, cumprod(rev(noflevels))))[-1], stop, PACKAGE = "QCA")
     })
     return(sort(unique(unlist(result))))
 }

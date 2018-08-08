@@ -146,7 +146,7 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
     tt <- condata[uniq, , drop = FALSE]
     rownstt <- sort(line.data)[uniq]
     rownames(tt) <- rownstt
-    ipc <- .Call("truthTable", as.matrix(data[, conditions]), data[, outcome], as.matrix(tt), as.numeric(fuzzy.cc), PACKAGE = "QCA")
+    ipc <- .Call("C_truthTable", as.matrix(data[, conditions]), data[, outcome], as.matrix(tt), as.numeric(fuzzy.cc), PACKAGE = "QCA")
     colnames(ipc) <- rownstt
     minmat <- ipc[seq(4, nrow(ipc)), , drop = FALSE]
     ipc <- ipc[1:3, , drop = FALSE]

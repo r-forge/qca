@@ -28,7 +28,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # include <R.h>
 # include <Rinternals.h>
 # include <R_ext/Rdynload.h>
-SEXP truthTable(SEXP x, SEXP vo, SEXP tt, SEXP fuz) {
+SEXP C_truthTable(SEXP x, SEXP vo, SEXP tt, SEXP fuz) {
     int i, j, k, index;
     double *p_x, *p_inclpri, *p_vo, min, so, sumx, sumpmin, prisum, temp1, temp2;
     int xrows, xcols, ttrows, ncut, *p_tt, *p_fuz;

@@ -31,7 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 # include <Rinternals.h>
 # include <Rmath.h>
 # include <R_ext/Rdynload.h>
-SEXP setDimnames(SEXP tt, SEXP dimnames) {
+SEXP C_setDimnames(SEXP tt, SEXP dimnames) {
     setAttrib(tt, R_DimNamesSymbol, dimnames);  
     return(R_NilValue);
 }
@@ -44,7 +44,7 @@ static R_INLINE Rboolean hasRownames(SEXP matrix) {
 static R_INLINE Rboolean hasColnames(SEXP matrix) {
     return hasDimnames(matrix) ? !Rf_isNull(VECTOR_ELT(getAttrib(matrix, R_DimNamesSymbol), 1)) : FALSE;
 }
-SEXP setColnames(SEXP matrix, SEXP colnames) {
+SEXP C_setColnames(SEXP matrix, SEXP colnames) {
     SEXP dimnames = PROTECT(allocVector(VECSXP, 2));
     SET_VECTOR_ELT(dimnames, 1, colnames);
     if (hasRownames(matrix)) {
@@ -54,7 +54,7 @@ SEXP setColnames(SEXP matrix, SEXP colnames) {
     UNPROTECT(1);
     return(R_NilValue);
 }
-SEXP setRownames(SEXP matrix, SEXP rownames) {
+SEXP C_setRownames(SEXP matrix, SEXP rownames) {
     SEXP dimnames = PROTECT(allocVector(VECSXP, 2));
     SET_VECTOR_ELT(dimnames, 0, rownames);
     if (hasColnames(matrix)) {
@@ -680,7 +680,7 @@ static R_INLINE double consistency(SEXP x, int k, int tempk[], int val[], Rboole
     UNPROTECT(1);
     return(sumxy / sumx);
 }
-SEXP solveChart(SEXP pichart, SEXP allsol, SEXP vdepth) {
+SEXP C_solveChart(SEXP pichart, SEXP allsol, SEXP vdepth) {
     int *p_indmat, *p_temp1, *p_temp2, *p_mintpis, *p_cols;
     SEXP usage, indmat, temp1, temp2, mintpis, cols;
     int *p_pichart = LOGICAL(pichart);
@@ -1070,7 +1070,7 @@ static R_INLINE void sortmat(int *p_matrix, int *p_colindx, int *p_ck, int ncond
         }
     }
 }
-SEXP ccubes(SEXP list) {
+SEXP C_ccubes(SEXP list) {
     int checkmin; 
     SEXP   posmat,    negmat,    pichart,    temp,    indx,    ck,    tempcpy,    result,    pic;
     int *p_posmat, *p_negmat, *p_pichart, *p_temp, *p_indx, *p_ck, *p_tempcpy, *p_result, *p_pic;
@@ -1479,7 +1479,7 @@ SEXP ccubes(SEXP list) {
             }
             else {
                 INTEGER(VECTOR_ELT(list, posdepth))[0] = INTEGER(VECTOR_ELT(list, posdepth))[1];
-                SET_VECTOR_ELT(out, 2, solveChart(pic, VECTOR_ELT(list, posallsol), VECTOR_ELT(list, posdepth)));
+                SET_VECTOR_ELT(out, 2, C_solveChart(pic, VECTOR_ELT(list, posallsol), VECTOR_ELT(list, posdepth)));
             }
         }
         SET_VECTOR_ELT(out, 1, pic = transpose(pic, posrows, foundPI));
@@ -1495,13 +1495,13 @@ SEXP ccubes(SEXP list) {
         return(result);
     }
 }
-SEXP findmin(SEXP pichart) {
+SEXP C_findmin(SEXP pichart) {
     SEXP out = PROTECT(allocVector(INTSXP, 1));
     INTEGER(out)[0] = getmin(pichart, ncols(pichart));
     UNPROTECT(1);
     return(out);
 }
-SEXP getRow(SEXP input) {
+SEXP C_getRow(SEXP input) {
     PROTECT(input);
     SEXP rowno, noflevels, mbase, matrix;
     SEXP usage = PROTECT(allocVector(VECSXP, 4));
@@ -1523,7 +1523,7 @@ SEXP getRow(SEXP input) {
     UNPROTECT(2);
     return(matrix);
 }
-SEXP createMatrix(SEXP input) {
+SEXP C_createMatrix(SEXP input) {
     PROTECT(input);
     SEXP matrix, noflevels, arrange, maxprod;
     SEXP usage = PROTECT(allocVector(VECSXP, 4));
@@ -1556,7 +1556,7 @@ SEXP createMatrix(SEXP input) {
     UNPROTECT(2);
     return(matrix);
 }
-SEXP superSubset(SEXP x, SEXP noflevels, SEXP fuz, SEXP vo,
+SEXP C_superSubset(SEXP x, SEXP noflevels, SEXP fuz, SEXP vo,
                  SEXP nec, SEXP inclcut, SEXP covcut, SEXP depth) {
     SEXP usage = PROTECT(allocVector(VECSXP, 19));
     SET_VECTOR_ELT(usage,  0, x         = coerceVector(x, REALSXP));
@@ -1987,7 +1987,7 @@ SEXP superSubset(SEXP x, SEXP noflevels, SEXP fuz, SEXP vo,
     UNPROTECT(2);
     return(result);
 }
-SEXP QMC(SEXP tt, SEXP noflevels) {
+SEXP C_QMC(SEXP tt, SEXP noflevels) {
     SEXP pimat, tempmat, minimized, copymat, order, cl; 
     int *p_tt, *p_noflevels, *p_pimat, *p_tempmat, *p_minimized, *p_copymat, *p_order,  *p_cl;
     SEXP usage = PROTECT(allocVector(VECSXP, 10));
@@ -2166,7 +2166,7 @@ SEXP QMC(SEXP tt, SEXP noflevels) {
     UNPROTECT(1);
     return(copymat);
 }
-SEXP removeRedundants(SEXP rowno, SEXP noflevels, SEXP mbase) {
+SEXP C_removeRedundants(SEXP rowno, SEXP noflevels, SEXP mbase) {
     int *pointer_next, *pointer_final, *pointer_temp1, *pointer_temp2, *pointer_rowno, *pointer_noflevels, *pointer_mbase;
     int previous, lmbase, ltemp2, lrowno, lmbasei, i, j, k, rn, finalength, lungime, flag2, flag1, templung;
     SEXP next, final, temp1, temp2;
@@ -2265,7 +2265,7 @@ SEXP removeRedundants(SEXP rowno, SEXP noflevels, SEXP mbase) {
         return(final);
     }
 }
-SEXP combinations (SEXP list) {
+SEXP C_combinations(SEXP list) {
     int nconds, k, aloe, zero;
     nconds = INTEGER(VECTOR_ELT(list, 0))[0];
     k = INTEGER(VECTOR_ELT(list, 1))[0];
@@ -2309,4 +2309,76 @@ SEXP combinations (SEXP list) {
     }
     UNPROTECT(1);
     return(out);
+}
+SEXP C_findSubsets(SEXP rowno, SEXP noflevels, SEXP mbase, SEXP max) {
+    int *prowno, *pnoflevels, *pmbase, *pmax, lmbase, lmbasei, i, j, k, lungime, flag, templung, *ptemp1, *ptemp2;
+    SEXP temp1, temp2;
+    SEXP usage = PROTECT(allocVector(VECSXP, 6));
+    SET_VECTOR_ELT(usage, 0, rowno = coerceVector(rowno, INTSXP));
+    SET_VECTOR_ELT(usage, 1, noflevels = coerceVector(noflevels, INTSXP));
+    SET_VECTOR_ELT(usage, 2, mbase = coerceVector(mbase, INTSXP));
+    prowno = INTEGER(rowno);
+    pnoflevels = INTEGER(noflevels);
+    pmbase = INTEGER(mbase);
+    if (max == R_NilValue) {
+        SET_VECTOR_ELT(usage, 3, max = allocVector(INTSXP, 1));
+        pmax = INTEGER(max);
+        pmax[0] = prowno[length(rowno) - 1];
+    }
+    else {
+        SET_VECTOR_ELT(usage, 3, max = coerceVector(max, INTSXP));
+        pmax = INTEGER(max);
+    }
+    SET_VECTOR_ELT(usage, 4, temp1 = allocVector(INTSXP, 1));
+    ptemp1 = INTEGER(temp1);
+    ptemp1[0] = prowno[0];
+    flag = 0;
+    lmbase = length(mbase);
+    templung = 1;
+    for (i = 0; i < lmbase; i++) {
+        lmbasei = lmbase - i - 1;
+        if (div(div(prowno[0] - 1, pmbase[lmbasei]).quot, pnoflevels[lmbasei] + 1).rem == 0) {
+            flag = 1;
+            lungime = templung * (pnoflevels[lmbasei] + 1);
+            SET_VECTOR_ELT(usage, 5, temp2 = allocVector(INTSXP, lungime));
+            ptemp2 = INTEGER(temp2);
+            for (j = 0; j < length(temp1); j++) {
+                ptemp2[j] = ptemp1[j];
+                for (k = 0; k < pnoflevels[lmbasei]; k++) {
+                    ptemp2[j + length(temp1)*(k + 1)] = ptemp1[j] + (k + 1)*pmbase[lmbasei];
+                }
+            }
+            if (i < length(mbase)) {
+                SET_VECTOR_ELT(usage, 4, temp1 = allocVector(INTSXP, lungime));
+                ptemp1 = INTEGER(temp1);
+                for (j = 0; j < lungime; j++) {
+                    ptemp1[j] = ptemp2[j];
+                }
+                templung = lungime;
+            }
+        }
+    }
+    if (flag == 1) {
+        templung = 0;
+        for (i = 0; i < lungime; i++) {
+            if (ptemp2[i] < (pmax[0] + 1)) {
+                templung += 1;
+            }
+        }
+        SET_VECTOR_ELT(usage, 4, temp1 = allocVector(INTSXP, templung - 1)); 
+        ptemp1 = INTEGER(temp1);
+        j = 0;
+        for (i = 1; i < lungime; i++) {
+            if (ptemp2[i] < pmax[0] + 1) {
+                ptemp1[j] = ptemp2[i];
+                j += 1;
+            }
+        }
+    }
+    else {
+        UNPROTECT(1);
+        return(R_NilValue);
+    }
+    UNPROTECT(1);
+    return(temp1);
 }

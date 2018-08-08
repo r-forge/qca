@@ -83,7 +83,7 @@ function(noflevels, ...) {
             }
         }
     }
-    return(.Call("createMatrix", tosend, PACKAGE = "QCA"))
+    return(.Call("C_createMatrix", tosend, PACKAGE = "QCA"))
     pwr <- unique(noflevels)
     if (length(pwr) == 1) {
         create <- function(idx) {

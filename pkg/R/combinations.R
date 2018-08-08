@@ -44,7 +44,7 @@ combinations <- function (n, k, aloe = 0, zero = FALSE, inC = FALSE) {
     k <- as.integer(k)
     zero <- as.integer(zero)
     if (inC) {
-        .Call("combinations", list(n = n, k = k, aloe = aloe, zero = zero), PACKAGE = "QCA")
+        .Call("C_combinations", list(n = n, k = k, aloe = aloe, zero = zero), PACKAGE = "QCA")
     }
     else {
         aloe <- as.integer(aloe)

@@ -297,12 +297,12 @@ function(input, include = "", exclude = NULL, dir.exp = "",
         incl.rem <- TRUE
         method <- "CCubes"
     }
-    expressions <- .Call("QMC", expressions, noflevels, PACKAGE = "QCA")
+    expressions <- .Call("C_QMC", expressions, noflevels, PACKAGE = "QCA")
     c.sol <- p.sol <- getSolution(expressions=expressions, mv=mv, use.tilde=use.tilde, collapse=collapse, inputt=inputt, row.dom=row.dom, initial=rownms, all.sol=all.sol, indata=indata, excl.matrix=excl.matrix, ...=...)
     if (incl.rem) {
         pos.matrix <- inputt
         if (method == "QMC") {
-            expressions <- .Call("QMC", createMatrix(noflevels)[-output$negatives, , drop = FALSE] + 1, noflevels, PACKAGE = "QCA")
+            expressions <- .Call("C_QMC", createMatrix(noflevels)[-output$negatives, , drop = FALSE] + 1, noflevels, PACKAGE = "QCA")
             setColnames(expressions, colnames(inputt))
         }
         else if (method == "eQMC") {
@@ -312,7 +312,7 @@ function(input, include = "", exclude = NULL, dir.exp = "",
             else {
                 expressions <- sort.int(findSupersets(pos.matrix, noflevels + 1))
             }
-            expressions <- .Call("removeRedundants", expressions, noflevels, mbaseplus, PACKAGE = "QCA")
+            expressions <- .Call("C_removeRedundants", expressions, noflevels, mbaseplus, PACKAGE = "QCA")
             expressions <- sortExpressions(getRow(expressions, noflevels + 1))
             setColnames(expressions, colnames(inputt))
         }
@@ -327,7 +327,7 @@ function(input, include = "", exclude = NULL, dir.exp = "",
             if (sol.cons > 0 & all.sol & sol.depth == 0) {
                 sol.depth <- 5
             }
-            expressions <- .Call("ccubes", list(
+            expressions <- .Call("C_ccubes", list(
                             tt = cbind(rbind(pos.matrix, neg.matrix) - 1, rep(c(1, 0), c(nrow(pos.matrix), nrow(neg.matrix)))),
                             pi.cons = pi.cons, depth = as.integer(c(pi.depth, sol.depth)),
                             min.pin = min.pin, row.dom = row.dom, all.sol = all.sol, sol.cons = sol.cons,
@@ -522,7 +522,7 @@ function(input, include = "", exclude = NULL, dir.exp = "",
                             }
                         }
                         pos.matrix.i.sol <- pos.matrix.i.sol[!tomit, , drop=FALSE]
-                        expressions <- .Call("QMC", pos.matrix.i.sol, noflevels, colnames(pos.matrix.i.sol))
+                        expressions <- .Call("C_QMC", pos.matrix.i.sol, noflevels, PACKAGE = "QCA") 
                         i.sol.index <- getSolution(expressions=expressions, mv=mv, use.tilde=use.tilde, collapse=collapse, inputt=inputt, row.dom=row.dom, initial=rownms, all.sol=all.sol, indata=indata, ...=...)
                         i.sol.index$expressions <- i.sol.index$expressions[rowSums(i.sol.index$mtrx) > 0, , drop=FALSE]
                         if (nrow(i.sol[[index]]$EC) > 0) {

@@ -354,8 +354,12 @@ function isNumeric0(n) {
         return !/^(NaN|-?Infinity)$/.test(+n);
     }
 }
-function isNumeric(obj) {   
-    if (obj.length == 0) {
+function isNumeric(obj) {
+    if (missing(obj)) {
+        return false;
+    } else if (obj === null) { 
+        return false;
+    } else if (obj.length == 0) {
         return false;
     }
     else {
@@ -1054,6 +1058,13 @@ function duplicates(arr) {
         }
     }
     return out;
+}
+function decToBin(x) {
+    if (isNumeric(x)) {
+        return((_$=($,_="")=>$?_$($>>1,($&1)+_):_)(x));
+    } else {
+        return("");
+    }
 }
 function getScrollBarWidth() {
     var inner = document.createElement('p');

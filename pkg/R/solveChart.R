@@ -49,7 +49,7 @@ function(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...) {
     }
     if (all(dim(chart) > 1)) {
         if (is.null(depth)) depth <- 0L
-        output <- .Call("solveChart", t(matrix(as.logical(chart), nrow = nrow(chart))), all.sol, as.integer(depth), PACKAGE = "QCA")
+        output <- .Call("C_solveChart", t(matrix(as.logical(chart), nrow = nrow(chart))), all.sol, as.integer(depth), PACKAGE = "QCA")
         output[output == 0] <- NA
     }
     else {
