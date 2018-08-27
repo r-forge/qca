@@ -162,9 +162,8 @@
     if (missing(noflevels)) {
         noflevels <- apply(expressions, 2, max)
     }
-    expressions <- qmc(expressions, noflevels)
-    expressions <- expressions[order(apply(expressions, 1, function(x) sum(x > 0))), , drop = FALSE]
-    expressions <- writePrimeimp(expressions, mv = multivalue, use.tilde = use.tilde)
+    expressions <- writePrimeimp(sortExpressions(qmc(expressions, noflevels)),
+                                 mv = multivalue, use.tilde = use.tilde)
     if (sl) {
         expressions <- gsub("[*]", "", expressions)
     }

@@ -106,6 +106,7 @@
 \alias{writeSolution}
 \alias{prettyString}
 \alias{rowDominance}
+\alias{sortExpressions}
 \alias{sortVector}
 \alias{sortMatrix}
 \alias{writePrimeimp}
