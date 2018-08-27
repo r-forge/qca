@@ -28,7 +28,7 @@ Description: An extensive set of functions to perform Qualitative Comparative An
              minimal causal combination that explains a given phenomenon.
 License: GPL (>= 2)
 NeedsCompilation: yes
-Packaged: 2018-08-27 18:19:15 UTC; dusadrian
+Packaged: 2018-08-27 20:01:07 UTC; dusadrian
 Author: Adrian Dusa [aut, cre, cph],
   jQuery Foundation [cph] (jQuery library and jQuery UI library),
   jQuery contributors [ctb, cph] (jQuery library; authors listed in

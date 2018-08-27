@@ -1,3 +1,7 @@
+Version 3.4
+    o Improved: function sop() now able to solve further simplifications
+      such as "A + ~AB" into "A + B"
+
 Version 3.3
     o New: function calibrate() now accepts method = "TFR" to calibrate
       ordinal values using the Totally Fuzzy and Relative method.

@@ -55,37 +55,36 @@
         }
         return(NULL)
     }
-    qmc <- function(implicants, noflevels) {
-        minimized <- logical(nrow(implicants))
-        if (nrow(implicants) > 1) {
-            for (i in seq(nrow(implicants) - 1)) {
-                if (!minimized[i]) {
-                    for (j in seq(i + 1, nrow(implicants))) {
-                        if (!minimized[j]) {
-                            subsetrow <- checksubset(implicants[c(i, j), , drop = FALSE])
-                            if (!is.null(subsetrow)) {
-                                minimized[c(i, j)[subsetrow]] <- TRUE
-                            }
-                        }
-                    }
-                }
-            }
-            implicants <- implicants[!minimized, , drop = FALSE]
+    qmc <- function(implicants, noflevels, nrowexp) {
+        if (nrowexp == 1) {
+            return(implicants[1, , drop = FALSE])
         }
-        if (nrow(implicants) == 1) {
-            return(implicants)
+        minimized <- rep(TRUE, nrow(implicants))
+        first <- nrow(implicants) > nrowexp
+        if (first) {
+            minimized[seq(nrowexp)] <- FALSE
         }
-        minimized <- TRUE
+        else {
+            minimized <- TRUE
+        }
         while (any(minimized) & nrow(implicants) > 1) {
-            minimized <- logical(nrow(implicants))
+            if (first) {
+                irows <- seq(nrowexp)
+            }
+            else {
+                minimized <- logical(nrow(implicants))
+                irows <- seq(nrow(implicants) - 1)
+            }
             tbc <- matrix(nrow = 0, ncol = 2)
-            for (i in seq(nrow(implicants) - 1)) {
+            for (i in irows) {
                 for (j in seq(i + 1, nrow(implicants))) {
                     if (sum(implicants[i, ] != implicants[j, ]) == 1) {
                         tbc <- rbind(tbc, c(i, j))
                     }
                 }
             }
+            first <- FALSE
+            result <- NULL
             if (nrow(tbc) > 0) {
                 differences <- t(apply(tbc, 1, function(idx) implicants[idx[1], ] != implicants[idx[2], ]))
                 result <- matrix(nrow = 0, ncol = ncol(differences))
@@ -101,7 +100,10 @@
                 }
             }
             if (sum(minimized) > 0) {
-                implicants <- rbind(implicants[!minimized, ], unique(result))
+                implicants <- implicants[!minimized, ]
+                if (!is.null(result)) {
+                    implicants <- rbind(implicants, unique(result))
+                }
             }
         }
         return(implicants)
@@ -162,7 +164,34 @@
     if (missing(noflevels)) {
         noflevels <- apply(expressions, 2, max)
     }
-    expressions <- writePrimeimp(sortExpressions(qmc(expressions, noflevels)),
+    nrowexp <- nrow(expressions)
+    for (i in seq(nrow(expressions))) {
+        x <- expressions[i, ]
+        if (sum(xzero <- x == 0 & noflevels != 0)) {
+            rows <- prod(noflevels[xzero])
+            x <- matrix(rep(x, rows), nrow = rows, byrow = TRUE)
+            x[, xzero] <- createMatrix(noflevels[xzero]) + 1
+            expressions <- rbind(expressions, x)
+        }
+    }
+    expressions <- qmc(expressions, noflevels, nrowexp)
+    if (nrow(expressions) > 1) {
+        minimized <- logical(nrow(expressions))
+        for (i in seq(nrow(expressions) - 1)) {
+            if (!minimized[i]) {
+                for (j in seq(i + 1, nrow(expressions))) {
+                    if (!minimized[j]) {
+                        subsetrow <- checksubset(expressions[c(i, j), , drop = FALSE])
+                        if (!is.null(subsetrow)) {
+                            minimized[c(i, j)[subsetrow]] <- TRUE
+                        }
+                    }
+                }
+            }
+        }
+        expressions <- expressions[!minimized, , drop = FALSE]
+    }
+    expressions <- writePrimeimp(sortExpressions(expressions),
                                  mv = multivalue, use.tilde = use.tilde)
     if (sl) {
         expressions <- gsub("[*]", "", expressions)
