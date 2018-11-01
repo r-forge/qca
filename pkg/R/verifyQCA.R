@@ -244,66 +244,88 @@ function(data, outcome, conditions, dir.exp = "") {
         return(dir.exp)
     }
     else {
-        delc <- vector("list", length = length(conditions))
-        names(delc) <- conditions
-        for (i in seq(length(delc))) {
+        delc <- list()
+        baselist <- vector(mode = "list", length = length(conditions))
+        names(baselist) <- conditions
+        for (i in seq(length(conditions))) {
             values <- sort(unique(data[, conditions[i]]))
             if (is.factor(values)) {
                 values <- as.character(values)
             }
             values <- setdiff(values, c("-", "dc", "?"))
-            if (possibleNumeric(values)) {
-                values <- asNumeric(values)
-                if (any(values %% 1 > 0)) { 
-                    max.value <- 1
-                }
-                else {
-                    max.value <- max(values)
-                }
+            if (!possibleNumeric(values)) {
+                cat("\n")
+                stop(simpleError("Data contains non-numerical values.\n\n"))
             }
-            else {
-                max.value <- values[length(values)]
-            }
-            delc[[i]] <- rep(0, as.numeric(max.value) + 1)
-            names(delc[[i]]) <- seq(0, as.numeric(max.value))
+            values <- asNumeric(values)
+            max.value <- ifelse(any(values %% 1 > 0), 1, max(values))
+            baselist[[i]] <- logical(max.value + 1)
         }
         if (length(dir.exp) == 1 & is.character(dir.exp)) {
             dir.exp <- splitstr(dir.exp)
         }
-        if (length(dir.exp) != length(conditions)) {
-            cat("\n")
-            stop(simpleError("Number of expectations does not match number of conditions.\n\n"))
-        }
-        del <- strsplit(as.character(dir.exp), split=";")
-        if (!is.null(names(dir.exp))) {
-            if (length(names(dir.exp)) != length(conditions)) {
+        oldway <- possibleNumeric(unlist(strsplit(gsub("-|;", "", dir.exp), split = "")))
+        if (oldway) {
+            delc$IDE <- baselist
+            if (length(dir.exp) != length(conditions)) {
                 cat("\n")
-                stop(simpleError("All directional expectations should have names, or none at all.\n\n"))
+                stop(simpleError("Number of expectations does not match number of conditions.\n\n"))
             }
-            else if (length(setdiff(names(dir.exp), conditions)) > 0) {
-                cat("\n")
-                stop(simpleError("Incorect names of the directional expectations.\n\n"))
-            }
-            names(del) <- names(dir.exp)
-            del <- del[conditions]
-        }
-        else {
-            names(del) <- conditions
-        }
-        for (i in seq(length(del))) {
-            values <- del[[i]]
-            if (all(values %in% c("-", "dc"))) {
-                delc[[i]][names(delc[[i]])] <- 0
+            del <- strsplit(as.character(dir.exp), split = ";")
+            if (is.null(names(dir.exp))) {
+                names(del) <- conditions
             }
             else {
-                values <- setdiff(values, c("-", "dc"))
-                if (length(setdiff(values, names(delc[[i]])) > 0)) {
+                if (length(names(dir.exp)) != length(conditions)) {
                     cat("\n")
-                    errmessage <- paste("Values specified in the directional expectations do not appear in the data, for condition \"", conditions[i], "\".\n\n", sep="")
-                    stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
+                    stop(simpleError("All directional expectations should have names, or none at all.\n\n"))
                 }
-                else {
-                    delc[[i]][as.character(values)] <- 1
+                else if (length(setdiff(names(dir.exp), conditions)) > 0) {
+                    cat("\n")
+                    stop(simpleError("Incorect names of the directional expectations.\n\n"))
+                }
+                names(del) <- names(dir.exp)
+                del <- del[conditions]
+            }
+            for (i in seq(length(del))) {
+                values <- del[[i]]
+                if (!all(is.element(values, c("-", "dc")))) {
+                    values <- asNumeric(setdiff(values, c("-", "dc")))
+                    if (length(setdiff(values, seq(length(delc$IDE[[i]])) - 1) > 0)) {
+                        cat("\n")
+                        errmessage <- paste("Values specified in the directional expectations do not appear in the data, for condition \"", conditions[i], "\".\n\n", sep="")
+                        stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
+                    }
+                    else {
+                        delc$IDE[[i]][values + 1] <- TRUE
+                    }
+                }
+            }
+            return(delc)
+        }
+        else {
+            noflevels <- getInfo(data, conditions, outcome)$noflevels
+            dem <- translate(sop(paste(dir.exp, collapse = "+"), snames = conditions, noflevels = noflevels), snames = conditions, noflevels = noflevels)
+            checkdem <- unname(apply(dem, 1, function(x) sum(x >= 0)))
+            ide <- which(checkdem == 1) 
+            cde <- which(checkdem > 1) 
+            if (length(ide) > 0) {
+                delc$IDE <- baselist
+                for (i in seq(length(ide))) {
+                    demi <- asNumeric(dem[ide[i], ])
+                    wdem <- which(demi >= 0)
+                    delc$IDE[[wdem]][demi[wdem] + 1] <- TRUE
+                }
+            }
+            if (length(cde) > 0) {
+                delc$CDE <- list()
+                for (i in seq(length(cde))) {
+                    delc$CDE[[i]] <- baselist
+                    demi <- asNumeric(dem[cde[i], ])
+                    wdem <- which(demi >= 0)
+                    for (j in seq(length(wdem))) {
+                        delc$CDE[[i]][[wdem[j]]][demi[wdem[j]] + 1] <- TRUE
+                    }
                 }
             }
         }

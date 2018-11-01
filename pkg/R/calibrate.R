@@ -27,10 +27,10 @@
 function (x, type = "fuzzy", method = "direct", thresholds = NA,
           logistic = TRUE, idm = 0.95, ecdf = FALSE, below = 1, above = 1, ...) {
     other.args <- list(...)
-    if ("q" %in% names(other.args)) {
+    if (is.element("q", names(other.args))) {
         above <- other.args$q
     }
-    if ("p" %in% names(other.args)) {
+    if (is.element("p", names(other.args))) {
         below <- other.args$p
     }
     if (possibleNumeric(x)) {
@@ -40,11 +40,11 @@ function (x, type = "fuzzy", method = "direct", thresholds = NA,
         cat("\n")
         stop(simpleError("x is not numeric.\n\n"))
     }
-    if (!(type %in% c("crisp", "fuzzy"))) {
+    if (!is.element(type, c("crisp", "fuzzy"))) {
         cat("\n")
         stop(simpleError("Unknown calibration type.\n\n"))
     }
-    if (!(method %in% c("direct", "indirect", "TFR"))) {
+    if (!is.element(method, c("direct", "indirect", "TFR"))) {
         cat("\n")
         stop(simpleError("Unknown calibration method.\n\n"))
     }
@@ -100,7 +100,7 @@ function (x, type = "fuzzy", method = "direct", thresholds = NA,
             }
             if (lth == 3) {
                 if (!is.null(names(thresholds))) {
-                    if (length(unique(nth)) == sum(nth %in% c("e", "c", "i"))) {
+                    if (length(unique(nth)) == sum(is.element(nth, c("e", "c", "i")))) {
                         thresholds <- thresholds[match(c("e", "c", "i"), nth)]
                     }
                 }
@@ -184,7 +184,7 @@ function (x, type = "fuzzy", method = "direct", thresholds = NA,
             }
             else { 
                 if (!is.null(nth)) {
-                    if (length(unique(nth)) == sum(nth %in% c("e1", "c1", "i1", "i2", "c2", "e2"))) {
+                    if (length(unique(nth)) == sum(is.element(nth, c("e1", "c1", "i1", "i2", "c2", "e2")))) {
                         thresholds <- thresholds[match(c("e1", "c1", "i1", "i2", "c2", "e2"), nth)]
                     }
                 }

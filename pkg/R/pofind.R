@@ -47,6 +47,10 @@ function(data, outcome = "", conditions = "", relation = "necessity",
         }
     }
     colnames(data) <- toupper(colnames(data))
+    if (!is.element(outcome, c(tolower(outcome), toupper(outcome)))) {
+        cat("\n")
+        stop(simpleError("The outcome name should not contain both lower and upper case letters.\n\n"))
+    }
     origoutcome <- outcome
     outcome <- toupper(notilde(curlyBrackets(outcome, outside = TRUE)))
     if (!is.element(outcome, colnames(data))) {
@@ -64,11 +68,23 @@ function(data, outcome = "", conditions = "", relation = "necessity",
         }
     }
     data <- data[, c(conditions, outcome)]
-    negconditions <- tolower(conditions)
-    if (use.tilde) {
-        negconditions <- paste("~", conditions, sep = "")
+    noflevels <- getLevels(data[, conditions, drop = FALSE])
+    if (any(noflevels > 2)) { 
+        expression <- paste(unlist(lapply(seq(length(conditions)), function(x) {
+            values <- sort(unique(data[, conditions[x]]))
+            return(paste(conditions[x], "{", values, "}", sep = ""))
+        })), collapse = "+")
     }
-    pofargs <- list(setms = paste(c(conditions, negconditions), collapse = "+"),
+    else {
+        if (use.tilde) {
+            negconditions <- paste("~", conditions, sep = "")
+        }
+        else {
+            negconditions <- tolower(conditions)
+        }
+        expression <- paste(negconditions, conditions, sep = "+", collapse = "+")
+    }
+    pofargs <- list(setms = expression,
                     outcome = origoutcome,
                     data = data,
                     relation = relation,

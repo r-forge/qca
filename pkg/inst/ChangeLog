@@ -1,10 +1,25 @@
 Version 3.4
+    o New: function findRows() gains a new three dots argument "..." to
+      allow passing a combination of cutoff values to function truthTable()
+      when negating the outcome
+    o New: function truthTable() gains a new argument called "pri.cut"
+    o Improved: function superSubset() gives a better error message when
+      no combinations are left given all cutoff values, including ron.cut and
+      pri.cut (thanks to Carsten Schneider for the suggestions)
     o Improved: function sop() now able to solve further simplifications
-      such as "A + ~AB" into "A + B"
-
+      such as "A + ~AB" into "A + B" (via "A + AB + ~AB")
+    o Improved: uniform QMC solutions from all minimization methods, with
+      no negative configurations, and including remainders
+    o Improved: function pofind() now accepts multivalue data
+      (thanks to Hanieh Moshki for the suggestion)
+    o Fixed: bug in printing the cases, when they contain multi-byte
+      characters (thanks to Stefan Verweij for the report)
+    o Changed: all C level functions are now renamed using a "C_" prefix,
+      to avoid a namespace overlap with the main R functions
+    
 Version 3.3
     o New: function calibrate() now accepts method = "TFR" to calibrate
-      ordinal values using the Totally Fuzzy and Relative method.
+      ordinal values using the Totally Fuzzy and Relative method
     o Improved: relation between Include and Exclude switches in the
       graphical user interface
     o Improved: the functions sop() and factorize() now try harder to
@@ -16,11 +31,11 @@ Version 3.3
     o Fixed: error in the GUI, when exporting a dataset
       (thanks to Ranajoy Choudhury for the report)
     o Changed: argument "tilde" in function factorize() renamed to
-      "use.tilde", making it uniform accross functions.
+      "use.tilde", making it uniform accross functions
     o Changed: relaxed the error about the 0.5 values in the fuzzy data
-      from the truthTable() function, to a warning.
+      from the truthTable() function, to a warning
     o Updated: the latest versions of the jQuery and jQuery-UI in the
-      graphical user interface.
+      graphical user interface
     
 Version 3.2
     o New: dramatically improved function to solve the prime implicants
@@ -248,8 +263,8 @@ Version 2.2
       is also named "PRI" (for example the Porter data)
 
 Version 2.1
-    o New: function translate() for an DNF expression
-    o New: function compute() for an DNF expression, using translate()
+    o New: function translate() for a SOP expression
+    o New: function compute() for a SOP expression, using translate()
       (thanks to Jirka Lewandowski for suggesting both functions)
     o New: function retention() for calculating the retention probability of a csQCA
       solution, in different perturbation scenarios
@@ -267,7 +282,7 @@ Version 2.1
       faster for very complex inputs and producing more accurate results; it also
       automatically detects the product split, if a "*"
     o Improved: deMorgan() can also return products of sums
-    o Improved: pof() function now accepts a DNF expression, in addition to current
+    o Improved: pof() function now accepts a SOP expression, in addition to current
       functionality
     
 Version 2.0

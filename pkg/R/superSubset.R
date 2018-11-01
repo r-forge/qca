@@ -140,7 +140,7 @@ function(data, outcome = "", conditions = "", relation = "necessity", incl.cut =
         lexprnec <- nrow(CMatrix[[2]])
         if (lexprnec + lexpressions == 0) {
             cat("\n")
-            stop(simpleError(paste("\nThere are no combinations with incl.cut = ", round(incl.cut, 3), " and cov.cut = ", round(cov.cut, 3), "\n\n", sep="")))
+            stop(simpleError(paste("\nThere are no configurations, using these cutoff values.\n\n", sep="")))
         }
         if (lexprnec > 0) {
             result.matrix2 <- CMatrix[[4]]

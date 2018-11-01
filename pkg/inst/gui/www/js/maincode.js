@@ -1673,6 +1673,7 @@ function print_cols(dialog, identifier, options) {
                                         if (dialog == "load") {
                                             var former = commobj[dialog][identifier];
                                             commobj[dialog][identifier] = this.name;
+                                            papers["load"]["title"].clear();
                                             if (identifier == "package") {
                                                 if (former != this.name) {
                                                     commobj.load.pkgdata = "";
@@ -1682,7 +1683,6 @@ function print_cols(dialog, identifier, options) {
                                                 refresh_cols(dialog);
                                             }
                                             else { 
-                                                papers["load"]["title"].clear();
                                                 var text = packages[commobj.load.package][commobj.load.pkgdata].split(" ");
                                                 var rows = 0;
                                                 var rowtext = "";
@@ -1822,13 +1822,13 @@ function strwrap(str, width, prefix, html) {
     return (str.replace(/£|§|∞|±|≠/g, function(x) {return crev[x]}));
 }
 function getTextHeight(text, width) {
-    input2 = document.createElement("textarea");
+    let input2 = document.createElement("textarea");
     text = strwrap(text, width, "", false);
     input2.value = text;
     input2.setAttribute("style", getStyle(fresh = true));
     input2.id = "txtarea2";
     $("#command").append(input2);
-    var iheight = $("#txtarea2")[0].scrollHeight;
+    let iheight = $("#txtarea2")[0].scrollHeight;
     $("#txtarea2").remove();
     return(iheight);
 }
@@ -2138,7 +2138,7 @@ function update_data() {
                         .attr({fill: "#ffffff", stroke: "none"});
                         sat(papers["data_editor"]["body"].text(5 + 70*(coords.mouseX + coords.Xshift), 10 + 20*(coords.mouseY + coords.Yshift), tocompare));
                         activeSquare();
-                        string_command = dataset + "[\"" + info["data"][dataset].rownames[coords.mouseY + coords.Yshift] + "\", \"" + info["data"][dataset].colnames[coords.mX + coords.Xshift] + "\"] <- " + tocompare;
+                        string_command = dataset + "[\"" + info["data"][dataset].rownames[coords.mouseY + coords.Yshift] + "\", \"" + info["data"][dataset].colnames[coords.mouseX + coords.Xshift] + "\"] <- " + tocompare;
                         Rcommand.command = string_command; 
                         talkToR();
                     }
@@ -7209,7 +7209,7 @@ $("#result_main").append("<span style='color:#932192'>" + "> " + "</span>");
 $("#result_main").append("<span style='color:blue'>library(QCA)</span><br>");
 $("#result_main").append("<span style='color:red'>" + 
     "To cite this package in publications, please use:<br><br>" + 
-    "  Dușa, Adrian (2018) QCA with R. A Comprehensive Resource.<br>".split(" ").join("&nbsp;") + 
+    "  Dușa, Adrian (2019) QCA with R. A Comprehensive Resource.<br>".split(" ").join("&nbsp;") + 
     "  Springer International Publishing.<br><br>".split(" ").join("&nbsp;"))
 createCommandPromptInRconsole();
 var keys = {

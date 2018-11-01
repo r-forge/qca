@@ -27,8 +27,8 @@
 function(string.vector, string.width = 80, repeat.space = 5, separator = ",", sufnec = "",
          outcome = "", cases = FALSE) {
     if (length(string.vector) == 1) {
-        if (nchar(paste(string.vector, " ", sufnec, " ", outcome, sep="")) >= string.width) {
-            string.vector <- unlist(strsplit(string.vector, split = paste(" \\", separator, " ", sep="")))
+        if (nchar(encodeString(paste(string.vector, " ", sufnec, " ", outcome, sep=""))) >= string.width) {
+            string.vector <- unlist(strsplit(string.vector, split = paste(" \\", separator, " ", sep = ""), useBytes = TRUE))
         }
     }
     string <- string.vector[1]
@@ -36,7 +36,7 @@ function(string.vector, string.width = 80, repeat.space = 5, separator = ",", su
         startpoint <- 1
         for (j in seq(2, length(string.vector) + 1)) {
             if (j <= length(string.vector)) {
-                if (nchar(paste(string.vector[seq(startpoint, j - ifelse(separator == ";", 1, 0))], collapse = paste(ifelse(separator == ";", "", " "), separator, " ", sep=""))) >= string.width) {
+                if (nchar(encodeString(paste(string.vector[seq(startpoint, j - ifelse(separator == ";", 1, 0))], collapse = paste(ifelse(separator == ";", "", " "), separator, " ", sep="")))) >= string.width) {
                         string <- paste(paste(string, ifelse(separator == ";", "", " "), separator, "\n", sep = ""), 
                                         paste(rep(" ", repeat.space), collapse=""),
                                         string.vector[j], sep="")
@@ -49,7 +49,7 @@ function(string.vector, string.width = 80, repeat.space = 5, separator = ",", su
             else {
                 if (outcome != "") {
                     last.part <- paste(paste(string.vector[seq(startpoint, j - 1)], collapse = paste(ifelse(separator == ";", "", " "), separator, " ", sep="")), sep="")
-                    if (nchar(paste(last.part, " ", sufnec, " ", outcome, sep = "")) >= string.width) {
+                    if (nchar(encodeString(paste(last.part, " ", sufnec, " ", outcome, sep = ""))) >= string.width) {
                         string <- paste(paste(string, "\n", sep=""),
                                   paste(rep(" ", repeat.space), collapse=""),
                                   sufnec, " ", outcome, sep = "")

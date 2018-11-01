@@ -41,6 +41,13 @@ function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol
         }
         expressions <- expressions[[1]]
     }
+    else if (is.matrix(expressions)) { 
+        if (nrow(expressions) == 1 & identical(unique(as.vector(expressions)), 0L)) {
+            if (enter) cat("\n")
+            stop(simpleError(paste0("All truth table configurations are used, all conditions are minimized.\n",
+                   "       Please check the truth table.", ifelse(enter, "\n\n", ""))))
+        }
+    }
     if (FALSE) {
     if (!missing(indata)) {
         hastime <- logical(ncol(expressions))
@@ -77,10 +84,9 @@ function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol
         if (row.dom & is.null(sol.matrix)) {
             reduced.rows <- rowDominance(mtrx)
             if (length(reduced.rows) > 0) {
-                reduced$mtrx <- mtrx[reduced.rows, , drop=FALSE]
-                reduced$expressions <- expressions[reduced.rows, , drop=FALSE]
+                reduced$mtrx <- mtrx[reduced.rows, , drop = FALSE]
+                reduced$expressions <- expressions[reduced.rows, , drop = FALSE]
             }
-            sol.matrix <- NULL 
         }
         mtrx <- reduced$mtrx
         setColnames(mtrx, initial)
@@ -88,17 +94,19 @@ function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol
             if (nrow(mtrx) > 150 & nrow(mtrx) * ncol(mtrx) > 1500) {
                 message(sprintf("Starting to search all possible solutions in a PI chart with %d rows and %d columns.\nThis will take some time...", nrow(mtrx), ncol(mtrx)))
             }
-            sol.matrix <- solveChart(mtrx, all.sol = all.sol, ...=...)
+            sol.matrix <- solveChart(mtrx, all.sol = all.sol, ... = ...)
         }
         tokeep <- sort(unique(as.vector(unique(sol.matrix))))
         all.PIs <- rownames(mtrx)[tokeep]
+        solm <- sol.matrix
         sol.matrix <- matrix(rownames(mtrx)[sol.matrix], nrow = nrow(sol.matrix))
-        reduced$expressions <- reduced$expressions[tokeep, , drop=FALSE]
+        reduced$expressions <- reduced$expressions[tokeep, , drop = FALSE]
         solution.list <- writeSolution(sol.matrix, mtrx)
     }
     else {
         all.PIs <- NA
         solution.list <- NA
+        solm <- NA
     }
-    return(list(mtrx=mtrx, reduced=reduced, expressions=expressions, all.PIs=all.PIs, solution.list=solution.list))
+    return(list(expressions=expressions, mtrx=mtrx, reduced=reduced, all.PIs=all.PIs, solution.list=solution.list, sol.matrix=solm))
 }

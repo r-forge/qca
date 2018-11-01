@@ -11,9 +11,9 @@ assign cases to the vector space corners (the truth table rows).
 }
 
 \usage{
-truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
-           complete = FALSE, use.letters = FALSE, show.cases = FALSE,
-           dcc = FALSE, sort.by = "", inf.test = "", ...)
+truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut = 0,
+           complete = FALSE, use.letters = FALSE, show.cases = FALSE, dcc = FALSE,
+           sort.by = "", inf.test = "", ...)
 }
 
 \arguments{
@@ -25,6 +25,8 @@ truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
         output, or a vector of length 2, the second for the absence of the output.}
   \item{n.cut}{The minimum number of cases under which a truth table row is 
         declared as a remainder.}
+  \item{pri.cut}{The minimal score for the \bold{\code{PRI}} - proportional reduction in
+        inconsistency, under which a truth table row is declared as a remainder.}
   \item{complete}{Logical, print complete truth table.}
   \item{use.letters}{Logical, use letters instead of causal conditions' names.}
   \item{show.cases}{Logical, print case names.}
@@ -110,7 +112,8 @@ Using these two cutoffs, the observed combinations are coded with:
 }
 
 The argument \bold{\code{n.cut}} specifies the frequency threshold under which a truth
-table row is coded as a remainder, irrespective of its inclusion score.
+table row is coded as a remainder, irrespective of its inclusion score. The sample
+happens with the \bold{\code{pri.cut}}, that establishes a minimal cutoff for the PRI.
 
 When argument \bold{\code{show.cases}} is set to \bold{\code{TRUE}}, the case names will be
 printed at their corresponding row in the truth table. The resulting object always contains

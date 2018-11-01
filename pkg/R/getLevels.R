@@ -23,19 +23,12 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-.onAttach <- function(...) {
-    msg <- paste("  Dusa, Adrian (2019) QCA with R. A Comprehensive Resource.",
-                 "  Springer International Publishing.", sep="\n")
-    msg <- paste(msg, "\n\nTo run the graphical user interface, use: runGUI()\n", sep="")
-    if (!grepl("there is no package called", tryCatch(find.package("QCApro"), error = function(e) e))) {
-        msg <- paste(msg, "\nNOTE: Found multiple functions and object type conflicts in the fork package QCApro.",
-                          "\n      To avoid confusion, please uninstall it before using this software, with:\n",
-                          "      uninstall(\"QCApro\")", sep="")
-    }
-    packageStartupMessage("\nTo cite this package in publications, please use:\n", msg, "\n")
-    invisibleEnvironment <- new.env()
-    invisibleEnvironment$firstHistory <- TRUE
-    invisibleEnvironment$hashes <- list()
-    invisibleEnvironment$visiblecols <- 8
-    invisibleEnvironment$visiblerows <- 17
+`getLevels` <- 
+function(data) {
+    data <- as.data.frame(data)
+    colnames <- paste("V", ncol(data), sep = ".")
+    noflevels <- apply(data, 2, max) + 1
+    noflevels[noflevels == 1] <- 2
+    noflevels[apply(data, 2, function(x) any(x %% 1 > 0))] <- 2
+    return(as.vector(noflevels))
 }

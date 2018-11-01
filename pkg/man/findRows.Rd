@@ -11,7 +11,7 @@ certain remainders or some observed configurations from the minimization process
 }
 
 \usage{
-findRows(expression = "", obj, remainders = TRUE, type = 1)
+findRows(expression = "", obj, remainders = TRUE, type = 1, ...)
 }
 
 \arguments{
@@ -21,6 +21,8 @@ findRows(expression = "", obj, remainders = TRUE, type = 1)
   \item{remainders}{Logical: find remainders only or also observed configurations,
         when \code{obj} is a truth table.}
   \item{type}{Numeric vector, specifying the type(s) of untenable configurations}
+  \item{...}{Additional arguments to be passed to function \code{\link{truthTable}()},
+        for the negation of the outcome.}
 }
 
 \details{
@@ -57,10 +59,12 @@ negation of the outcome (if the input truth table was created for its presence, 
 other way round), and minimizes both to inspect their simplifying assumptions to
 detect which are contradictory.
 
-If there are such simplifying assumptions in both parsimonious solutions, it means
-these are contradictory, and if there are observed configurations that are
-sufficient for both the presence and the absence of the outcome, these are also
-incoherent because of the simultaneous subset relations problem.
+If very specific cutoffs are needed for the negation of the outcome, these can be provided
+via the \bold{\code{...}} argument, that will be passed to function \bold{\code{truthTable()}}.
+
+Identical simplifying assumptions that found in both parsimonious solutions are declared as
+contradictory. Observed configurations that are sufficient for both the presence and the absence
+of the outcome are incoherent because of the simultaneous subset relations problem.
 
 The following types of untenable assumptions can be searched for:
 

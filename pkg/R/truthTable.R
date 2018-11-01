@@ -24,15 +24,15 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `truthTable` <-
-function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
-         complete = FALSE, use.letters = FALSE, show.cases = FALSE,
-         dcc = FALSE, sort.by = "", inf.test = "", ...) {
+function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut = 0,
+         complete = FALSE, use.letters = FALSE, show.cases = FALSE, dcc = FALSE,
+         sort.by = "", inf.test = "", ...) {
     metacall <- match.call(expand.dots = TRUE)
     other.args <- list(...)
     back.args <- c("outcome", "conditions", "n.cut", "incl.cut", "complete", "show.cases", sort.by = "", "use.letters", "inf.test")
     check.args <- pmatch(names(other.args), back.args)
     names(other.args)[!is.na(check.args)] <- back.args[check.args[!is.na(check.args)]]
-    enter       <- ifelse (is.element("enter",       names(other.args)), other.args$enter,       TRUE)
+    enter <- ifelse (is.element("enter", names(other.args)), other.args$enter, TRUE)
     ic0 <- 1
     if (is.character(incl.cut) & length(incl.cut) == 1) {
         incl.cut <- splitstr(incl.cut)
@@ -42,14 +42,14 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
         ic0 <- incl.cut[2]
     }
         neg.out <- FALSE
-        if ("neg.out" %in% names(other.args)) {
+        if (is.element("neg.out", names(other.args))) {
             neg.out <- other.args$neg.out
         }
-        if ("incl.cut1" %in% names(other.args) & identical(ic1, 1)) {
+        if (is.element("incl.cut1", names(other.args)) & identical(ic1, 1)) {
             ic1 <- other.args$incl.cut1
             incl.cut[1] <- ic1
         }
-        if ("incl.cut0" %in% names(other.args) & identical(ic0, 1)) {
+        if (is.element("incl.cut0", names(other.args)) & identical(ic0, 1)) {
             ic0 <- other.args$incl.cut0
             incl.cut[2] <- ic0
         }
@@ -68,15 +68,15 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
         outcome <- substring(outcome, 2)
     }
     if (!identical(outcome, "")) {
-        if (! toupper(curlyBrackets(outcome, outside = TRUE)) %in% colnames(data)) {
+        if (!is.element(toupper(curlyBrackets(outcome, outside = TRUE)), colnames(data))) {
             cat("\n")
             stop(simpleError(paste0("Inexisting outcome name.", ifelse(enter, "\n\n", ""))))
         }
     }
     if (grepl("[{|}]", outcome)) {
         outcome.value <- curlyBrackets(outcome)
-        outcome <- curlyBrackets(outcome, outside=TRUE)
-        data[, toupper(outcome)] <- as.numeric(data[, toupper(outcome)] %in% splitstr(outcome.value))
+        outcome <- curlyBrackets(outcome, outside = TRUE)
+        data[, toupper(outcome)] <- is.element(data[, toupper(outcome)], splitstr(outcome.value)) * 1
     }
     if (identical(conditions, "")) {
         conditions <- setdiff(colnames(data), outcome)
@@ -90,7 +90,7 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
         sort.by <- splitstr(sort.by)
     }
     decreasing <- TRUE 
-    if ("decreasing" %in% names(other.args)) {
+    if (is.element("decreasing", names(other.args))) {
         decreasing <- other.args$decreasing
     }
     if (is.character(decreasing) & length(decreasing) == 1) {
@@ -152,10 +152,10 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
     ipc <- ipc[1:3, , drop = FALSE]
     rownames(minmat) <- rownames(data)
     rownames(ipc) <- c("n", "incl", "PRI")
-    exclude <- ipc[1, ] < n.cut
+    exclude <- ipc[1, ] < n.cut | ipc[3, ] < pri.cut
     if (sum(!exclude) == 0) {
         cat("\n")
-        stop(simpleError(paste0("There are no combinations at this frequency cutoff.", ifelse(enter, "\n\n", ""))))
+        stop(simpleError(paste0("There are no configurations, using these cutoff values.", ifelse(enter, "\n\n", ""))))
     }
     tt$OUT <- "?"
     tt$OUT[!exclude] <- as.numeric(ipc[2, !exclude] >= (ic1 - .Machine$double.eps ^ 0.5))

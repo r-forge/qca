@@ -58,7 +58,17 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
         }
     }
     missingdata <- missing(data)
-    if (!is.character(setms)) {
+    if (is.character(setms)) {
+        if (setms == tolower(setms) & setms != toupper(setms)) {
+            if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", toupper(setms))), n = 1)) {
+                conds <- toupper(setms)
+                setms <- eval.parent(parse(text = sprintf("get(\"%s\")", toupper(setms))), n = 1)
+                setms <- getLevels(setms) - setms - 1
+                condnegated <- TRUE
+            }
+        }
+    }
+    else {
         if (inherits(testit <- tryCatch(eval(setms), error = function(e) e), "error")) {
             setms <- deparse(funargs$setms)
         }
@@ -68,23 +78,13 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
                 if (hastilde(testit)) {
                     if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", notilde(testit))), n = 1)) {
                         setms <- eval.parent(parse(text = sprintf("get(\"%s\")", notilde(testit))), n = 1)
-                        setms <- getNoflevels(setms) - setms - 1
+                        setms <- getLevels(setms) - setms - 1
                         condnegated <- TRUE
                     }
                     else {
                         setms <- testit
                     }
                 }
-            }
-        }
-    }
-    else {
-        if (setms == tolower(setms) & setms != toupper(setms)) {
-            if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", toupper(setms))), n = 1)) {
-                conds <- toupper(setms)
-                setms <- eval.parent(parse(text = sprintf("get(\"%s\")", toupper(setms))), n = 1)
-                setms <- getNoflevels(setms) - setms - 1
-                condnegated <- TRUE
             }
         }
     }
@@ -104,7 +104,7 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
                 if (hastilde(testit)) {
                     if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", notilde(testit))), n = 1)) {
                         outcome <- eval.parent(parse(text = sprintf("get(\"%s\")", notilde(testit))), n = 1)
-                        outcome <- getNoflevels(outcome) - outcome - 1
+                        outcome <- getLevels(outcome) - outcome - 1
                         outnegated <- TRUE
                     }
                     else {
@@ -134,7 +134,7 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
             ica <- other.args$incl.cut0
         }
     syscalls <- unlist(lapply(lapply(sys.calls(), as.character), "[[", 1)) 
-    force.rows <- "force.rows" %in% names(other.args)
+    force.rows <- is.element("force.rows", names(other.args))
     if (is.null(outnegated)) {
         outnegated <- identical(substr(gsub("[[:space:]]", "", funargs$outcome), 1, 2), "1-")
     }
@@ -223,7 +223,7 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
                 else {
                     if (is.character(outcome)) {
                         conditions <- setdiff(conditions, outcome)
-                        if (! toupper(notilde(curlyBrackets(outcome, outside=TRUE))) %in% colnames(data)) {
+                        if (!is.element(toupper(notilde(curlyBrackets(outcome, outside=TRUE))), colnames(data))) {
                             cat("\n")
                             stop(simpleError("The outcome in the expression is not found in the data.\n\n"))
                         }
@@ -239,13 +239,17 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
                         outcome <- curlyBrackets(outcome, outside=TRUE)
                         data[, toupper(outcome)] <- as.numeric(data[, toupper(outcome)] %in% splitstr(outcome.value))
                     }
-                    else if (! outcome %in% colnames(data)) {
-                        data[, toupper(outcome)] <- getNoflevels(data[, toupper(outcome)]) - data[, toupper(outcome)] - 1
+                    else if (!is.element(outcome, colnames(data))) {
+                        if (!is.element(outcome, c(tolower(outcome), toupper(outcome)))) {
+                            cat("\n")
+                            stop(simpleError("The outcome name should not contain both lower and upper case letters.\n\n"))
+                        }
+                        data[, toupper(outcome)] <- getLevels(data[, toupper(outcome)]) - data[, toupper(outcome)] - 1
                     }
                     outcome <- toupper(outcome)
                 }
                 complete <- FALSE
-                if ("complete" %in% names(other.args)) {
+                if (is.element("complete", names(other.args))) {
                     if (is.logical(other.args$complete)) {
                         complete <- other.args$complete
                     }
@@ -292,14 +296,14 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
                     neg.out <- TRUE
                     outcome <- gsub("1-", "", gsub("[[:space:]]|\"", "", funargs$outcome))
                 }
-                if (! toupper(curlyBrackets(outcome, outside = TRUE)) %in% colnames(data)) {
+                if (!is.element(toupper(curlyBrackets(outcome, outside = TRUE)), colnames(data))) {
                     cat("\n")
                     stop(simpleError("Inexisting outcome name.\n\n"))
                 }
                 if (grepl("[{|}]", outcome)) {
                     outcome.value <- curlyBrackets(outcome)
                     outcome <- curlyBrackets(outcome, outside=TRUE)
-                    data[, toupper(outcome)] <- as.numeric(data[, toupper(outcome)] %in% splitstr(outcome.value))
+                    data[, toupper(outcome)] <- is.element(data[, toupper(outcome)], splitstr(outcome.value)) * 1
                 }
                 outcomename <- toupper(outcome)
                 outcome <- data[, outcomename]
@@ -483,7 +487,7 @@ function(setms, outcome, data, relation = "necessity", inf.test = "",
             }
         }
         if (neg.out) {
-            outcome <- getNoflevels(outcome) - outcome - 1
+            outcome <- getLevels(outcome) - outcome - 1
         }
         sum.outcome <- sum(outcome)
         if (pims) {

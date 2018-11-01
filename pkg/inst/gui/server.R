@@ -93,7 +93,7 @@ infobjs <- function(env, objs, scrollvh) {
                 x <- env[[n]]
                 dscrollvh <- c(1, 1)
                 if (!misscroll) {
-                    if (n %in% names(scrollvh)) {
+                    if (is.element(n, names(scrollvh))) {
                         dscrollvh <- scrollvh[[n]]
                     }
                 }
@@ -112,10 +112,10 @@ infobjs <- function(env, objs, scrollvh) {
                     calibrated = as.list(as.vector(unlist(lapply(x, function(x) {
                         all(na.omit(x) >= 0 & na.omit(x) <= 1)
                     })))),
-                    binary = as.list(as.vector(unlist(lapply(x, function(x) all(x %in% 0:1))))),
+                    binary = as.list(as.vector(unlist(lapply(x, function(x) all(is.element(x, 0:1)))))),
                     scrollvh = c(srow, scol) - 1, 
                     theData = unname(as.list(x[seq(srow, erow), seq(scol, ecol), drop = FALSE])),
-                    dataCoords = paste(srow, scol, erow, ecol, ncol(x), sep="_")
+                    dataCoords = paste(srow, scol, erow, ecol, ncol(x), sep = "_")
                 )
             })
             names(toreturn$data) <- names(objs[objs == 1])
@@ -602,7 +602,7 @@ getDatasets <- function() {
     return(attached)
 }
 getXasp <- function(x, type = "default") {
-    clr <- range(x)
+    clr <- range(x, na.rm = TRUE)
     pdf(templotfile)
     if (type == "default") {
         plot(seq(clr[1], clr[2], length.out = 100), seq(100), xlim = clr, type = "n", axes = FALSE)
@@ -667,7 +667,7 @@ shinyServer(function(input, output, session) {
         dirfilist <- input$dirfilist
         session$sendCustomMessage(type = "dirfile", listFiles(current_path))
     })
-    observe({
+    observe({ 
         read_table <- input$read_table
         filepath <<- ""
         oktoset <<- TRUE
@@ -850,7 +850,7 @@ shinyServer(function(input, output, session) {
             }
         }
     })
-    observe({
+    observe({ 
         foo <- input$import
         if (!is.null(foo) & tcisdata) {
             result <- list(infobjs = NULL, console = NULL)
@@ -864,7 +864,7 @@ shinyServer(function(input, output, session) {
             session$sendCustomMessage(type = "fullinfo", result)
         }
     })
-    observe({
+    observe({ 
         foo <- input$scrollobj
         if (!is.null(foo)) {
             scrollvh <- lapply(foo$scrollvh, function(x) unlist(x) + 1)
@@ -892,7 +892,7 @@ shinyServer(function(input, output, session) {
             session$sendCustomMessage(type = "scrollData", tosend)
         }   
     })
-    observe({
+    observe({ 
         foo <- input$thinfo
         if (!is.null(foo)) {
             response <- list()
@@ -916,7 +916,7 @@ shinyServer(function(input, output, session) {
             }
         }
     })
-    observe({
+    observe({ 
         foo <- input$calibrate
         if (!is.null(foo)) {
             checkit <- calibrateit(foo)
@@ -928,7 +928,7 @@ shinyServer(function(input, output, session) {
             }
         }
     })
-    observe({
+    observe({ 
         foo <- input$xyplot
         if (!is.null(foo)) {
             if (all(c(foo$x, foo$y) %in% names(ev[[foo$dataset]]))) {
@@ -936,7 +936,7 @@ shinyServer(function(input, output, session) {
             }
         }
     })
-    observe({
+    observe({ 
         foo <- input$Rcommand
         if (!is.null(foo)) {
             if (length(foo$plotsize) > 0) {
@@ -1094,25 +1094,25 @@ shinyServer(function(input, output, session) {
             session$sendCustomMessage(type = "Rcommand", tosend)
         }
     })
-    observe({
+    observe({ 
         foo <- input$changes
         if (!is.null(foo)) {
             session$sendCustomMessage(type = "getChanges", readLines(system.file("ChangeLog", package="QCA")))
         }
     })
-    observe({
+    observe({ 
         foo <- input$help
         if (!is.null(foo)) {
             browseURL(file.path(path.package("QCA"), "staticdocs", "index.html"))
         }
     })
-    observe({
+    observe({ 
         foo <- input$pingobj
         if (!is.null(foo)) {
             session$sendCustomMessage(type = "ping", paste("bar", foo))
         }
     })
-    observe({
+    observe({ 
         foo <- input$closeplot
         if (!is.null(foo)) {
             if (file.exists(svgfile)) {
@@ -1124,7 +1124,7 @@ shinyServer(function(input, output, session) {
             sapply(dev.list(), dev.off)
         }
     })
-    observe({
+    observe({ 
         foo <- input$saveRplot
         if (!is.null(foo)) {
             filename <- paste(foo$filename, foo$type, sep=".")
@@ -1150,7 +1150,7 @@ shinyServer(function(input, output, session) {
             dev.off()
         }
     })
-    observe({
+    observe({ 
         foo <- input$plotsize
         if (!is.null(foo)) {
             if (!identical(grafic, emptyplot)) {
@@ -1165,7 +1165,7 @@ shinyServer(function(input, output, session) {
             }
         }
     })
-    observe({
+    observe({ 
         foo <- input$quit
         if (!is.null(foo)) {
             if (file.exists(svgfile)) {

@@ -24,7 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `findRows` <-
-function(expression = "", obj, remainders = TRUE, type = 1) {
+function(expression = "", obj, remainders = TRUE, type = 1, ...) {
     if (any(type == 0)) {
         type <- 0
     }
@@ -36,6 +36,7 @@ function(expression = "", obj, remainders = TRUE, type = 1) {
         cat("\n")
         stop(simpleError("The truth table object is missing.\n\n"))
     }
+    other.args <- list(...)
     if (methods::is(obj, "tt")) {
         noflevels <- obj$noflevels
         conditions <- obj$options$conditions
@@ -51,6 +52,16 @@ function(expression = "", obj, remainders = TRUE, type = 1) {
                 call$outcome <- paste("~", call$outcome, sep = "")
             }
             call$incl.cut <- rev(obj$options$incl.cut)
+            if (length(other.args) > 0) {
+                if (length(setdiff(names(other.args), c("incl.cut", "n.cut", "pri.cut"))) > 0) {
+                    cat("\n")
+                    stop(simpleError("Only cutoff arguments can be specified for the negation of the outcome.\n\n"))
+                }
+                nms <- names(other.args)
+                for (i in seq(length(nms))) {
+                    call[[nms[i]]] <- other.args[[nms[i]]]
+                }
+            }
             nobj <- suppressWarnings(do.call("truthTable", call))
         }
     }
@@ -74,7 +85,7 @@ function(expression = "", obj, remainders = TRUE, type = 1) {
         trexp <- attr(translate(paste(expression, collapse = "+"), snames = conditions), "retlist")
         result <- matrix(ncol = length(trexp[[1]]), nrow = 0)
         if (is.matrix(obj)) {
-            noflevels <- getNoflevels(obj)
+            noflevels <- getLevels(obj)
         }
         for (i in seq(length(trexp))) {
             rowi <- trexp[[i]]
