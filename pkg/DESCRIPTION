@@ -1,5 +1,5 @@
 Package: QCA
-Version: 3.3-2
+Version: 3.3-3
 Date: 2018-11-02
 Title: Qualitative Comparative Analysis
 Authors@R: c(person("Adrian", "Dusa", role = c("aut", "cre", "cph"),
