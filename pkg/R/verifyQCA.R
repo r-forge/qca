@@ -264,7 +264,8 @@ function(data, outcome, conditions, dir.exp = "") {
         if (length(dir.exp) == 1 & is.character(dir.exp)) {
             dir.exp <- splitstr(dir.exp)
         }
-        oldway <- possibleNumeric(unlist(strsplit(gsub("-|;", "", dir.exp), split = "")))
+        checkway <- unlist(strsplit(gsub("-|;", "", dir.exp), split = ""))
+        oldway <- possibleNumeric(checkway) | length(checkway) == 0
         if (oldway) {
             delc$IDE <- baselist
             if (length(dir.exp) != length(conditions)) {

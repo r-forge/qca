@@ -453,16 +453,18 @@ function(input, include = "", exclude = NULL, dir.exp = "",
                                             dir.exp.k <- which(dir.exp$IDE[[conditions[k]]])
                                             if (is.element(comp[k], dir.exp.k)) {
                                                 equals <- sort(c(equals, k))
-                                                res[[k]] <- sort(dir.exp.k)
+                                                res[[k]] <- dir.exp.k
                                             }
                                         }
-                                        dir.exp.matrix <- rbind(dir.exp.matrix, expand.grid(res))
+                                        if (!identical(res, baseres)) {
+                                            dir.exp.matrix <- rbind(dir.exp.matrix, expand.grid(res))
+                                        }
                                     }
                                     if (any(names(dir.exp) == "CDE")) {
                                         for (cde in seq(length(dir.exp$CDE))) {
                                             res <- baseres
                                             truek <- which(unlist(lapply(dir.exp$CDE[[cde]], any)))
-                                            if (length(setdiff(truek, which(comp > 0))) == 0) {
+                                            if (length(setdiff(truek, which(comp > 0))) == 0 & length(intersect(truek, notequals)) > 0) {
                                                 if (identical(comp[truek], unlist(lapply(dir.exp$CDE[[cde]], which)))) {
                                                     covered <- FALSE
                                                     for (k in notequals) {
