@@ -2382,3 +2382,201 @@ SEXP C_findSubsets(SEXP rowno, SEXP noflevels, SEXP mbase, SEXP max) {
     UNPROTECT(1);
     return(temp1);
 }
+SEXP C_getEC(SEXP xx, SEXP aa, SEXP bb, SEXP cc, SEXP dd, SEXP ee) {
+    SEXP usage = PROTECT(allocVector(VECSXP, 6));
+    SEXP dimnames;
+    SET_VECTOR_ELT(usage, 0, dimnames = allocVector(VECSXP, 2));
+    int *p_xx   = INTEGER(xx);
+    int *p_aa = INTEGER(aa);
+    int *p_bb = INTEGER(bb);
+    int *p_cc = INTEGER(cc);
+    int *p_dd = INTEGER(dd);
+    int nc_xx   = ncols(xx);
+    int nr_xx   = nrows(xx);
+    int nr_aa = nrows(aa);
+    int nc_bb = ncols(bb);
+    int nr_bb = nrows(bb);
+    int nr_cc = nrows(cc);
+    int nc_dd = ncols(dd);
+    int nr_dd = nrows(dd);
+    int rsms[nr_xx];
+    int hh = 0;
+    int ii = 0;
+    for (int r = 0; r < nr_xx; r++) {
+        rsms[r] = 0;
+        for (int c = 0; c < nc_xx; c++) {
+            if (p_xx[c * nr_xx + r] > 0) {
+                if (rsms[r] == 0) {
+                    hh += 1;
+                }
+                else {
+                    hh -= 1;
+                    ii += 1;
+                }
+                rsms[r] += 1;
+            }
+        }
+    }
+    SEXP ff, gg;
+    SET_VECTOR_ELT(usage, 1, ff = allocVector(INTSXP, hh));
+    int *p_ff = INTEGER(ff);
+    SET_VECTOR_ELT(usage, 2, gg = allocVector(INTSXP, ii));
+    int *p_gg = INTEGER(gg);
+    int rr = 0, ss = 0;
+    for (int r = 0; r < nr_xx; r++) {
+        if (rsms[r] == 1) {
+            p_ff[rr] = r;
+            rr++;
+        }
+        else {
+            p_gg[ss] = r;
+            ss++;
+        }
+    }
+    SEXP EClist = PROTECT(allocVector(VECSXP, nc_bb * nc_dd));
+    int kk[nc_xx];
+    int ll[nc_xx];
+    int res[nc_xx];
+    SEXP yy; 
+    int *p_yy;
+    int ecp = 0;
+    for (int tt = 0; tt < nc_bb; tt++) { 
+        int csnt = 0;
+        for (int r = 0; r < nr_bb; r++) {
+            if (p_bb[tt * nr_bb + r] > 0) {
+                csnt++;
+            }
+        }
+        for (int vv = 0; vv < nc_dd; vv++) { 
+            int nn = 0;
+            for (int r = 0; r < nr_dd; r++) {
+                if (p_dd[vv * nr_dd + r] > 0) {
+                    nn++;
+                }
+            }
+            SET_VECTOR_ELT(usage, 3, yy = VECTOR_ELT(ee, vv));
+            p_yy = INTEGER(yy);
+            int nr_yy = nrows(yy);
+            Rboolean ecs[nr_yy];
+            for (int r = 0; r < nr_yy; r++) {
+                ecs[r] = FALSE;
+            }
+            for (int xs = 0; xs < csnt; xs++) {
+                for (int c = 0; c < nc_xx; c++) {
+                    kk[c] = p_aa[c * nr_aa + p_bb[tt * nr_bb + xs] - 1];
+                }
+                for (int ys = 0; ys < nn; ys++) {
+                    Rboolean coar = TRUE;
+                    Rboolean lgz[nc_xx]; 
+                    Rboolean fgz[nc_xx]; 
+                    for (int c = 0; c < nc_xx; c++) {
+                        ll[c] = p_cc[c * nr_cc + p_dd[vv * nr_dd + ys] - 1];
+                        fgz[c] = kk[c] > 0;
+                        lgz[c] = ll[c] > 0;
+                        if (lgz[c]) {
+                            coar = coar && (ll[c] == kk[c]);
+                            fgz[c] = FALSE;
+                        }
+                    }
+                    if (coar) {
+                        Rboolean rlt = FALSE;
+                        int i = 0;
+                        while (!rlt && i < nc_xx) {
+                            rlt = fgz[i];
+                            i++;
+                        }
+                        if (rlt) { 
+                            if (hh > 0) { 
+                                for (int c = 0; c < nc_xx; c++) {
+                                    Rboolean jj = FALSE;
+                                    if (fgz[c]) {
+                                        int r = 0;
+                                        while (!jj && r < hh) {
+                                            jj = p_xx[c * nr_xx + p_ff[r]] == kk[c];
+                                            r++;
+                                        }
+                                    }
+                                    res[c] = jj ? kk[c] : ll[c];
+                                }
+                                Rboolean mm = TRUE;
+                                int c = 0;
+                                while (mm && c < nc_xx) {
+                                    mm = res[c] == ll[c];
+                                    c++;
+                                }
+                                if (!mm) {
+                                    for (int r = 0; r < nr_yy; r++) {
+                                        if (!ecs[r]) {
+                                            mm = TRUE;
+                                            int c = 0;
+                                            while (mm && c < nc_xx) {
+                                                mm = (res[c] > 0) ? p_yy[c * nr_yy + r] + 1 == res[c] : TRUE;
+                                                c++;
+                                            }
+                                            ecs[r] = mm;
+                                        }
+                                    }
+                                }
+                            }
+                            if (ii > 0) { 
+                                for (int r = 0; r < ii; r++) {
+                                    for (int c = 0; c < nc_xx; c++) {
+                                        res[c] = (p_xx[c * nr_xx + p_gg[r]] == kk[c]) ? kk[c] : ll[c];
+                                    }
+                                    Rboolean mm = TRUE;
+                                    int c = 0;
+                                    while (mm && c < nc_xx) {
+                                        mm = res[c] == ll[c];
+                                        c++;
+                                    }
+                                    if (!mm) {
+                                        for (int r = 0; r < nr_yy; r++) {
+                                            if (!ecs[r]) {
+                                                mm = TRUE;
+                                                int c = 0;
+                                                while (mm && c < nc_xx) {
+                                                    mm = (res[c] > 0) ? p_yy[c * nr_yy + r] + 1 == res[c] : TRUE;
+                                                    c++;
+                                                }
+                                                ecs[r] = mm;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } 
+            } 
+            int oo = 0;
+            for (int r = 0; r < nr_yy; r++) {
+                oo += ecs[r] * 1;
+            }
+            SEXP ec;
+            SET_VECTOR_ELT(EClist, ecp, ec = allocMatrix(INTSXP, oo, nc_xx));
+            int *p_ec = INTEGER(ec);
+            SEXP pp;
+            SET_VECTOR_ELT(usage, 4, pp = VECTOR_ELT(getAttrib(yy, R_DimNamesSymbol), 0));
+            SEXP qq;
+            SET_VECTOR_ELT(usage, 5, qq = allocVector(STRSXP, oo));
+            int ecr = 0;
+            for (int r = 0; r < nr_yy; r++) {
+                if (ecs[r]) {
+                    for (int c = 0; c < nc_xx; c++) {
+                        p_ec[c * oo + ecr] = p_yy[c * nr_yy + r];
+                    }
+                    SET_STRING_ELT(qq, ecr, STRING_ELT(pp, r));
+                    ecr++;
+                }
+            }
+            SET_VECTOR_ELT(dimnames, 0, qq);
+            if (hasColnames(aa)) {
+                SET_VECTOR_ELT(dimnames, 1, VECTOR_ELT(getAttrib(aa, R_DimNamesSymbol), 1));
+            }
+            setAttrib(ec, R_DimNamesSymbol, dimnames);
+            ecp++;
+        } 
+    } 
+    UNPROTECT(2);
+    return(EClist);
+}

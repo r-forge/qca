@@ -154,7 +154,7 @@
     if (identical(bl, "")) {
         return(bl)
     }
-    bl <- translate(bl, snames = snames, noflevels = noflevels)
+    bl <- translate(gsub("\\*\\,", "+", bl), snames = snames, noflevels = noflevels)
     expressions <- matrix(nrow = 0, ncol = ncol(bl))
     for (i in seq(nrow(bl))) {
         expressions <- rbind(expressions, as.matrix(expand.grid(lapply(bl[i, ], function(x) {

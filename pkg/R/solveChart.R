@@ -58,5 +58,7 @@ function(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...) {
             output <- t(output)
         }
     }
-    return(matrix(row.numbers[output], nrow=nrow(output)))
+    output <- matrix(as.integer(row.numbers[output]), nrow = nrow(output))
+    output[is.na(output)] <- 0L
+    return(output)
 }

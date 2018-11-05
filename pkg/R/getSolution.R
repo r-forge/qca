@@ -36,9 +36,6 @@ function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol
             if (enter) cat("\n")
             stop(simpleError(paste("There are no solutions, given these constraints.", ifelse(enter, "\n\n", ""))))
         }
-        else {
-            sol.matrix[sol.matrix == 0] <- NA
-        }
         expressions <- expressions[[1]]
     }
     else if (is.matrix(expressions)) { 

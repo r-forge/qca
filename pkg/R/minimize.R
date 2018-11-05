@@ -104,9 +104,6 @@ function(input, include = "", exclude = NULL, dir.exp = "",
     if (is.character(outcome) & !identical(outcome, "")) {
         outcome <- splitstr(outcome)
     }
-    if (is.character(dir.exp) & !identical(dir.exp, "")) {
-        dir.exp <- gsub(dashes(), "-", splitstr(dir.exp))
-    }
     if (methods::is(input, "tt")) { 
         tt <- input
         recdata <- tt$recoded.data
@@ -172,12 +169,8 @@ function(input, include = "", exclude = NULL, dir.exp = "",
         missings <- which(tt$tt$OUT == "?")
         tt$tt <- tt$tt[-missings, ]
     }
-    dir.exp <- verify.dir.exp(recdata, outcome, conditions, dir.exp)
-    if (!identical(dir.exp, "")) {
-        names(dir.exp) <- toupper(names(dir.exp))
-    }
     noflevels <- tt$noflevels
-    mbase <- rev(c(1, cumprod(rev(noflevels))))[-1]
+    mbase <- as.integer(rev(c(1, cumprod(rev(noflevels))))[-1])
     mbaseplus <- rev(c(1, cumprod(rev(noflevels + 1))))[-1]
     alreadyletters <- sum(nchar(colnames(recdata)[-ncol(recdata)])) == ncol(recdata) - 1
     tt$tt[seq(length(conditions))] <- as.data.frame(lapply(tt$tt[seq(length(conditions))], function(x) {
@@ -421,94 +414,22 @@ function(input, include = "", exclude = NULL, dir.exp = "",
             temp <- sort(unique(as.vector(unlist(temp))))
             temp <- temp[!is.element(temp, drop(inputt %*% mbaseplus))]
             if (length(temp) == 0) return(NULL)
-            SAx <- getRow(temp + 1, noflevels + 1) - 1
+            SAx <- getRow(temp + 1, noflevels + 1) - 1L
             colnames(SAx) <- colnames(inputt)
             rownames(SAx) <- drop(SAx %*% mbase) + 1
             return(SAx)
         })
         prettyNums <- formatC(seq(length(p.sol$solution.list[[1]])), digits = nchar(length(p.sol$solution.list[[1]])) - 1, flag = 0)
-        names(output$SA) <- paste("M", prettyNums, sep = "")
         if (!identical(dir.exp, "") & !identical(include, "") & !identical(c.sol$solution.list, NA)) {
-            i.sol <- vector("list", length(c.sol$solution.list[[1]])*length(p.sol$solution.list[[1]]))
-            index <- 1
-            for (c.s in seq(length(c.sol$solution.list[[1]]))) {
-                c.expressions <- c.sol$reduced$expressions[c.sol$solution.list[[1]][[c.s]], , drop = FALSE]
-                for (p.s in seq(length(p.sol$solution.list[[1]]))) {
-                    p.expressions <- p.sol$reduced$expressions[p.sol$solution.list[[1]][[p.s]], , drop = FALSE]
-                    dir.exp.matrix <- matrix(ncol = length(conditions), nrow = 0)
-                    for (i in seq(nrow(c.expressions))) {
-                        comp <- c.expressions[i, ]
-                        for (j in seq(nrow(p.expressions))) {
-                            pars <- p.expressions[j, ]
-                            if (all(comp[pars > 0] == pars[pars > 0])) { 
-                                equals <- which(pars > 0)
-                                baseres <- rep(0, length(conditions)) 
-                                baseres[equals] <- drop(pars[equals])
-                                baseres <- as.list(baseres)
-                                notequals <- setdiff(which(comp > 0), equals)
-                                if (length(notequals) > 0) { 
-                                    if (any(names(dir.exp) == "IDE")) {
-                                        res <- baseres
-                                        for (k in notequals) {
-                                            dir.exp.k <- which(dir.exp$IDE[[conditions[k]]])
-                                            if (is.element(comp[k], dir.exp.k)) {
-                                                equals <- sort(c(equals, k))
-                                                res[[k]] <- dir.exp.k
-                                            }
-                                        }
-                                        if (!identical(res, baseres)) {
-                                            dir.exp.matrix <- rbind(dir.exp.matrix, expand.grid(res))
-                                        }
-                                    }
-                                    if (any(names(dir.exp) == "CDE")) {
-                                        for (cde in seq(length(dir.exp$CDE))) {
-                                            res <- baseres
-                                            truek <- which(unlist(lapply(dir.exp$CDE[[cde]], any)))
-                                            if (length(setdiff(truek, which(comp > 0))) == 0 & length(intersect(truek, notequals)) > 0) {
-                                                if (identical(comp[truek], unlist(lapply(dir.exp$CDE[[cde]], which)))) {
-                                                    covered <- FALSE
-                                                    for (k in notequals) {
-                                                        dir.exp.k <- which(dir.exp$CDE[[cde]][[conditions[k]]])
-                                                        if (is.element(comp[k], dir.exp.k)) {
-                                                            equals <- sort(c(equals, k))
-                                                            res[[k]] <- sort(dir.exp.k)
-                                                        }
-                                                    }
-                                                }
-                                                dir.exp.matrix <- rbind(dir.exp.matrix, expand.grid(res))
-                                            }
-                                        }
-                                    }
-                                }
-                                else {
-                                }
-                            } 
-                        }
-                    }
-                    colnames(dir.exp.matrix) <- conditions
-                    dir.exp.matrix <- unique(dir.exp.matrix)
+            dir.exp <- verify.dir.exp(recdata, outcome, conditions, noflevels, dir.exp)
+            EClist <- .Call("C_getEC", dir.exp, c.sol$expressions, c.sol$sol.matrix, p.sol$expressions, p.sol$sol.matrix, output$SA, PACKAGE = "QCA")
+            for (c.s in seq(ncol(c.sol$sol.matrix))) {
+                for (p.s in seq(ncol(p.sol$sol.matrix))) {
                     names(i.sol)[index] <- paste("C", c.s, "P", p.s, sep = "")
-                    EC <- subcols <- sexpr <- matrix(ncol = length(conditions), nrow = 0)
-                    colnames(EC) <- colnames(inputt)
-                    if (nrow(dir.exp.matrix) > 0) {
-                        for (dir.exp.i in seq(nrow(dir.exp.matrix))) {
-                            dir.exp.x <- dir.exp.matrix[dir.exp.i, ]
-                            subset.columns <- dir.exp.x > 0
-                            if (!is.null(output$SA[[p.s]])) { 
-                                SArows <- apply(output$SA[[p.s]] + 1, 1, function(x) {
-                                    return(all(x[subset.columns] == dir.exp.x[subset.columns]))
-                                })
-                                EC <- rbind(EC, output$SA[[p.s]][SArows, , drop = FALSE])
-                            } 
-                        }
-                    }
-                    if (nrow(EC) > 0) {
-                        EC <- EC[order(rownames(EC)), , drop = FALSE]
-                    }
-                    i.sol[[index]]$EC <- unique(EC)
-                    i.sol[[index]]$DC <- output$SA[[p.s]][setdiff(rownames(output$SA[[p.s]]), rownames(EC)), , drop = FALSE]
-                    i.sol[[index]]$NSEC <- matrix(ncol = ncol(EC), nrow = 0)
-                    colnames(i.sol[[index]]$NSEC) <- colnames(EC)
+                    i.sol[[index]]$EC <- EClist[[index]]
+                    i.sol[[index]]$DC <- output$SA[[p.s]][setdiff(rownames(output$SA[[p.s]]), rownames(EClist[[index]])), , drop = FALSE]
+                    i.sol[[index]]$NSEC <- matrix(ncol = ncol(EClist[[index]]), nrow = 0)
+                    colnames(i.sol[[index]]$NSEC) <- colnames(EClist[[index]])
                     nsecs <- TRUE
                     while (nsecs) {
                         pos.matrix.i.sol <- unique(rbind(pos.matrix, i.sol[[index]]$EC + 1))
@@ -601,6 +522,7 @@ function(input, include = "", exclude = NULL, dir.exp = "",
             }
             output$i.sol <- i.sol
         }
+        names(output$SA) <- paste("M", prettyNums, sep = "")
         output$SA <- lapply(output$SA, as.data.frame)
     }
     if (any(names(output) == "i.sol")) {

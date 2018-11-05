@@ -239,35 +239,20 @@ function(data, outcome = "", conditions = "", explain = "",
     }
 }
 `verify.dir.exp` <-
-function(data, outcome, conditions, dir.exp = "") {
+function(data, outcome, conditions, noflevels, dir.exp = "") {
     if (identical(dir.exp, "")) {
         return(dir.exp)
     }
     else {
-        delc <- list()
-        baselist <- vector(mode = "list", length = length(conditions))
-        names(baselist) <- conditions
-        for (i in seq(length(conditions))) {
-            values <- sort(unique(data[, conditions[i]]))
-            if (is.factor(values)) {
-                values <- as.character(values)
-            }
-            values <- setdiff(values, c("-", "dc", "?"))
-            if (!possibleNumeric(values)) {
-                cat("\n")
-                stop(simpleError("Data contains non-numerical values.\n\n"))
-            }
-            values <- asNumeric(values)
-            max.value <- ifelse(any(values %% 1 > 0), 1, max(values))
-            baselist[[i]] <- logical(max.value + 1)
+        if (is.character(dir.exp)) {
+            dir.exp <- gsub(dashes(), "-", dir.exp)
         }
-        if (length(dir.exp) == 1 & is.character(dir.exp)) {
-            dir.exp <- splitstr(dir.exp)
-        }
-        checkway <- unlist(strsplit(gsub("-|;", "", dir.exp), split = ""))
-        oldway <- possibleNumeric(checkway) | length(checkway) == 0
-        if (oldway) {
-            delc$IDE <- baselist
+        oldway <- unlist(strsplit(gsub("[-|;|,|[:space:]]", "", dir.exp), split = ""))
+        if (possibleNumeric(oldway) | length(oldway) == 0) {
+            if (length(dir.exp) == 1) {
+                dir.exp <- splitstr(dir.exp)
+            }
+            expression <- NULL
             if (length(dir.exp) != length(conditions)) {
                 cat("\n")
                 stop(simpleError("Number of expectations does not match number of conditions.\n\n"))
@@ -290,47 +275,31 @@ function(data, outcome, conditions, dir.exp = "") {
             }
             for (i in seq(length(del))) {
                 values <- del[[i]]
-                if (!all(is.element(values, c("-", "dc")))) {
-                    values <- asNumeric(setdiff(values, c("-", "dc")))
-                    if (length(setdiff(values, seq(length(delc$IDE[[i]])) - 1) > 0)) {
+                if (any(values != "-")) {
+                    values <- asNumeric(setdiff(values, "-"))
+                    if (length(setdiff(values, seq(noflevels[i]) - 1)) > 0) {
                         cat("\n")
                         errmessage <- paste("Values specified in the directional expectations do not appear in the data, for condition \"", conditions[i], "\".\n\n", sep="")
                         stop(simpleError(paste(strwrap(errmessage, exdent = 7), collapse = "\n", sep="")))
                     }
                     else {
-                        delc$IDE[[i]][values + 1] <- TRUE
+                        expression <- c(expression, paste(conditions[i], "{", paste(values, collapse = ","), "}", sep = ""))
                     }
                 }
             }
-            return(delc)
+            dir.exp <- expression
         }
-        else {
-            noflevels <- getInfo(data, conditions, outcome)$noflevels
-            dem <- translate(sop(paste(dir.exp, collapse = "+"), snames = conditions, noflevels = noflevels), snames = conditions, noflevels = noflevels)
-            checkdem <- unname(apply(dem, 1, function(x) sum(x >= 0)))
-            ide <- which(checkdem == 1) 
-            cde <- which(checkdem > 1) 
-            if (length(ide) > 0) {
-                delc$IDE <- baselist
-                for (i in seq(length(ide))) {
-                    demi <- asNumeric(dem[ide[i], ])
-                    wdem <- which(demi >= 0)
-                    delc$IDE[[wdem]][demi[wdem] + 1] <- TRUE
-                }
+        dir.exp <- paste(dir.exp, collapse = "+") 
+        if (!grepl("[{|}]", dir.exp)) {
+            if (any(noflevels > 2)) {
+                cat("\n")
+                stop(simpleError("For multivalue data, directional expectations should be specified using curly brackets.\n\n"))
             }
-            if (length(cde) > 0) {
-                delc$CDE <- list()
-                for (i in seq(length(cde))) {
-                    delc$CDE[[i]] <- baselist
-                    demi <- asNumeric(dem[cde[i], ])
-                    wdem <- which(demi >= 0)
-                    for (j in seq(length(wdem))) {
-                        delc$CDE[[i]][[wdem[j]]][demi[wdem[j]] + 1] <- TRUE
-                    }
-                }
-            }
+            dir.exp <- splitstr(dir.exp)
         }
-        return(delc)
+        dir.exp <- sop(dir.exp, snames = conditions, noflevels = noflevels)
+        dir.exp <- translate(dir.exp, snames = conditions, noflevels = noflevels)
+        return(matrix(as.integer(dir.exp) + 1L, ncol = ncol(dir.exp)))
     }
 }
 `verify.mqca` <-
