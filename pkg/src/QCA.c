@@ -2382,163 +2382,163 @@ SEXP C_findSubsets(SEXP rowno, SEXP noflevels, SEXP mbase, SEXP max) {
     UNPROTECT(1);
     return(temp1);
 }
-SEXP C_getEC(SEXP xx, SEXP aa, SEXP bb, SEXP cc, SEXP dd, SEXP ee) {
+SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratusca, SEXP ametist) {
     SEXP usage = PROTECT(allocVector(VECSXP, 6));
     SEXP dimnames;
     SET_VECTOR_ELT(usage, 0, dimnames = allocVector(VECSXP, 2));
-    int *p_xx   = INTEGER(xx);
-    int *p_aa = INTEGER(aa);
-    int *p_bb = INTEGER(bb);
-    int *p_cc = INTEGER(cc);
-    int *p_dd = INTEGER(dd);
-    int nc_xx   = ncols(xx);
-    int nr_xx   = nrows(xx);
-    int nr_aa = nrows(aa);
-    int nc_bb = ncols(bb);
-    int nr_bb = nrows(bb);
-    int nr_cc = nrows(cc);
-    int nc_dd = ncols(dd);
-    int nr_dd = nrows(dd);
-    int rsms[nr_xx];
-    int hh = 0;
-    int ii = 0;
-    for (int r = 0; r < nr_xx; r++) {
+    int *p_aleabune   = INTEGER(aleabune);
+    int *p_veverita = INTEGER(veverita);
+    int *p_catelus = INTEGER(catelus);
+    int *p_ursulet = INTEGER(ursulet);
+    int *p_ratusca = INTEGER(ratusca);
+    int nc_aleabune   = ncols(aleabune);
+    int nr_aleabune   = nrows(aleabune);
+    int nr_veverita = nrows(veverita);
+    int nc_catelus = ncols(catelus);
+    int nr_catelus = nrows(catelus);
+    int nr_ursulet = nrows(ursulet);
+    int nc_ratusca = ncols(ratusca);
+    int nr_ratusca = nrows(ratusca);
+    int rsms[nr_aleabune];
+    int cronicar = 0;
+    int alambic = 0;
+    for (int r = 0; r < nr_aleabune; r++) {
         rsms[r] = 0;
-        for (int c = 0; c < nc_xx; c++) {
-            if (p_xx[c * nr_xx + r] > 0) {
+        for (int c = 0; c < nc_aleabune; c++) {
+            if (p_aleabune[c * nr_aleabune + r] > 0) {
                 if (rsms[r] == 0) {
-                    hh += 1;
+                    cronicar += 1;
                 }
                 else {
-                    hh -= 1;
-                    ii += 1;
+                    cronicar -= 1;
+                    alambic += 1;
                 }
                 rsms[r] += 1;
             }
         }
     }
-    SEXP ff, gg;
-    SET_VECTOR_ELT(usage, 1, ff = allocVector(INTSXP, hh));
-    int *p_ff = INTEGER(ff);
-    SET_VECTOR_ELT(usage, 2, gg = allocVector(INTSXP, ii));
-    int *p_gg = INTEGER(gg);
-    int rr = 0, ss = 0;
-    for (int r = 0; r < nr_xx; r++) {
+    SEXP carare, poteca;
+    SET_VECTOR_ELT(usage, 1, carare = allocVector(INTSXP, cronicar));
+    int *p_carare = INTEGER(carare);
+    SET_VECTOR_ELT(usage, 2, poteca = allocVector(INTSXP, alambic));
+    int *p_poteca = INTEGER(poteca);
+    int scris = 0, oral = 0;
+    for (int r = 0; r < nr_aleabune; r++) {
         if (rsms[r] == 1) {
-            p_ff[rr] = r;
-            rr++;
+            p_carare[scris] = r;
+            scris++;
         }
         else {
-            p_gg[ss] = r;
-            ss++;
+            p_poteca[oral] = r;
+            oral++;
         }
     }
-    SEXP EClist = PROTECT(allocVector(VECSXP, nc_bb * nc_dd));
-    int kk[nc_xx];
-    int ll[nc_xx];
-    int res[nc_xx];
-    SEXP yy; 
-    int *p_yy;
+    SEXP EClist = PROTECT(allocVector(VECSXP, nc_catelus * nc_ratusca));
+    int calare[nc_aleabune];
+    int pejos[nc_aleabune];
+    int res[nc_aleabune];
+    SEXP alearele; 
+    int *p_alearele;
     int ecp = 0;
-    for (int tt = 0; tt < nc_bb; tt++) { 
+    for (int rotund = 0; rotund < nc_catelus; rotund++) { 
         int csnt = 0;
-        for (int r = 0; r < nr_bb; r++) {
-            if (p_bb[tt * nr_bb + r] > 0) {
+        for (int r = 0; r < nr_catelus; r++) {
+            if (p_catelus[rotund * nr_catelus + r] > 0) {
                 csnt++;
             }
         }
-        for (int vv = 0; vv < nc_dd; vv++) { 
-            int nn = 0;
-            for (int r = 0; r < nr_dd; r++) {
-                if (p_dd[vv * nr_dd + r] > 0) {
-                    nn++;
+        for (int oval = 0; oval < nc_ratusca; oval++) { 
+            int catranit = 0;
+            for (int r = 0; r < nr_ratusca; r++) {
+                if (p_ratusca[oval * nr_ratusca + r] > 0) {
+                    catranit++;
                 }
             }
-            SET_VECTOR_ELT(usage, 3, yy = VECTOR_ELT(ee, vv));
-            p_yy = INTEGER(yy);
-            int nr_yy = nrows(yy);
-            Rboolean ecs[nr_yy];
-            for (int r = 0; r < nr_yy; r++) {
+            SET_VECTOR_ELT(usage, 3, alearele = VECTOR_ELT(ametist, oval));
+            p_alearele = INTEGER(alearele);
+            int nr_alearele = nrows(alearele);
+            Rboolean ecs[nr_alearele];
+            for (int r = 0; r < nr_alearele; r++) {
                 ecs[r] = FALSE;
             }
-            for (int xs = 0; xs < csnt; xs++) {
-                for (int c = 0; c < nc_xx; c++) {
-                    kk[c] = p_aa[c * nr_aa + p_bb[tt * nr_bb + xs] - 1];
+            for (int croseu = 0; croseu < csnt; croseu++) {
+                for (int c = 0; c < nc_aleabune; c++) {
+                    calare[c] = p_veverita[c * nr_veverita + p_catelus[rotund * nr_catelus + croseu] - 1];
                 }
-                for (int ys = 0; ys < nn; ys++) {
-                    Rboolean coar = TRUE;
-                    Rboolean lgz[nc_xx]; 
-                    Rboolean fgz[nc_xx]; 
-                    for (int c = 0; c < nc_xx; c++) {
-                        ll[c] = p_cc[c * nr_cc + p_dd[vv * nr_dd + ys] - 1];
-                        fgz[c] = kk[c] > 0;
-                        lgz[c] = ll[c] > 0;
+                for (int upercut = 0; upercut < catranit; upercut++) {
+                    Rboolean dinfata = TRUE;
+                    Rboolean lgz[nc_aleabune]; 
+                    Rboolean fgz[nc_aleabune]; 
+                    for (int c = 0; c < nc_aleabune; c++) {
+                        pejos[c] = p_ursulet[c * nr_ursulet + p_ratusca[oval * nr_ratusca + upercut] - 1];
+                        fgz[c] = calare[c] > 0;
+                        lgz[c] = pejos[c] > 0;
                         if (lgz[c]) {
-                            coar = coar && (ll[c] == kk[c]);
+                            dinfata = dinfata && (pejos[c] == calare[c]);
                             fgz[c] = FALSE;
                         }
                     }
-                    if (coar) {
-                        Rboolean rlt = FALSE;
+                    if (dinfata) {
+                        Rboolean stacana = FALSE;
                         int i = 0;
-                        while (!rlt && i < nc_xx) {
-                            rlt = fgz[i];
+                        while (!stacana && i < nc_aleabune) {
+                            stacana = fgz[i];
                             i++;
                         }
-                        if (rlt) { 
-                            if (hh > 0) { 
-                                for (int c = 0; c < nc_xx; c++) {
-                                    Rboolean jj = FALSE;
+                        if (stacana) { 
+                            if (cronicar > 0) { 
+                                for (int c = 0; c < nc_aleabune; c++) {
+                                    Rboolean maroniu = FALSE;
                                     if (fgz[c]) {
                                         int r = 0;
-                                        while (!jj && r < hh) {
-                                            jj = p_xx[c * nr_xx + p_ff[r]] == kk[c];
+                                        while (!maroniu && r < cronicar) {
+                                            maroniu = p_aleabune[c * nr_aleabune + p_carare[r]] == calare[c];
                                             r++;
                                         }
                                     }
-                                    res[c] = jj ? kk[c] : ll[c];
+                                    res[c] = maroniu ? calare[c] : pejos[c];
                                 }
-                                Rboolean mm = TRUE;
+                                Rboolean nerod = TRUE;
                                 int c = 0;
-                                while (mm && c < nc_xx) {
-                                    mm = res[c] == ll[c];
+                                while (nerod && c < nc_aleabune) {
+                                    nerod = res[c] == pejos[c];
                                     c++;
                                 }
-                                if (!mm) {
-                                    for (int r = 0; r < nr_yy; r++) {
+                                if (!nerod) {
+                                    for (int r = 0; r < nr_alearele; r++) {
                                         if (!ecs[r]) {
-                                            mm = TRUE;
+                                            nerod = TRUE;
                                             int c = 0;
-                                            while (mm && c < nc_xx) {
-                                                mm = (res[c] > 0) ? p_yy[c * nr_yy + r] + 1 == res[c] : TRUE;
+                                            while (nerod && c < nc_aleabune) {
+                                                nerod = (res[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == res[c] : TRUE;
                                                 c++;
                                             }
-                                            ecs[r] = mm;
+                                            ecs[r] = nerod;
                                         }
                                     }
                                 }
                             }
-                            if (ii > 0) { 
-                                for (int r = 0; r < ii; r++) {
-                                    for (int c = 0; c < nc_xx; c++) {
-                                        res[c] = (p_xx[c * nr_xx + p_gg[r]] == kk[c]) ? kk[c] : ll[c];
+                            if (alambic > 0) { 
+                                for (int r = 0; r < alambic; r++) {
+                                    for (int c = 0; c < nc_aleabune; c++) {
+                                        res[c] = (p_aleabune[c * nr_aleabune + p_poteca[r]] == calare[c]) ? calare[c] : pejos[c];
                                     }
-                                    Rboolean mm = TRUE;
+                                    Rboolean nerod = TRUE;
                                     int c = 0;
-                                    while (mm && c < nc_xx) {
-                                        mm = res[c] == ll[c];
+                                    while (nerod && c < nc_aleabune) {
+                                        nerod = res[c] == pejos[c];
                                         c++;
                                     }
-                                    if (!mm) {
-                                        for (int r = 0; r < nr_yy; r++) {
+                                    if (!nerod) {
+                                        for (int r = 0; r < nr_alearele; r++) {
                                             if (!ecs[r]) {
-                                                mm = TRUE;
+                                                nerod = TRUE;
                                                 int c = 0;
-                                                while (mm && c < nc_xx) {
-                                                    mm = (res[c] > 0) ? p_yy[c * nr_yy + r] + 1 == res[c] : TRUE;
+                                                while (nerod && c < nc_aleabune) {
+                                                    nerod = (res[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == res[c] : TRUE;
                                                     c++;
                                                 }
-                                                ecs[r] = mm;
+                                                ecs[r] = nerod;
                                             }
                                         }
                                     }
@@ -2548,30 +2548,30 @@ SEXP C_getEC(SEXP xx, SEXP aa, SEXP bb, SEXP cc, SEXP dd, SEXP ee) {
                     }
                 } 
             } 
-            int oo = 0;
-            for (int r = 0; r < nr_yy; r++) {
-                oo += ecs[r] * 1;
+            int toatealea = 0;
+            for (int r = 0; r < nr_alearele; r++) {
+                toatealea += ecs[r] * 1;
             }
             SEXP ec;
-            SET_VECTOR_ELT(EClist, ecp, ec = allocMatrix(INTSXP, oo, nc_xx));
+            SET_VECTOR_ELT(EClist, ecp, ec = allocMatrix(INTSXP, toatealea, nc_aleabune));
             int *p_ec = INTEGER(ec);
-            SEXP pp;
-            SET_VECTOR_ELT(usage, 4, pp = VECTOR_ELT(getAttrib(yy, R_DimNamesSymbol), 0));
-            SEXP qq;
-            SET_VECTOR_ELT(usage, 5, qq = allocVector(STRSXP, oo));
+            SEXP incepute;
+            SET_VECTOR_ELT(usage, 4, incepute = VECTOR_ELT(getAttrib(alearele, R_DimNamesSymbol), 0));
+            SEXP lafinal;
+            SET_VECTOR_ELT(usage, 5, lafinal = allocVector(STRSXP, toatealea));
             int ecr = 0;
-            for (int r = 0; r < nr_yy; r++) {
+            for (int r = 0; r < nr_alearele; r++) {
                 if (ecs[r]) {
-                    for (int c = 0; c < nc_xx; c++) {
-                        p_ec[c * oo + ecr] = p_yy[c * nr_yy + r];
+                    for (int c = 0; c < nc_aleabune; c++) {
+                        p_ec[c * toatealea + ecr] = p_alearele[c * nr_alearele + r];
                     }
-                    SET_STRING_ELT(qq, ecr, STRING_ELT(pp, r));
+                    SET_STRING_ELT(lafinal, ecr, STRING_ELT(incepute, r));
                     ecr++;
                 }
             }
-            SET_VECTOR_ELT(dimnames, 0, qq);
-            if (hasColnames(aa)) {
-                SET_VECTOR_ELT(dimnames, 1, VECTOR_ELT(getAttrib(aa, R_DimNamesSymbol), 1));
+            SET_VECTOR_ELT(dimnames, 0, lafinal);
+            if (hasColnames(veverita)) {
+                SET_VECTOR_ELT(dimnames, 1, VECTOR_ELT(getAttrib(veverita, R_DimNamesSymbol), 1));
             }
             setAttrib(ec, R_DimNamesSymbol, dimnames);
             ecp++;

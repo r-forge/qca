@@ -423,6 +423,8 @@ function(input, include = "", exclude = NULL, dir.exp = "",
         if (!identical(dir.exp, "") & !identical(include, "") & !identical(c.sol$solution.list, NA)) {
             dir.exp <- verify.dir.exp(recdata, outcome, conditions, noflevels, dir.exp)
             EClist <- .Call("C_getEC", dir.exp, c.sol$expressions, c.sol$sol.matrix, p.sol$expressions, p.sol$sol.matrix, output$SA, PACKAGE = "QCA")
+            i.sol <- vector("list", ncol(c.sol$sol.matrix)*ncol(p.sol$sol.matrix))
+            index <- 1
             for (c.s in seq(ncol(c.sol$sol.matrix))) {
                 for (p.s in seq(ncol(p.sol$sol.matrix))) {
                     names(i.sol)[index] <- paste("C", c.s, "P", p.s, sep = "")

@@ -1,6 +1,6 @@
 Package: QCA
 Version: 3.3-5
-Date: 2018-11-05
+Date: 2018-11-06
 Title: Qualitative Comparative Analysis
 Authors@R: c(person("Adrian", "Dusa", role = c("aut", "cre", "cph"),
                     email = "dusa.adrian@unibuc.ro"),
@@ -28,7 +28,7 @@ Description: An extensive set of functions to perform Qualitative Comparative An
              minimal causal combination that explains a given phenomenon.
 License: GPL (>= 2)
 NeedsCompilation: yes
-Packaged: 2018-11-05 20:11:24 UTC; dusadrian
+Packaged: 2018-11-06 06:50:07 UTC; dusadrian
 Author: Adrian Dusa [aut, cre, cph],
   jQuery Foundation [cph] (jQuery library and jQuery UI library),
   jQuery contributors [ctb, cph] (jQuery library; authors listed in
