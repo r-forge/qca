@@ -2399,21 +2399,21 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
     int nr_ursulet = nrows(ursulet);
     int nc_ratusca = ncols(ratusca);
     int nr_ratusca = nrows(ratusca);
-    int rsms[nr_aleabune];
+    int magarii[nr_aleabune];
     int cronicar = 0;
     int alambic = 0;
     for (int r = 0; r < nr_aleabune; r++) {
-        rsms[r] = 0;
+        magarii[r] = 0;
         for (int c = 0; c < nc_aleabune; c++) {
             if (p_aleabune[c * nr_aleabune + r] > 0) {
-                if (rsms[r] == 0) {
+                if (magarii[r] == 0) {
                     cronicar += 1;
                 }
                 else {
                     cronicar -= 1;
                     alambic += 1;
                 }
-                rsms[r] += 1;
+                magarii[r] += 1;
             }
         }
     }
@@ -2424,7 +2424,7 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
     int *p_poteca = INTEGER(poteca);
     int scris = 0, oral = 0;
     for (int r = 0; r < nr_aleabune; r++) {
-        if (rsms[r] == 1) {
+        if (magarii[r] == 1) {
             p_carare[scris] = r;
             scris++;
         }
@@ -2436,15 +2436,15 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
     SEXP EClist = PROTECT(allocVector(VECSXP, nc_catelus * nc_ratusca));
     int calare[nc_aleabune];
     int pejos[nc_aleabune];
-    int res[nc_aleabune];
+    int balarie[nc_aleabune];
     SEXP alearele; 
     int *p_alearele;
-    int ecp = 0;
+    int mirare = 0;
     for (int rotund = 0; rotund < nc_catelus; rotund++) { 
-        int csnt = 0;
+        int calaret = 0;
         for (int r = 0; r < nr_catelus; r++) {
             if (p_catelus[rotund * nr_catelus + r] > 0) {
-                csnt++;
+                calaret++;
             }
         }
         for (int oval = 0; oval < nc_ratusca; oval++) { 
@@ -2457,88 +2457,95 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
             SET_VECTOR_ELT(usage, 3, alearele = VECTOR_ELT(ametist, oval));
             p_alearele = INTEGER(alearele);
             int nr_alearele = nrows(alearele);
-            Rboolean ecs[nr_alearele];
+            Rboolean palarie[nr_alearele];
             for (int r = 0; r < nr_alearele; r++) {
-                ecs[r] = FALSE;
+                palarie[r] = FALSE;
             }
-            for (int croseu = 0; croseu < csnt; croseu++) {
+            for (int croseu = 0; croseu < calaret; croseu++) {
                 for (int c = 0; c < nc_aleabune; c++) {
                     calare[c] = p_veverita[c * nr_veverita + p_catelus[rotund * nr_catelus + croseu] - 1];
                 }
                 for (int upercut = 0; upercut < catranit; upercut++) {
                     Rboolean dinfata = TRUE;
-                    Rboolean lgz[nc_aleabune]; 
-                    Rboolean fgz[nc_aleabune]; 
-                    for (int c = 0; c < nc_aleabune; c++) {
+                    Rboolean rosiatic[nc_aleabune]; 
+                    Rboolean cenusiu[nc_aleabune]; 
+                    int c = 0;
+                    while (dinfata && c < nc_aleabune) {
                         pejos[c] = p_ursulet[c * nr_ursulet + p_ratusca[oval * nr_ratusca + upercut] - 1];
-                        fgz[c] = calare[c] > 0;
-                        lgz[c] = pejos[c] > 0;
-                        if (lgz[c]) {
-                            dinfata = dinfata && (pejos[c] == calare[c]);
-                            fgz[c] = FALSE;
+                        rosiatic[c] = pejos[c] > 0;
+                        cenusiu[c] = calare[c] > 0 && !rosiatic[c]; 
+                        if (rosiatic[c]) {
+                            dinfata = pejos[c] == calare[c];
                         }
+                        c++;
                     }
                     if (dinfata) {
                         Rboolean stacana = FALSE;
-                        int i = 0;
-                        while (!stacana && i < nc_aleabune) {
-                            stacana = fgz[i];
-                            i++;
+                        int c = 0;
+                        while (!stacana && c < nc_aleabune) {
+                            stacana = cenusiu[c];
+                            c++;
                         }
                         if (stacana) { 
                             if (cronicar > 0) { 
                                 for (int c = 0; c < nc_aleabune; c++) {
                                     Rboolean maroniu = FALSE;
-                                    if (fgz[c]) {
+                                    if (cenusiu[c]) {
                                         int r = 0;
                                         while (!maroniu && r < cronicar) {
                                             maroniu = p_aleabune[c * nr_aleabune + p_carare[r]] == calare[c];
                                             r++;
                                         }
                                     }
-                                    res[c] = maroniu ? calare[c] : pejos[c];
+                                    balarie[c] = maroniu ? calare[c] : pejos[c];
                                 }
                                 Rboolean nerod = TRUE;
                                 int c = 0;
                                 while (nerod && c < nc_aleabune) {
-                                    nerod = res[c] == pejos[c];
+                                    nerod = balarie[c] == pejos[c];
                                     c++;
                                 }
                                 if (!nerod) {
                                     for (int r = 0; r < nr_alearele; r++) {
-                                        if (!ecs[r]) {
+                                        if (!palarie[r]) {
                                             nerod = TRUE;
                                             int c = 0;
                                             while (nerod && c < nc_aleabune) {
-                                                nerod = (res[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == res[c] : TRUE;
+                                                nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
                                                 c++;
                                             }
-                                            ecs[r] = nerod;
+                                            palarie[r] = nerod;
                                         }
                                     }
                                 }
                             }
                             if (alambic > 0) { 
                                 for (int r = 0; r < alambic; r++) {
-                                    for (int c = 0; c < nc_aleabune; c++) {
-                                        res[c] = (p_aleabune[c * nr_aleabune + p_poteca[r]] == calare[c]) ? calare[c] : pejos[c];
-                                    }
-                                    Rboolean nerod = TRUE;
+                                    Rboolean toatecele = TRUE;
+                                    Rboolean maruntis = FALSE;
                                     int c = 0;
-                                    while (nerod && c < nc_aleabune) {
-                                        nerod = res[c] == pejos[c];
+                                    while (toatecele && c < nc_aleabune ) {
+                                        int galetusa = p_aleabune[c * nr_aleabune + p_poteca[r]];
+                                        balarie[c] = pejos[c];
+                                        if (galetusa > 0 && pejos[c] == 0) {
+                                            toatecele = galetusa == calare[c]; 
+                                            if (toatecele) {
+                                                maruntis = TRUE;
+                                                balarie[c] = galetusa; 
+                                            }
+                                        }
                                         c++;
                                     }
-                                    if (!nerod) {
+                                    if (maruntis && toatecele) {
                                         for (int r = 0; r < nr_alearele; r++) {
-                                            if (!ecs[r]) {
-                                                nerod = TRUE;
+                                            if (!palarie[r]) {
+                                                Rboolean nerod = TRUE;
                                                 int c = 0;
                                                 while (nerod && c < nc_aleabune) {
-                                                    nerod = (res[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == res[c] : TRUE;
+                                                    nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
                                                     c++;
                                                 }
-                                                ecs[r] = nerod;
+                                                palarie[r] = nerod;
                                             }
                                         }
                                     }
@@ -2550,10 +2557,10 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
             } 
             int toatealea = 0;
             for (int r = 0; r < nr_alearele; r++) {
-                toatealea += ecs[r] * 1;
+                toatealea += palarie[r] * 1;
             }
             SEXP ec;
-            SET_VECTOR_ELT(EClist, ecp, ec = allocMatrix(INTSXP, toatealea, nc_aleabune));
+            SET_VECTOR_ELT(EClist, mirare, ec = allocMatrix(INTSXP, toatealea, nc_aleabune));
             int *p_ec = INTEGER(ec);
             SEXP incepute;
             SET_VECTOR_ELT(usage, 4, incepute = VECTOR_ELT(getAttrib(alearele, R_DimNamesSymbol), 0));
@@ -2561,7 +2568,7 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
             SET_VECTOR_ELT(usage, 5, lafinal = allocVector(STRSXP, toatealea));
             int ecr = 0;
             for (int r = 0; r < nr_alearele; r++) {
-                if (ecs[r]) {
+                if (palarie[r]) {
                     for (int c = 0; c < nc_aleabune; c++) {
                         p_ec[c * toatealea + ecr] = p_alearele[c * nr_alearele + r];
                     }
@@ -2574,7 +2581,7 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
                 SET_VECTOR_ELT(dimnames, 1, VECTOR_ELT(getAttrib(veverita, R_DimNamesSymbol), 1));
             }
             setAttrib(ec, R_DimNamesSymbol, dimnames);
-            ecp++;
+            mirare++;
         } 
     } 
     UNPROTECT(2);
