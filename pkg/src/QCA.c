@@ -2480,20 +2480,21 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
                     if (dinfata) {
                         if (cronicar > 0) { 
                             for (int c = 0; c < nc_aleabune; c++) {
-                                balarie[c] = pejos[c];
+                                balarie[c] = calare[c];
                                 if (cenusiu[c]) {
                                     Rboolean banana = TRUE;
+                                    Rboolean portocala = FALSE;
                                     for (int r = 0; r < cronicar; r++) {
                                         int galetusa = p_aleabune[c * nr_aleabune + p_carare[r]];
                                         if (galetusa > 0) {
                                             banana = FALSE;
                                             if (galetusa == calare[c]) {
-                                                balarie[c] = galetusa;
+                                                portocala = TRUE;
                                             }
                                         }
                                     }
-                                    if (banana) {
-                                        balarie[c] = calare[c];
+                                    if (!banana && !portocala) {
+                                        balarie[c] = 0;
                                     }
                                 }
                             }

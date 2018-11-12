@@ -15,9 +15,8 @@ Version 3.4
       no negative configurations, and including remainders
     o Improved: function pofind() now accepts multivalue data
       (thanks to Hanieh Moshki for the suggestion)
-    o Fixed: long overdue bug that failed to identify all easy counterfactuals
-      for certain types of directional expectations involving multiple values
-      and / or multiple don't cares
+    o Fixed: long overdue bug that incorrectly identified the easy
+      counterfactuals for directional expectations involving multiple values
     o Fixed: bug in printing the cases, when they contain multi-byte
       characters (thanks to Stefan Verweij for the report)
     o Changed: all C level functions are now renamed using a "C_" prefix,
