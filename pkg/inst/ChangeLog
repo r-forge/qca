@@ -1,5 +1,6 @@
 Version 3.4
-    o New: conjunctural directional expectations finally implemented
+    o New: complete re-write of the code treating the directional expectations,
+      now also implementing conjunctural directional expectations
       (thanks to Carsten Schneider for the persistence)
     o New: function findRows() gains a new three dots argument "..." to
       allow passing a combination of cutoff values to function truthTable()
@@ -15,7 +16,8 @@ Version 3.4
     o Improved: function pofind() now accepts multivalue data
       (thanks to Hanieh Moshki for the suggestion)
     o Fixed: long overdue bug that failed to identify all easy counterfactuals
-      for certain types of directional expectations
+      for certain types of directional expectations involving multiple values
+      and / or multiple don't cares
     o Fixed: bug in printing the cases, when they contain multi-byte
       characters (thanks to Stefan Verweij for the report)
     o Changed: all C level functions are now renamed using a "C_" prefix,

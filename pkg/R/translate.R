@@ -152,7 +152,7 @@ function(expression = "", snames = "", noflevels, data) {
             }
             empty <- FALSE
             for (i in seq(length(conds))) {
-                if (conds[i] %in% remtilde[dupnot]) { 
+                if (is.element(conds[i], remtilde[dupnot])) { 
                     wdup <- which(remtilde == conds[i])
                     inx[[wdup[1]]] <- intersect(inx[[wdup[1]]], inx[[wdup[2]]])
                     if (length(wdup) > 2) {
@@ -171,6 +171,11 @@ function(expression = "", snames = "", noflevels, data) {
             return(ret)
         })
         names(retlist) <- pporig
+        retlist <- retlist[!unlist(lapply(retlist, function(x) any(unlist(lapply(x, length)) == 0)))]
+        if (length(retlist) == 0) {
+            cat("\n")
+            stop(simpleError("The result is an empty set.\n\n"))
+        }
     }
     else {
         pp <- unlist(strsplit(expression, split = "[+]"))

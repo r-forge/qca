@@ -2384,8 +2384,6 @@ SEXP C_findSubsets(SEXP rowno, SEXP noflevels, SEXP mbase, SEXP max) {
 }
 SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratusca, SEXP ametist) {
     SEXP usage = PROTECT(allocVector(VECSXP, 6));
-    SEXP dimnames;
-    SET_VECTOR_ELT(usage, 0, dimnames = allocVector(VECSXP, 2));
     int *p_aleabune   = INTEGER(aleabune);
     int *p_veverita = INTEGER(veverita);
     int *p_catelus = INTEGER(catelus);
@@ -2480,73 +2478,66 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
                         c++;
                     }
                     if (dinfata) {
-                        Rboolean stacana = FALSE;
-                        int c = 0;
-                        while (!stacana && c < nc_aleabune) {
-                            stacana = cenusiu[c];
-                            c++;
-                        }
-                        if (stacana) { 
-                            if (cronicar > 0) { 
-                                for (int c = 0; c < nc_aleabune; c++) {
-                                    Rboolean maroniu = FALSE;
-                                    if (cenusiu[c]) {
-                                        int r = 0;
-                                        while (!maroniu && r < cronicar) {
-                                            maroniu = p_aleabune[c * nr_aleabune + p_carare[r]] == calare[c];
-                                            r++;
+                        if (cronicar > 0) { 
+                            for (int c = 0; c < nc_aleabune; c++) {
+                                balarie[c] = pejos[c];
+                                if (cenusiu[c]) {
+                                    Rboolean banana = TRUE;
+                                    for (int r = 0; r < cronicar; r++) {
+                                        int galetusa = p_aleabune[c * nr_aleabune + p_carare[r]];
+                                        if (galetusa > 0) {
+                                            banana = FALSE;
+                                            if (galetusa == calare[c]) {
+                                                balarie[c] = galetusa;
+                                            }
                                         }
                                     }
-                                    balarie[c] = maroniu ? calare[c] : pejos[c];
+                                    if (banana) {
+                                        balarie[c] = calare[c];
+                                    }
                                 }
-                                Rboolean nerod = TRUE;
+                            }
+                            for (int r = 0; r < nr_alearele; r++) {
+                                if (!palarie[r]) {
+                                    Rboolean nerod = TRUE;
+                                    int c = 0;
+                                    while (nerod && c < nc_aleabune) {
+                                        nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
+                                        c++;
+                                    }
+                                    palarie[r] = nerod;
+                                }
+                            }
+                        }
+                        if (alambic > 0) { 
+                            for (int r = 0; r < alambic; r++) {
+                                Rboolean toatecele = TRUE;
                                 int c = 0;
-                                while (nerod && c < nc_aleabune) {
-                                    nerod = balarie[c] == pejos[c];
+                                while (toatecele && c < nc_aleabune ) {
+                                    balarie[c] = pejos[c];
+                                    if (cenusiu[c]) {
+                                        int galetusa = p_aleabune[c * nr_aleabune + p_poteca[r]];
+                                        if (galetusa > 0) {
+                                            if (!rosiatic[c]) { 
+                                                toatecele = galetusa == calare[c];
+                                                if (toatecele) {
+                                                    balarie[c] = galetusa;
+                                                }
+                                            }
+                                        }
+                                    }
                                     c++;
                                 }
-                                if (!nerod) {
+                                if (toatecele) {
                                     for (int r = 0; r < nr_alearele; r++) {
                                         if (!palarie[r]) {
-                                            nerod = TRUE;
+                                            Rboolean nerod = TRUE;
                                             int c = 0;
                                             while (nerod && c < nc_aleabune) {
                                                 nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
                                                 c++;
                                             }
                                             palarie[r] = nerod;
-                                        }
-                                    }
-                                }
-                            }
-                            if (alambic > 0) { 
-                                for (int r = 0; r < alambic; r++) {
-                                    Rboolean toatecele = TRUE;
-                                    Rboolean maruntis = FALSE;
-                                    int c = 0;
-                                    while (toatecele && c < nc_aleabune ) {
-                                        int galetusa = p_aleabune[c * nr_aleabune + p_poteca[r]];
-                                        balarie[c] = pejos[c];
-                                        if (galetusa > 0 && pejos[c] == 0) {
-                                            toatecele = galetusa == calare[c]; 
-                                            if (toatecele) {
-                                                maruntis = TRUE;
-                                                balarie[c] = galetusa; 
-                                            }
-                                        }
-                                        c++;
-                                    }
-                                    if (maruntis && toatecele) {
-                                        for (int r = 0; r < nr_alearele; r++) {
-                                            if (!palarie[r]) {
-                                                Rboolean nerod = TRUE;
-                                                int c = 0;
-                                                while (nerod && c < nc_aleabune) {
-                                                    nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
-                                                    c++;
-                                                }
-                                                palarie[r] = nerod;
-                                            }
                                         }
                                     }
                                 }
@@ -2565,7 +2556,9 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
             SEXP incepute;
             SET_VECTOR_ELT(usage, 4, incepute = VECTOR_ELT(getAttrib(alearele, R_DimNamesSymbol), 0));
             SEXP lafinal;
-            SET_VECTOR_ELT(usage, 5, lafinal = allocVector(STRSXP, toatealea));
+            SET_VECTOR_ELT(usage, 5, lafinal = allocVector(STRSXP, toatealea)); 
+            SEXP dimnames;
+            SET_VECTOR_ELT(usage, 0, dimnames = allocVector(VECSXP, 2));
             int ecr = 0;
             for (int r = 0; r < nr_alearele; r++) {
                 if (palarie[r]) {
@@ -2576,7 +2569,7 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
                     ecr++;
                 }
             }
-            SET_VECTOR_ELT(dimnames, 0, lafinal);
+            SET_VECTOR_ELT(dimnames, 0, duplicate(lafinal));
             if (hasColnames(veverita)) {
                 SET_VECTOR_ELT(dimnames, 1, VECTOR_ELT(getAttrib(veverita, R_DimNamesSymbol), 1));
             }
