@@ -244,6 +244,7 @@ function(data, outcome, conditions, noflevels, dir.exp = "") {
         return(dir.exp)
     }
     else {
+        multivalue <- any(grepl("[{|}]", dir.exp))
         if (is.character(dir.exp)) {
             dir.exp <- gsub(dashes(), "-", dir.exp)
         }
@@ -287,15 +288,35 @@ function(data, outcome, conditions, noflevels, dir.exp = "") {
                     }
                 }
             }
+            multivalue <- TRUE
             dir.exp <- expression
         }
+        else {
+            if (length(dir.exp) == 1) {
+                if (!grepl("[+]", dir.exp) &  grepl("[,]", dir.exp)) {
+                    if (multivalue) {
+                        values <- curlyBrackets(dir.exp)
+                        atvalues <- paste("@", seq(length(values)), sep = "")
+                        for (i in seq(length(values))) {
+                            dir.exp <- gsub(values[i], atvalues[i], dir.exp)
+                        }
+                        dir.exp <- gsub(",", "+", dir.exp)
+                        for (i in seq(length(values))) {
+                            dir.exp <- gsub(atvalues[i], values[i], dir.exp)
+                        }
+                    }
+                    else {
+                        dir.exp <- gsub(",", "+", dir.exp)
+                    }
+                }
+            }
+        }
         dir.exp <- paste(dir.exp, collapse = "+") 
-        if (!grepl("[{|}]", dir.exp)) {
+        if (!multivalue) {
             if (any(noflevels > 2)) {
                 cat("\n")
                 stop(simpleError("For multivalue data, directional expectations should be specified using curly brackets.\n\n"))
             }
-            dir.exp <- splitstr(dir.exp)
         }
         dir.exp <- sop(dir.exp, snames = conditions, noflevels = noflevels)
         dir.exp <- translate(dir.exp, snames = conditions, noflevels = noflevels)

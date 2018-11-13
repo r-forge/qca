@@ -2477,10 +2477,10 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
                         }
                         c++;
                     }
-                    if (dinfata) {
+                    if (dinfata) { 
                         if (cronicar > 0) { 
                             for (int c = 0; c < nc_aleabune; c++) {
-                                balarie[c] = calare[c];
+                                balarie[c] = calare[c]; 
                                 if (cenusiu[c]) {
                                     Rboolean banana = TRUE;
                                     Rboolean portocala = FALSE;
@@ -2498,50 +2498,37 @@ SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratu
                                     }
                                 }
                             }
-                            for (int r = 0; r < nr_alearele; r++) {
-                                if (!palarie[r]) {
-                                    Rboolean nerod = TRUE;
-                                    int c = 0;
-                                    while (nerod && c < nc_aleabune) {
-                                        nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
-                                        c++;
-                                    }
-                                    palarie[r] = nerod;
-                                }
-                            }
                         }
                         if (alambic > 0) { 
                             for (int r = 0; r < alambic; r++) {
                                 Rboolean toatecele = TRUE;
-                                int c = 0;
-                                while (toatecele && c < nc_aleabune ) {
-                                    balarie[c] = pejos[c];
-                                    if (cenusiu[c]) {
+                                for (int c = 0; c < nc_aleabune; c++) {
+                                    balarie[c] = calare[c];
+                                    if (cenusiu[c]) { 
                                         int galetusa = p_aleabune[c * nr_aleabune + p_poteca[r]];
                                         if (galetusa > 0) {
-                                            if (!rosiatic[c]) { 
-                                                toatecele = galetusa == calare[c];
-                                                if (toatecele) {
-                                                    balarie[c] = galetusa;
-                                                }
-                                            }
+                                            toatecele = toatecele && galetusa == calare[c];
                                         }
                                     }
+                                }
+                                if (!toatecele) {
+                                    for (int c = 0; c < nc_aleabune; c++) {
+                                        if (cenusiu[c] && p_aleabune[c * nr_aleabune + p_poteca[r]] > 0) {
+                                            balarie[c] = 0;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        for (int r = 0; r < nr_alearele; r++) {
+                            if (!palarie[r]) {
+                                Rboolean nerod = TRUE;
+                                int c = 0;
+                                while (nerod && c < nc_aleabune) {
+                                    nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
                                     c++;
                                 }
-                                if (toatecele) {
-                                    for (int r = 0; r < nr_alearele; r++) {
-                                        if (!palarie[r]) {
-                                            Rboolean nerod = TRUE;
-                                            int c = 0;
-                                            while (nerod && c < nc_aleabune) {
-                                                nerod = (balarie[c] > 0) ? p_alearele[c * nr_alearele + r] + 1 == balarie[c] : TRUE;
-                                                c++;
-                                            }
-                                            palarie[r] = nerod;
-                                        }
-                                    }
-                                }
+                                palarie[r] = nerod;
                             }
                         }
                     }

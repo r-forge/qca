@@ -35,6 +35,25 @@
         verify.multivalue(expression, snames = snames, noflevels = noflevels) 
     }
     sl <- ifelse(identical(snames, ""), FALSE, ifelse(all(nchar(snames) == 1), TRUE, FALSE))
+    if (!grepl("[+]", expression) & grepl("[,]", expression)) {
+        if (multivalue) {
+            values <- curlyBrackets(expression)
+            atvalues <- paste("@", seq(length(values)), sep = "")
+            for (i in seq(length(values))) {
+                expression <- gsub(values[i], atvalues[i], expression)
+            }
+            expression <- gsub(",", "+", expression)
+            for (i in seq(length(values))) {
+                expression <- gsub(atvalues[i], values[i], expression)
+            }
+        }
+        else {
+            oldway <- unlist(strsplit(gsub("[-|;|,|[:space:]]", "", dir.exp), split = ""))
+            if (!possibleNumeric(oldway) & length(oldway) > 0) {
+                expression <- gsub(",", "+", expression)
+            }
+        }
+    }
     getbl <- function(expression) {
         bl <- splitMainComponents(gsub("[[:space:]]", "", expression))
         bl <- splitBrackets(bl)
@@ -55,7 +74,8 @@
         }
         return(NULL)
     }
-    qmc <- function(implicants, noflevels, nrowexp) {
+    qmc <- function(implicants, nrowexp) {
+        noflevels <- rep(2, ncol(implicants))
         if (nrowexp == 1) {
             return(implicants[1, , drop = FALSE])
         }
@@ -154,27 +174,35 @@
     if (identical(bl, "")) {
         return(bl)
     }
-    bl <- translate(gsub("\\*\\,", "+", bl), snames = snames, noflevels = noflevels)
+    bl <- translate(bl, snames = snames, noflevels = noflevels)
     expressions <- matrix(nrow = 0, ncol = ncol(bl))
     for (i in seq(nrow(bl))) {
         expressions <- rbind(expressions, as.matrix(expand.grid(lapply(bl[i, ], function(x) {
             asNumeric(splitstr(x)) + 1
         }))))
     }
-    if (missing(noflevels)) {
-        noflevels <- apply(expressions, 2, max)
-    }
     nrowexp <- nrow(expressions)
-    for (i in seq(nrow(expressions))) {
-        x <- expressions[i, ]
-        if (sum(xzero <- x == 0 & noflevels != 0)) {
-            rows <- prod(noflevels[xzero])
-            x <- matrix(rep(x, rows), nrow = rows, byrow = TRUE)
-            x[, xzero] <- createMatrix(noflevels[xzero]) + 1
-            expressions <- rbind(expressions, x)
+    if (!multivalue & nrowexp > 1) {
+        combs <- combinations(nrowexp, 2)
+        for (i in seq(ncol(combs))) {
+            submat <- expressions[combs[, i], ]
+            ints <- apply(submat, 2, function(x) all(as.logical(x)))
+            if (any(ints)) {
+                sums <- apply(submat, 1, function(x) sum(as.logical(x)))
+                if (length(unique(sums)) > 1) {
+                    expressions <- rbind(expressions, apply(submat, 2, function(x) {
+                        if (any(x == 0)) {
+                            return(max(x))
+                        }
+                        else {
+                            return(x[which.min(sums)])
+                        }
+                    }))
+                }
+            }
         }
+        expressions <- qmc(expressions, nrowexp)
     }
-    expressions <- qmc(expressions, noflevels, nrowexp)
     if (nrow(expressions) > 1) {
         minimized <- logical(nrow(expressions))
         for (i in seq(nrow(expressions) - 1)) {
