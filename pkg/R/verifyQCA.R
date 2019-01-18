@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -318,7 +318,10 @@ function(data, outcome, conditions, noflevels, dir.exp = "") {
                 stop(simpleError("For multivalue data, directional expectations should be specified using curly brackets.\n\n"))
             }
         }
-        dir.exp <- sop(dir.exp, snames = conditions, noflevels = noflevels)
+        dir.exp <- tryCatch(simplify(dir.exp, snames = conditions, noflevels = noflevels), error = function(e) e, warning = function(w) w)
+        if (!is.character(dir.exp) | identical(dir.exp, "")) {
+            stop(simpleError("Directional expectations cancel each other out to an empty set.\n\n"))
+        }
         dir.exp <- translate(dir.exp, snames = conditions, noflevels = noflevels)
         return(matrix(as.integer(dir.exp) + 1L, ncol = ncol(dir.exp)))
     }

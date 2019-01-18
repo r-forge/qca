@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,7 +24,24 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `GUIcall` <- function(commandlist) {
-    ev <- get("invisibleEnvironment", envir = globalenv())
+    QCA_env <- as.environment("package:QCA")
+    if (is.element("invisibleEnvironment", ls(envir = QCA_env))) {
+        ev <- QCA_env$invisibleEnvironment
+    }
+    else {
+        ev <- new.env()
+        ev$firstHistory <- TRUE
+        ev$hashes <- list()
+        ev$visiblecols <- 8
+        ev$visiblerows <- 17
+        if (.Call("C_unlock", QCA_env, PACKAGE = "QCA")) {
+            QCA_env$invisibleEnvironment <- ev
+        }
+        else {
+            cat("\n")
+            stop(simpleError("Cannot unlock QCA environment.\n\n"))
+        }
+    }
     nms <- names(commandlist)
     result <- c()
     `hashobjs` <- function(...) {
@@ -265,7 +282,7 @@
     if (length(added) > 0) result <- c(result, infobjs(added))
     if (length(modified) > 0) result <- c(result, infobjs(modified))
     if (length(deleted) > 0) result <- c(result, jsonify(list(deleted = deleted)))
-    savehistory(file = "temphistory")
+    utils::savehistory(file = "temphistory")
     history <- readLines("temphistory")
     if (ev$firstHistory) {
         ev$firstHistory <- FALSE

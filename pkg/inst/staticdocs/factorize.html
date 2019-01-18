@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>factorize. QCA 3.3-6</title>
+<title>factorize. QCA 3.4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.3-6</a>
+      <a class="brand" href="#">QCA 3.4</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -63,7 +63,7 @@ written in SOP - Sum Of Products form.</p>
     </div>
     
     <h2>Usage</h2>
-    <pre><div>factorize(expression, snames = &quot;&quot;, noflevels, pos = FALSE, use.tilde = FALSE, ...)</div></pre>
+    <pre><div>factorize(expression, snames = &quot;&quot;, noflevels, use.tilde = FALSE, pos = FALSE, ...)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -83,14 +83,14 @@ written in SOP - Sum Of Products form.</p>
             <td>Numerical vector containing the number of levels for each set.</td>
         </tr>
         <tr>
-            <td valign="top"><b><code>pos</code></b></td>
-            <td></td><td></td><td></td>
-            <td>Logical, if possible factorize using product(s) of sums.</td>
-        </tr>
-        <tr>
             <td valign="top"><b><code>use.tilde</code></b></td>
             <td></td><td></td><td></td>
             <td>Logical, use a tilde to negate the sets.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>pos</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Logical, if possible factorize using product(s) of sums.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>...</code></b></td>

@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -110,7 +110,7 @@
         return(y)
     }
 }
-getName <- function(x) {
+`getName` <- function(x) {
     result <- rep("", length(x))
     x <- as.vector(gsub("1-", "", gsub("[[:space:]]", "", x)))
     for (i in seq(length(x))) {
@@ -189,7 +189,7 @@ getName <- function(x) {
     big.list <- simplifyList(big.list)
     return(big.list)
 }
-splitMainComponents <- function(expression) {
+`splitMainComponents` <- function(expression) {
     expression <- gsub("[[:space:]]", "", expression)
     ind.char <- unlist(strsplit(expression, split=""))
     if (grepl("\\(", expression)) {
@@ -277,12 +277,12 @@ splitMainComponents <- function(expression) {
     }
     return(big.list)
 }
-splitBrackets <- function(big.list) {
+`splitBrackets` <- function(big.list) {
     return(lapply(big.list, function(x) {
         as.list(unlist(strsplit(unlist(strsplit(x, split="\\(")), split="\\)")))
     }))
 }
-removeSingleStars <- function(big.list) {
+`removeSingleStars` <- function(big.list) {
     return(lapply(big.list, function(x) {
         single.stars <- unlist(lapply(x, function(y) {
             return(y == "*")
@@ -290,7 +290,7 @@ removeSingleStars <- function(big.list) {
         return(x[!single.stars])
     }))
 }
-splitPluses <- function(big.list) {
+`splitPluses` <- function(big.list) {
     return(lapply(big.list, function(x) {
         lapply(x, function(y) {
             plus.split <- unlist(strsplit(y, "\\+"))
@@ -298,7 +298,7 @@ splitPluses <- function(big.list) {
         })
     }))
 }
-splitStars <- function(big.list, prod.split) {
+`splitStars` <- function(big.list, prod.split) {
     return(lapply(big.list, function(x) {
         lapply(x, function(y) {
             lapply(y, function(z) {
@@ -321,7 +321,7 @@ splitStars <- function(big.list, prod.split) {
         })
     }))
 }
-splitTildas <- function (big.list) {
+`splitTildas` <- function (big.list) {
     return(lapply(big.list, function(x) {
         lapply(x, function(y) {
             lapply(y, function(z) {
@@ -344,7 +344,7 @@ splitTildas <- function (big.list) {
         })
     }))
 }
-solveBrackets <- function(big.list) {
+`solveBrackets` <- function(big.list) {
     bracket.comps <- which(unlist(lapply(big.list, length)) > 1)
     if (length(bracket.comps) > 0) {
         for (i in bracket.comps) {
@@ -370,7 +370,7 @@ solveBrackets <- function(big.list) {
     }
     return(big.list)
 }
-simplifyList <- function(big.list) {
+`simplifyList` <- function(big.list) {
     lengths <- unlist(lapply(big.list, function(x) length(x[[1]])))
     big.list.copy <- vector("list", length = sum(lengths))
     start.position <- 1
@@ -457,7 +457,7 @@ simplifyList <- function(big.list) {
     }
     return(big.list[!redundants])
 }
-getNonChars <- function(x) {
+`getNonChars` <- function(x) {
     x <- gsub("^[[:space:]]+|[[:space:]]+$", "", unlist(strsplit(x, "\\+")))
     z <- vector(mode="list", length=length(x))
     for (i in seq(length(x))) {
@@ -481,7 +481,7 @@ getNonChars <- function(x) {
     charList <- split(chars[keep], row(chars)[keep])
     unlist(lapply(charList, paste, collapse = "*"))
 }
-splitMainComponents2 <- function(expression) {
+`splitMainComponents2` <- function(expression) {
     expression <- gsub("[[:space:]]", "", expression)
     ind.char <- unlist(strsplit(expression, split=""))
     if (grepl("\\(", expression)) {
@@ -571,7 +571,7 @@ splitMainComponents2 <- function(expression) {
     names(big.list) <- expression
     return(big.list)
 }
-splitBrackets2 <- function(big.list) {
+`splitBrackets2` <- function(big.list) {
     big.list <- as.vector(unlist(big.list))
     result <- vector(mode="list", length = length(big.list))
     for (i in seq(length(big.list))) {
@@ -580,7 +580,7 @@ splitBrackets2 <- function(big.list) {
     names(result) <- big.list
     return(result)
 }
-splitPluses2 <- function(big.list) {
+`splitPluses2` <- function(big.list) {
     return(lapply(big.list, function(x) {
         x2 <- lapply(x, function(y) {
             plus.split <- unlist(strsplit(y, "\\+"))
@@ -590,11 +590,11 @@ splitPluses2 <- function(big.list) {
         return(x2)
     }))
 }
-splitProducts <- function(x, prod.split) {
+`splitProducts` <- function(x, prod.split) {
     x <- as.vector(unlist(x))
     strsplit(x, split=prod.split)
 }
-insideBrackets <- function(x, invert = FALSE, type = "{") {
+`insideBrackets` <- function(x, invert = FALSE, type = "{") {
     typematrix <- matrix(c("{", "[", "(", "}", "]", ")", "{}", "[]", "()"), nrow = 3)
     tml <- which(typematrix == type, arr.ind = TRUE)[1]
     if (is.na(tml)) {
@@ -604,7 +604,7 @@ insideBrackets <- function(x, invert = FALSE, type = "{") {
     gsub(paste("\\", tml, sep = "", collapse = "|"), "",
          regmatches(x, gregexpr(paste("\\", tml, sep = "", collapse = ".*"), x), invert = invert)[[1]])
 }
-outsideBrackets <- function(x, type = "{") {
+`outsideBrackets` <- function(x, type = "{") {
     typematrix <- matrix(c("{", "[", "(", "}", "]", ")", "{}", "[]", "()"), nrow = 3)
     tml <- which(typematrix == type, arr.ind = TRUE)[1]
     if (is.na(tml)) {
@@ -614,7 +614,7 @@ outsideBrackets <- function(x, type = "{") {
     pattern <- paste("\\", tml, sep = "", collapse = "[[:alnum:]|,]*")
     unlist(strsplit(gsub("\\s+", " ", trimstr(gsub(pattern, " ", x))), split = " "))
 }
-curlyBrackets <- function(x, outside = FALSE) {
+`curlyBrackets` <- function(x, outside = FALSE) {
     x <- paste(x, collapse = "+")
     regexp <- "\\{[[:alnum:]|,|;]+\\}"
     x <- gsub("[[:space:]]", "", x)
@@ -627,7 +627,7 @@ curlyBrackets <- function(x, outside = FALSE) {
         return(gsub("\\{|\\}", "", res))
     }
 }
-roundBrackets <- function(x, outside = FALSE) {
+`roundBrackets` <- function(x, outside = FALSE) {
     regexp <- "\\(([^)]+)\\)"
     x <- gsub("[[:space:]]", "", x)
     res <- regmatches(x, gregexpr(regexp, x), invert = outside)[[1]]

@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2018, Adrian Dusa
+Copyright (c) 2019, Adrian Dusa
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

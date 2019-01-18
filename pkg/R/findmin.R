@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -31,5 +31,5 @@ function(chart) {
             stop(simpleError("The input should be a logical matrix. See function makeChart()\n\n"))
         }
     }
-    return(.Call("C_findmin", t(matrix(as.logical(chart), nrow = nrow(chart))), PACKAGE = "QCA"))
+    return(.Call("C_findmin", t(matrix(as.logical(chart), nrow = nrow(chart))), FALSE, PACKAGE = "QCA"))
 }

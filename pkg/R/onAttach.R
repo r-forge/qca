@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -33,9 +33,4 @@
                           "      uninstall(\"QCApro\")", sep="")
     }
     packageStartupMessage("\nTo cite this package in publications, please use:\n", msg, "\n")
-    invisibleEnvironment <- new.env()
-    invisibleEnvironment$firstHistory <- TRUE
-    invisibleEnvironment$hashes <- list()
-    invisibleEnvironment$visiblecols <- 8
-    invisibleEnvironment$visiblerows <- 17
 }

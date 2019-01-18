@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -93,7 +93,7 @@ function(expression = "", snames = "", noflevels, data) {
     }
     expression <- unlist(lapply(expression, function(x) {
         if (grepl("[(|)]", x)) {
-            x <- do.call("sop", c(list(expression = x), arglist)) 
+            x <- do.call("simplify", c(list(expression = x), arglist)) 
         }
         return(x)
     }))
@@ -301,7 +301,7 @@ function(expression = "", snames = "", noflevels, data) {
                 else {
                     if (all(nchar(snames) == 1)) {
                         retlist <- lapply(pp, function(x) {
-                            x <- unlist(strsplit(x, split=""))
+                            x <- unlist(strsplit(x, split = ""))
                             if (!all(is.element(tocheck <- toupper(x[!hastilde(x)]), toupper(conds)))) {
                                 for (i in seq(length(tocheck))) {
                                     if (!is.element(tocheck[i], conds)) {
@@ -330,7 +330,7 @@ function(expression = "", snames = "", noflevels, data) {
                             }
                             empty <- FALSE
                             for (i in seq(length(conds))) {
-                                if (conds[i] %in% remtilde[dupnot]) { 
+                                if (is.element(conds[i], remtilde[dupnot])) { 
                                     if (length(unique(unlist(inx[which(remtilde == conds[i])]))) > 1) {
                                         empty <- TRUE
                                     }

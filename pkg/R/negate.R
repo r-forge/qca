@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -53,7 +53,7 @@ function(expression, snames = "", noflevels, use.tilde = FALSE) {
         }
         mv <- any(grepl("[{|}]", expression))
         negateit <- function(x, snames, noflevels) {
-            x <- sop(x, snames = snames, noflevels = noflevels)
+            x <- simplify(x, snames = snames, noflevels = noflevels)
             trexp <- translate(x, snames = snames, noflevels = noflevels)
             snames <- colnames(trexp)
             if (missing(noflevels)) {
@@ -75,7 +75,7 @@ function(expression, snames = "", noflevels, use.tilde = FALSE) {
                     return(paste("(", paste(nms, collapse = " + ", sep = ""), ")", sep = ""))
                 }
             }), collapse = "")
-            negated <- sop(negated, snames = snames, noflevels = noflevels)
+            negated <- simplify(negated, snames = snames, noflevels = noflevels)
             if (use.tilde & !mv) {
                 trneg <- translate(negated, snames = snames, noflevels = noflevels)
                 negated <- paste(apply(trneg, 1, function(x) {

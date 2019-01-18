@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -36,7 +36,7 @@ function(string.vector, string.width = 80, repeat.space = 5, separator = ",", su
         startpoint <- 1
         for (j in seq(2, length(string.vector) + 1)) {
             if (j <= length(string.vector)) {
-                if (nchar(encodeString(paste(string.vector[seq(startpoint, j - ifelse(separator == ";", 1, 0))], collapse = paste(ifelse(separator == ";", "", " "), separator, " ", sep="")))) >= string.width) {
+                if (nchar(encodeString(paste(string.vector[seq(startpoint, j - ifelse(separator == ";", 1, 0))], collapse = paste(ifelse(separator == ";", "", " "), separator, " ", sep = "")))) >= string.width) {
                         string <- paste(paste(string, ifelse(separator == ";", "", " "), separator, "\n", sep = ""), 
                                         paste(rep(" ", repeat.space), collapse=""),
                                         string.vector[j], sep="")

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>minimize. QCA 3.3-6</title>
+<title>minimize. QCA 3.4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.3-6</a>
+      <a class="brand" href="#">QCA 3.4</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -205,12 +205,9 @@ It can be specified as a vector of truth table line numbers, or as a matrix of
 causal combinations.</p>
 
     <p>The argument <b><code>dir.exp</code></b> is used to specify directional expectations,
-as described by Ragin (2003). They can be specified as a single string, with values
-separated by commas. For multi-value directional expectations, they are specified
-together, separated by semicolons. The total length of the directional expectations
-must match the number of causal conditions specified in the analysis, using a dash
-<b><code>&quot;-&quot;</code></b> if there are no particular expectations for a specific
-causal condition.</p>
+as described by Ragin (2003). They can be specified using SOP expressions, which opens
+up the possibility to experiment with conjunctural directional expectations. Don't care
+conditions are simply left unspecified.</p>
 
     <p>Activating the <b><code>details</code></b> argument has the effect of printing
 parameters of fit for each prime implicant and each overall solution, the essential prime
@@ -318,7 +315,7 @@ are searched based on their consistencies, which should be at least equal to thi
       <h2>Value</h2>
 
       <p><dl>
-An object of class <code>&quot;qca&quot;</code> when using a single outcomes, or class
+An object of class <code>&quot;qca&quot;</code> when using a single outcome, or class
 <code>&quot;mqca&quot;</code> when using multiple outcomes. These objects are lists having
 the following components:</p>
 
@@ -668,68 +665,92 @@ M1: DEV{0} + DEV{1}*URB{0}*IND{1} =&gt; ~SURV{1}
 data(LF)
 
 # truth table using a very low inclusion cutoff
-ttLF &lt;- truthTable(LF, &quot;SURV&quot;, incl.cut = 0.7,
+ttLF &lt;- truthTable(LF, &quot;SURV&quot;, incl.cut = 0.8,
         show.cases = TRUE, sort.by=&quot;incl&quot;)
 
 # conservative solution
 minimize(ttLF, details = TRUE, show.cases = TRUE)
 </div>
 <div class='output'>
-n OUT = 1/0/C: 8/10/0 
+n OUT = 1/0/C: 6/12/0 
   Total      : 18 
 
-Number of multiple-covered cases: 2 
+Number of multiple-covered cases: 0 
 
-M1: DEV*urb*LIT*STB + DEV*LIT*IND*STB =&gt; SURV
+M1: DEV*URB*LIT*IND*STB + DEV*urb*LIT*ind*STB => SURV
 
-                    inclS  PRI    covS   covU   cases 
------------------------------------------------------------------- 
-1  DEV*urb*LIT*STB  0.809  0.761  0.433  0.196  FI,IE; FR,SE 
-2  DEV*LIT*IND*STB  0.843  0.821  0.622  0.385  FR,SE; BE,CZ,NL,UK 
------------------------------------------------------------------- 
-   M1               0.871  0.851  0.818 
+                        inclS  PRI    covS   covU   cases 
+--------------------------------------------------------------- 
+1  DEV*URB*LIT*IND*STB  0.904  0.886  0.454  0.393  BE,CZ,NL,UK 
+2  DEV*urb*LIT*ind*STB  0.804  0.719  0.265  0.204  FI,IE 
+--------------------------------------------------------------- 
+   M1                   0.870  0.843  0.658
 
 </div>
 <div class='input'>
 # parsimonious solution
-minimize(ttLF, include = &quot;?&quot;, details = TRUE, show.cases = TRUE)
+minimize(ttLF, include = &quot;?&quot;, details = TRUE)
 </div>
 <div class='output'>
-n OUT = 1/0/C: 8/10/0 
+n OUT = 1/0/C: 6/12/0 
   Total      : 18 
 
 Number of multiple-covered cases: 0 
 
-M1: DEV*STB =&gt; SURV
+M1: DEV*ind + URB*STB => SURV
 
             inclS  PRI    covS   covU   cases 
------------------------------------------------------------------ 
-1  DEV*STB  0.869  0.848  0.824    -    FI,IE; FR,SE; BE,CZ,NL,UK 
------------------------------------------------------------------ 
-   M1       0.869  0.848  0.824 
+--------------------------------------------------- 
+1  DEV*ind  0.815  0.721  0.284  0.194  FI,IE 
+2  URB*STB  0.874  0.845  0.520  0.430  BE,CZ,NL,UK 
+--------------------------------------------------- 
+   M1       0.850  0.819  0.714 
 
 </div>
 <div class='input'>
 # intermediate solution using directional expectations
-iLF &lt;- minimize(ttLF, include = &quot;?&quot;, details = TRUE, show.cases = TRUE,
-             dir.exp = &quot;1,1,1,1,1&quot;)
-iLF
+minimize(ttLF, include = &quot;?&quot;, details = TRUE, show.cases = TRUE,
+             dir.exp = &quot;DEV, URB, LIT, IND, STB&quot;)
 </div>
 <div class='output'>
-n OUT = 1/0/C: 8/10/0 
+n OUT = 1/0/C: 6/12/0 
   Total      : 18 
 
-p.sol: DEV*STB
+From C1P1: 
 
 Number of multiple-covered cases: 0 
 
-M1:    DEV*LIT*STB => SURV 
+M1:    DEV*URB*LIT*STB + DEV*LIT*ind*STB => SURV 
+
+                    inclS  PRI    covS   covU   cases 
+----------------------------------------------------------- 
+1  DEV*URB*LIT*STB  0.901  0.879  0.468  0.378  BE,CZ,NL,UK 
+2  DEV*LIT*ind*STB  0.814  0.721  0.282  0.191  FI,IE 
+----------------------------------------------------------- 
+   M1               0.866  0.839  0.660
+</div>
+<div class='input'>
+# URB as a don't care condition (left unspecified) and
+# experimentally, conjunctural directional expectations
+minimize(ttLF, include = &quot;?&quot;, details = TRUE, show.cases = TRUE,
+         dir.exp = &quot;DEV, STB, ~LIT*IND&quot;)
+</div>
+<div class='output'>
+n OUT = 1/0/C: 6/12/0 
+  Total      : 18 
+
+From C1P1: 
+
+Number of multiple-covered cases: 0 
+
+M1:    DEV*URB*STB + DEV*ind*STB => SURV 
 
                 inclS  PRI    covS   covU   cases 
---------------------------------------------------------------------- 
-1  DEV*LIT*STB  0.869  0.848  0.824    -    FI,IE; FR,SE; BE,CZ,NL,UK 
---------------------------------------------------------------------- 
-   M1           0.869  0.848  0.824
+------------------------------------------------------- 
+1  DEV*URB*STB  0.901  0.879  0.468  0.378  BE,CZ,NL,UK 
+2  DEV*ind*STB  0.814  0.721  0.282  0.191  FI,IE 
+------------------------------------------------------- 
+   M1           0.866  0.839  0.660
 </div>
 <div class='input'>
 

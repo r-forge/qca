@@ -1,15 +1,16 @@
-\name{Interpret SOP expressions: translate, compute, sop}
+\name{Interpret DNF/SOP expressions: translate, compute, simplify}
 
 \alias{translate}
 \alias{compute}
+\alias{simplify}
 \alias{sop}
 
-\title{Functions to interpret or create a SOP expression}
+\title{Functions to interpret a DNF/SOP expression}
 
 \description{
-These functions interpret an expression written in a SOP (sum of products) form, for both
-crisp and multivalue QCA. The function \bold{\code{translate()}} translates the expression
-into a standard (canonical) SOP form using a matrix of implicants, while
+These functions interpret an expression written in a DNF (disjunctive normal form), also known as
+SOP (sum of products) form, for both crisp and multivalue QCA. The function \bold{\code{translate()}}
+translates the expression into a standard (canonical) SOP form using a matrix of implicants, while
 \bold{\code{compute()}} uses the first to compute the scores based on a particular data input.
 
 For crisp sets notation, upper case letters are considered the presence of that causal
@@ -21,9 +22,9 @@ been written by Lewandowski (2015) but the actual code in these functions has be
 completely re-written and expanded with more extensive functionality (see details and
 examples below).
 
-The function \bold{\code{sop()}} transforms any expression (most notably a POS - product
-of sums) into a sum of products, minimizing it to the simplest equivalent logical expression.
-It provides a software implementation of the intersection examples presented by
+The function \bold{\code{simplify()}} transforms any expression (most notably a POS - product
+of sums) into a simpler sum of products, minimizing it to the simplest equivalent logical
+expression. It provides a software implementation of the intersection examples presented by
 Ragin (1987: 144-147), and extended to multi-value sets.
 }
 
@@ -32,20 +33,20 @@ translate(expression = "", snames = "", noflevels, data)
 
 compute(expression = "", data, separate = FALSE)
 
-sop(expression = "", snames = "", use.tilde = FALSE, noflevels)
+simplify(expression = "", snames = "", noflevels, use.tilde = FALSE)
 }
 
 \arguments{
   \item{expression}{String: a QCA expression written in sum of products form.}
   \item{snames}{A string containing the sets' names, separated by commas.}
-  \item{use.tilde}{Logical, use tilde to negate bivalent conditions.}
   \item{noflevels}{Numerical vector containing the number of levels for each set.}
+  \item{use.tilde}{Logical, use tilde to negate bivalent conditions.}
   \item{data}{A dataset with binary cs, mv and fs data.}
   \item{separate}{Logical, perform computations on individual, separate paths.}
 }
 
 \details{
-A SOP - sum of products is also known as a DNF - disjunctive normal form, or in other
+A DNF - disjunctive normal form is also known as a SOP - sum of products, or in other
 words a "union of intersections", for example \bold{\code{A*D + B*c}}.
 
 The same expression can be written in multivalue notation: \bold{\code{A{1}*D{1} + B{1}*C{0}}}.
@@ -86,8 +87,9 @@ deep in the space of the conditions' names, at the cost of slowing down for a hi
 conditions. For this reason, an arbitrary limit of 7 causal \bold{\code{snames}} is imposed, to
 write an expression.
 
-For the function \bold{\code{sop()}}, if a tilde is present in the expression, the argument
-\bold{\code{use.tilde}} is automatically activated.
+For the function \bold{\code{simplify()}}, if a tilde is present in the expression, the argument
+\bold{\code{use.tilde}} is automatically activated. For Boolean expressions, the simplest equivalent
+logical expression can result in the empty set, if the conditions cancel each other out.
 }
 
 
@@ -136,7 +138,7 @@ translate("~A + ~b*C")
 translate("C{1} + T{2} + T{1}V{0} + C{0}")
 
 # negation of multivalue sets requires the number of levels
-translate("~A{1} + ~B{0}*C{1}", snames = "A, B, C", noflevels = c(2,2,2))
+translate("~A{1} + ~B{0}*C{1}", snames = "A, B, C", noflevels = c(2, 2, 2))
 
 # multiple values can be specified
 translate("C{1} + T{1,2} + T{1}V{0} + C{0}")
@@ -181,14 +183,14 @@ compute("DEV*ind + URB*STB", data = LF, separate = TRUE)
 
 
 # -----
-# for sop()
-sop("(A + B)(A + ~B)") # result is "A"
+# for simplify()
+simplify("(A + B)(A + ~B)") # result is "A"
 
 # to force a certain order of the set names
-sop("(URB + LIT*~DEV)(~LIT + ~DEV)", snames = "DEV, URB, LIT")
+simplify("(URB + LIT*~DEV)(~LIT + ~DEV)", snames = "DEV, URB, LIT")
 
 # multilevel conditions can also be specified (and negated)
-sop("(A{1} + ~B{0})(B{1} + C{0})", snames = "A, B, C", noflevels = c(2, 3, 2))
+simplify("(A{1} + ~B{0})(B{1} + C{0})", snames = "A, B, C", noflevels = c(2, 3, 2))
 
 
 # in Ragin's (1987) book, the equation E = SG + LW is the result
@@ -197,25 +199,25 @@ sop("(A{1} + ~B{0})(B{1} + C{0})", snames = "A, B, C", noflevels = c(2, 3, 2))
 # intersecting the reactive ethnicity perspective (R = lw)
 # with the equation E (page 144)
 
-sop("lw(SG + LW)", snames = "S, L, W, G")
+simplify("lw(SG + LW)", snames = "S, L, W, G")
 
 # [1] "SlwG"
 
 
 # resources for size and wealth (C = SW) with E (page 145)
-sop("SW(SG + LW)", snames = "S, L, W, G")
+simplify("SW(SG + LW)", snames = "S, L, W, G")
 
 # [1] "SWG + SLW"
 
 
 # and factorized
-factorize(sop("SW(SG + LW)", snames = "S, L, W, G"))
+factorize(simplify("SW(SG + LW)", snames = "S, L, W, G"))
 
 # F1: SW(G + L)
 
 
 # developmental perspective (D = Lg) and E (page 146)
-sop("Lg(SG + LW)", snames = "S, L, W, G", use.tilde = TRUE)
+simplify("Lg(SG + LW)", snames = "S, L, W, G", use.tilde = TRUE)
 
 # [1] "LW~G"
 }

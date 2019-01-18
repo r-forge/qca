@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -224,7 +224,7 @@ function(input, snames = "", noflevels, pos = FALSE, use.tilde = FALSE, ...) {
         }
     }
     factorizeit <- function(x, snames, noflevels) {
-        x <- sop(x, snames = snames, noflevels = noflevels)
+        x <- simplify(x, snames = snames, noflevels = noflevels)
         trexp <- translate(x, snames = snames, noflevels = noflevels)
         snames <- colnames(trexp)
         getSol(lapply(

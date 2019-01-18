@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -43,7 +43,7 @@ function(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...) {
         row.numbers <- rowDominance(chart)
         chart <- chart[row.numbers, ]
     }
-    if (findmin(chart) == 0) {
+    if (findmin(chart) == 0) { 
         cat("\n")
         stop(simpleError("The PI chart cannot be solved.\n\n"))
     }

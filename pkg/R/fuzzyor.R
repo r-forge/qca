@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -52,13 +52,13 @@
     }
     for (i in seq(length(funargs))) {
         tc <- tryCatch(eval.parent(parse(text = funargs[i])), error = function(e) e, warning = function(w) w)
-        tc <- capture.output(tc)[1]
+        tc <- capture.output(dim(tc))[1]
         if (identical(substring(gsub("[[:space:]]", "", tc), 1, 9), "function(")) {
             tc <- simpleError("simpleError")
         }
         if (grepl("simpleError", tc)) {
             tc <- tryCatch(eval.parent(parse(text = toupper(funargs[i]))), error = function(e) e, warning = function(w) w)
-            tc <- capture.output(tc)[1]
+            tc <- capture.output(dim(tc))[1]
             if (identical(substring(gsub("[[:space:]]", "", tc), 1, 9), "function(")) {
                 tc <- simpleError("simpleError")
             }

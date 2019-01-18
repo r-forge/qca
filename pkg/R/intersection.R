@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -92,7 +92,7 @@
         }
         expressions[i] <- paste(expression, collapse = "")
         expressions[i] <- gsub("\\*\\(", "(", expressions[i])
-        result[i] <- do.call("sop", c(list(expressions[i]), arglist))
+        result[i] <- do.call("simplify", c(list(expressions[i]), arglist))
     }
     if (sl) {
         for (i in seq(length(expressions))) {

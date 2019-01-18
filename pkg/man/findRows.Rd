@@ -20,7 +20,7 @@ findRows(expression = "", obj, remainders = TRUE, type = 1, ...)
         numerical matrix.}
   \item{remainders}{Logical: find remainders only or also observed configurations,
         when \code{obj} is a truth table.}
-  \item{type}{Numeric vector, specifying the type(s) of untenable configurations}
+  \item{type}{Numeric vector, specifying the type(s) of untenable configurations.}
   \item{...}{Additional arguments to be passed to function \code{\link{truthTable}()},
         for the negation of the outcome.}
 }
@@ -54,13 +54,10 @@ more integrated and systematic way.
 
 Providing a truth table is sufficient to perform all these tasks, because a truth
 table already contains all necessary information of how it was produced, most importantly
-the inclusion cut-off(s). It uses the same options to produce a truth table for the
-negation of the outcome (if the input truth table was created for its presence, or the
+the inclusion cut-off(s). By default, it uses the same options to produce a truth table for
+the negation of the outcome (if the input truth table was created for its presence, or the
 other way round), and minimizes both to inspect their simplifying assumptions to
 detect which are contradictory.
-
-If very specific cutoffs are needed for the negation of the outcome, these can be provided
-via the \bold{\code{...}} argument, that will be passed to function \bold{\code{truthTable()}}.
 
 Identical simplifying assumptions that found in both parsimonious solutions are declared as
 contradictory. Observed configurations that are sufficient for both the presence and the absence
@@ -79,6 +76,9 @@ To find contradictory simplifying assumptions, a truth table for the negated out
 constructed, using the \bold{\code{incl.cut}} argument from the \bold{\code{obj}}
 input object. If the inclusion cut-off has a single value, the same is used for the negated
 outcome, and if it has two values the second is used.
+
+If very specific cutoff values are needed for the negation of the outcome, these can be provided
+via the \bold{\code{...}} argument, that will be passed to function \bold{\code{truthTable()}}.
 }
 
 
@@ -108,6 +108,12 @@ data(LF)
 ttLF <- truthTable(LF, outcome = "SURV", incl.cut = 0.8)
 
 findRows(obj = ttLF, type = 2) # contradictory simplifying assumptions
+
+
+# Contradictory simplifying assumptions using different cutoff values
+# for the _negation_ of the outcome
+
+findRows(obj = ttLF, type = 2, incl.cut = 0.9, pri.cut = 0.7)
 }
 
 \keyword{functions}

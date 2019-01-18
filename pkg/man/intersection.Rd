@@ -25,12 +25,12 @@ intersection(..., snames = "", use.tilde = FALSE, noflevels)
 \details{
 The initial aim of this function was to provide a software implementation of the
 intersection examples presented by Ragin (1987: 144-147). That type of example can also
-be performed with the function \bold{\code{\link{sop}()}}, while this function is now
+be performed with the function \bold{\code{\link{simplify}()}}, while this function is now
 mainly used in conjunction with the \bold{\code{\link{modelFit}()}} function, to assess
 the intersection between theory and a QCA model.
 
 Irrespective of the input type (character expressions and / or minimiation objects), this
-function is now a wrapper to the main \bold{\code{\link{sop}()}} function (which only
+function is now a wrapper to the main \bold{\code{\link{simplify}()}} function (which only
 accepts character expressions).
 
 It can deal with any kind of expressions, but multivalent crisp conditions need additional

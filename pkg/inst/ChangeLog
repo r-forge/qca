@@ -1,24 +1,23 @@
 Version 3.4
-    o New: complete re-write of the code treating the directional expectations,
-      now also implementing conjunctural directional expectations
-      (thanks to Carsten Schneider for the persistence)
-    o New: function findRows() gains a new three dots argument "..." to
-      allow passing a combination of cutoff values to function truthTable()
-      for the negation of the outcome
+    o New: function findRows() gains a three dots argument "..." to allow
+      passing a combination of cutoff values to function truthTable() for
+      the negation of the outcome
     o New: function truthTable() gains a new argument called "pri.cut"
     o Improved: function superSubset() gives a better error message when
       no combinations are left given all cutoff values, including ron.cut and
       pri.cut (thanks to Carsten Schneider for the suggestions)
-    o Improved: function sop() now able to solve further simplifications
+    o Improved: function simplify() now able to solve further simplifications
       such as A + ~AB into A + B (via A + AB + ~AB)
     o Improved: uniform QMC solutions from all minimization methods, with
       no negative configurations, and including remainders
     o Improved: function pofind() now accepts multivalue data
       (thanks to Hanieh Moshki for the suggestion)
-    o Fixed: long overdue bug that incorrectly identified the easy
-      counterfactuals for directional expectations involving multiple values
+    o Fixed: long overdue bug (dating from version 1.0-0) that incorrectly
+      identified the easy counterfactuals for some directional expectations
+      involving multiple values
     o Fixed: bug in printing the cases, when they contain multi-byte
       characters (thanks to Stefan Verweij for the report)
+    o Changed: function sop() renamed to simplify()
     o Changed: all C level functions are now renamed using a "C_" prefix,
       to avoid a namespace overlap with the main R functions
     

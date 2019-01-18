@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>translate, compute, findRows, sop. QCA 3.3-6</title>
+<title>translate, compute, simplify. QCA 3.4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.3-6</a>
+      <a class="brand" href="#">QCA 3.4</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -49,7 +49,7 @@ Adrian Dusa
         
       </header>
       
-      <h1>Functions to interpret a SOP expression</h1>
+      <h1>Functions to interpret a DNF/SOP expression</h1>
 
 <div class="row">
   <div class="span8">
@@ -57,8 +57,8 @@ Adrian Dusa
     <div class="Description">
       <h2>Description</h2>
 
-      <p>These functions interpret an expression written in a SOP (sum of products) form,
-for both crisp and multivalue QCA. The function <b><code><a href=''>translate()</a></code></b>
+      <p>These functions interpret an expression written in a DNF (disjunctive normal form), also known as
+SOP (sum of products) form, for both crisp and multivalue QCA. The function <b><code><a href=''>translate()</a></code></b>
 translates the expression into a standard (canonical) SOP form using a matrix of implicants, while
 <b><code><a href=''>compute()</a></code></b> uses the first to compute the scores based on a particular
 data input.</p>
@@ -72,8 +72,8 @@ condition. Tilde is recognized as a negation, even in combination with upper/low
 but the actual code in these functions has been completely re-written to integrate it with the
 package <b><span class = "pkg">QCA</span></b>, and expanded with more extensive functionality (see details and examples below).</p>
   
-      <p>The function <b><code><a href=''>sop()</a></code></b> transforms any expression
-(most notably a POS product of sums) into a sum of products, minimizing it to the simplest
+      <p>The function <b><code><a href=''>simplify()</a></code></b> transforms any expression
+(most notably a POS product of sums) into a simpler sum of products, minimizing it to the simplest
 equivalent logical expression. It provides a software implementation of the intersection
 examples presented by Ragin (1987: 144-147), and extended to multi-value sets.</p>
   
@@ -82,7 +82,7 @@ examples presented by Ragin (1987: 144-147), and extended to multi-value sets.</
     <h2>Usage</h2>
 <pre><div>translate(expression = &quot;&quot;, snames = &quot;&quot;, noflevels, data)</div>
 <div>compute(expression = &quot;&quot;, data, separate = FALSE)</div>
-<div>sop(expression = &quot;&quot;, snames = "", use.tilde = FALSE, noflevels)</div></pre>
+<div>simplify(expression = &quot;&quot;, snames = "", noflevels, use.tilde = FALSE)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -97,14 +97,14 @@ examples presented by Ragin (1987: 144-147), and extended to multi-value sets.</
             <td>A string containing the sets' names, separated by commas.</td>
         </tr>
         <tr>
-            <td valign="top"><b><code>use.tilde</code></b></td>
-            <td></td><td></td><td></td>
-            <td>Logical, use tilde to negate bivalent conditions.</td>
-        </tr>
-        <tr>
             <td valign="top"><b><code>noflevels</code></b></td>
             <td></td><td></td><td></td>
             <td>Numerical vector containing the number of levels for each set.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>use.tilde</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Logical, use tilde to negate bivalent conditions.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>data</code></b></td>
@@ -121,7 +121,7 @@ examples presented by Ragin (1987: 144-147), and extended to multi-value sets.</
     <div class="Details">
       <h2>Details</h2>
 
-      <p>A SOP - sum of products is also known as a DNF - disjunctive normal form, or in other
+      <p>A DNF - disjunctive normal form is also known as a SOP - sum of products, or in other
 words a &quot;union of intersections&quot;, for example <b><code>A*D + B*c</code></b>.</p>
   
       <p>The same expression can be written in multivalue notation: <b><code>A{1}*D{1} + B{1}*C{0}</code></b>.
@@ -162,8 +162,9 @@ deep in the space of the conditions' names, at the cost of slowing down for a hi
 conditions. For this reason, an arbitrary limit of 7 causal <b><code>snames</code></b> is imposed, to write an
 expression with.</p>
 
-      <p>For the function <b><code><a href=''>sop()</a></code></b>, if a tilde is present in the expression, the argument
-<b><code>use.tilde</code></b> is automatically activated.</p>
+      <p>For the function <b><code><a href=''>simplify()</a></code></b>, if a tilde is present in the expression, the argument
+<b><code>use.tilde</code></b> is automatically activated. For Boolean expressions, the simplest equivalent
+logical expression can result in the empty set, if the conditions cancel each other out.</p>
   
     </div>
 
@@ -416,8 +417,8 @@ compute(&quot;DEV*ind + URB*STB&quot;, data = LF, separate = TRUE)
 <div class='input'>
 
 
-# for sop()
-sop("(A + B)(A + ~B)")
+# for simplify()
+simplify("(A + B)(A + ~B)")
 </div>
 <div class='output'>
 [1] "A"
@@ -425,7 +426,7 @@ sop("(A + B)(A + ~B)")
 
 <div class='input'>
 # to force a certain order of the set names
-sop("(URB + LIT*~DEV)(~LIT + ~DEV)", snames = "DEV, URB, LIT")
+simplify("(URB + LIT*~DEV)(~LIT + ~DEV)", snames = "DEV, URB, LIT")
 </div>
 <div class='output'>
 [1] "URB*~LIT + ~DEV*URB + ~DEV*LIT"
@@ -433,7 +434,7 @@ sop("(URB + LIT*~DEV)(~LIT + ~DEV)", snames = "DEV, URB, LIT")
 
 <div class='input'>
 # multilevel conditions can also be specified (and negated)
-sop("(A{1} + ~B{0})(B{1} + C{0})", snames = "A, B, C", noflevels = c(2, 3, 2))
+simplify("(A{1} + ~B{0})(B{1} + C{0})", snames = "A, B, C", noflevels = c(2, 3, 2))
 </div>
 <div class='output'>
 [1] "A{1}*C{0} + B{1} + B{1,2}*C{0}"
@@ -446,7 +447,7 @@ sop("(A{1} + ~B{0})(B{1} + C{0})", snames = "A, B, C", noflevels = c(2, 3, 2))
 # intersecting the reactive ethnicity perspective (R = lw)
 # with the equation E (page 144)
 
-sop("lw(SG + LW)", snames = "S, L, W, G")
+simplify("lw(SG + LW)", snames = "S, L, W, G")
 </div>
 <div class='output'>
 [1] "SlwG"
@@ -454,7 +455,7 @@ sop("lw(SG + LW)", snames = "S, L, W, G")
 
 <div class='input'>
 # resources for size and wealth (C = SW) with E (page 145)
-sop("SW(SG + LW)", snames = "S, L, W, G")
+simplify("SW(SG + LW)", snames = "S, L, W, G")
 </div>
 <div class='output'>
 [1] "SWG + SLW"
@@ -462,7 +463,7 @@ sop("SW(SG + LW)", snames = "S, L, W, G")
 
 <div class='input'>
 # and factorized
-factorize(sop("SW(SG + LW)", snames = "S, L, W, G"))
+factorize(simplify("SW(SG + LW)", snames = "S, L, W, G"))
 </div>
 <div class='output'>
 F1: SW(G + L)
@@ -470,7 +471,7 @@ F1: SW(G + L)
 
 <div class='input'>
 # developmental perspective (D = Lg) and E (page 146)
-sop("Lg(SG + LW)", snames = "S, L, W, G", use.tilde = TRUE)
+simplify("Lg(SG + LW)", snames = "S, L, W, G", use.tilde = TRUE)
 </div>
 <div class='output'>
 [1] "LW~G"
@@ -481,7 +482,7 @@ sop("Lg(SG + LW)", snames = "S, L, W, G", use.tilde = TRUE)
 # not hypothesized by any of the three theories (page 147)
 # ~H = ~(lw + SW + Lg) = GLs + GLw + GsW + lsW
 
-sop("(GLs + GLw + GsW + lsW)(SG + LW)", snames = "S, L, W, G")
+simplify("(GLs + GLw + GsW + lsW)(SG + LW)", snames = "S, L, W, G")
 </div>
 <div class='output'>
 [1] "sLWG + SLwG"
@@ -491,7 +492,7 @@ sop("(GLs + GLw + GsW + lsW)(SG + LW)", snames = "S, L, W, G")
   </div>
   <div class="span4">
     <!-- <ul>
-      <li>translate</li><li>compute</li><li>findRows</li><li>sop</li>
+      <li>translate</li><li>compute</li><li>findRows</li><li>simplify</li>
     </ul>
     <ul>
       <li>functions</li>

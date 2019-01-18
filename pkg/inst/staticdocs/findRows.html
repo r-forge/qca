@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>findRows. QCA 3.3-6</title>
+<title>findRows. QCA 3.4</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.3-6</a>
+      <a class="brand" href="#">QCA 3.4</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -64,7 +64,7 @@ certain remainders or some observed configurations from the minimization process
     </div>
     
     <h2>Usage</h2>
-    <pre><div>findRows(expression = &quot;&quot;, obj, remainders = TRUE, type = 1)</div></pre>
+    <pre><div>findRows(expression = &quot;&quot;, obj, remainders = TRUE, type = 1, ...)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -88,6 +88,12 @@ certain remainders or some observed configurations from the minimization process
             <td valign="top"><b><code>type</code></b></td>
             <td></td><td></td><td></td>
             <td>Numeric vector, specifying the type(s) of untenable configurations</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>...</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Additional arguments to be passed to function <b><code><a href='truthTable.html'>truthTable()</a></code></b>,
+              for the negation of the outcome.</td>
         </tr>
     </table>
 
@@ -122,8 +128,8 @@ more integrated and systematic way.</p>
   
       <p>Providing a truth table is sufficient to perform all these tasks, because a truth
 table already contains all necessary information of how it was produced, most importantly
-the inclusion cut-off(s). It uses the same options to produce a truth table for the
-negation of the outcome (if the input truth table was created for its presence, or the
+the inclusion cut-off(s). By default, it uses the same options to produce a truth table for
+the negation of the outcome (if the input truth table was created for its presence, or the
 other way round), and minimizes both to inspect their simplifying assumptions to
 detect which are contradictory.</p>
   
@@ -152,6 +158,10 @@ incoherent because of the simultaneous subset relations problem.</p>
 constructed, using the <b><code>incl.cut</code></b> argument from the <b><code>obj</code></b>
 input object. If the inclusion cut-off has a single value, the same is used for the negated
 outcome, and if it has two values the second is used.</p>
+</tr></table></p>
+  
+      <p>If very specific cutoff values are needed for the negation of the outcome, these can be provided
+via the <b><code>...</code></b> argument, that will be passed to function <b><code>truthTable()</code></b>.</p>
 
       <p></p>
   
@@ -200,6 +210,16 @@ ttLF <- truthTable(LF, outcome = "SURV", incl.cut = 0.8)
 findRows(obj = ttLF, type = 2) # contradictory simplifying assumptions
 </div>
 <div class='output'>[1] 10 12 14 16 17 21 25 29
+</div>
+
+<div class='input'>
+
+# Contradictory simplifying assumptions using different cutoff values
+# for the _negation_ of the outcome
+
+findRows(obj = ttLF, type = 2, incl.cut = 0.9, pri.cut = 0.7)
+</div>
+<div class='output'>[1] 10 12 16 17 18 21 25 26 28 29 30
 </div>
 
 

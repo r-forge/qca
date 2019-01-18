@@ -85,12 +85,9 @@ It can be specified as a vector of truth table line numbers, or as a matrix of
 causal combinations.
 
 The argument \bold{\code{dir.exp}} is used to specify directional expectations, as
-described by Ragin (2003). They can be specified as a single string, with values
-separated by commas. For multi-value directional expectations, they are specified
-together, separated by semicolons. The total length of the directional expectations
-must match the number of causal conditions specified in the analysis, using a dash
-\bold{\code{"-"}} if there are no particular expectations for a specific causal
-condition.
+described by Ragin (2003). They can be specified using SOP expressions, which opens
+up the possibility to experiment with conjunctural directional expectations. Don't care
+conditions are simply left unspecified.
 
 Activating the \bold{\code{details}} argument has the effect of printing parameters
 of fit for each prime implicant and each overall solution, the essential prime
@@ -118,8 +115,6 @@ Consequently, two kinds of depth arguments are provided:
 \bold{\code{sol.depth}} \tab the maximum number of prime implicants needed to find a solution\cr
  \tab (to cover all initial positive output configurations)
 }
-
-
 
 These arguments introduce a possible new way of deriving prime implicants and solutions,
 that can lead to different results (i.e. even more parsimonious) compared to the classical
@@ -185,7 +180,7 @@ consistencies, which should be at least equal to this threshold.
 }
 
 \value{
-An object of class \code{"qca"} when using a single outcomes, or class \code{"mqca"}
+An object of class \code{"qca"} when using a single outcome, or class \code{"mqca"}
 when using multiple outcomes. These objects are lists having the following components:
 
 \item{tt}{The truth table object.}
@@ -321,7 +316,7 @@ minimize(ttLMn, include = "?", details = TRUE)
 # Lipset fuzzy sets data (Ragin 2009, p.112)
 data(LF)
 # truth table using a very low inclusion cutoff
-ttLF <- truthTable(LF, "SURV", incl.cut = 0.7,
+ttLF <- truthTable(LF, "SURV", incl.cut = 0.8,
         sort.by = "incl", show.cases = TRUE)
 
 # conservative solution
@@ -331,10 +326,13 @@ minimize(ttLF, details = TRUE)
 minimize(ttLF, include = "?", details = TRUE)
 
 # intermediate solution using directional expectations
-iLF <- minimize(ttLF, include = "?", details = TRUE,
-                dir.exp = "1,1,1,1,1")
-iLF
+minimize(ttLF, include = "?", details = TRUE,
+         dir.exp = "DEV, URB, LIT, IND, STB")
 
+# URB as a don't care condition (left unspecified) and
+# experimentally, conjunctural directional expectations
+minimize(ttLF, include = "?", details = TRUE,
+         dir.exp = "DEV, STB, ~LIT*IND")
 
 
 # -----

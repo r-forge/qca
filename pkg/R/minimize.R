@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -310,7 +310,7 @@ function(input, include = "", exclude = NULL, dir.exp = "",
             if (sol.cons > 0 & all.sol & sol.depth == 0) {
                 sol.depth <- 5
             }
-            expressions <- .Call("C_ccubes", list(
+            expressions <- .Call("C_Cubes", list(
                             tt = cbind(rbind(pos.matrix, neg.matrix) - 1, rep(c(1, 0), c(nrow(pos.matrix), nrow(neg.matrix)))),
                             pi.cons = pi.cons, depth = as.integer(c(pi.depth, sol.depth)),
                             min.pin = min.pin, row.dom = row.dom, all.sol = all.sol, sol.cons = sol.cons,
@@ -557,6 +557,6 @@ function(...) {
     return(structure(minimize.list, class = "mqca"))
 }
 `eqmcc` <- function(...) {
-    .Deprecated(msg = "Function eqmcc() is deprecated. Use function minimize() instead.\n")
+    .Deprecated(msg = "Function eqmcc() is deprecated, and has been renamed to minimize()\n")
     minimize(...)
 }

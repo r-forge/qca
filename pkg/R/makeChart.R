@@ -1,4 +1,4 @@
-# Copyright (c) 2018, Adrian Dusa
+# Copyright (c) 2019, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -82,12 +82,18 @@ function(primes = "", configs = "", snames = "", mv = FALSE,
             snames <- names(tconfigs[[1]])
         }
         tprimes <- attr(translate(primes, snames, noflevels), "retlist")
-        mtrx <- matrix(FALSE, nrow=length(tprimes), ncol=length(tconfigs))
+        mtrx <- matrix(FALSE, nrow = length(tprimes), ncol = length(tconfigs))
         for (i in seq(nrow(mtrx))) {
             for (j in seq(ncol(mtrx))) {
-                tp <- unlist(tprimes[[i]])
-                tc <- unlist(tconfigs[[j]])
-                mtrx[i, j] <- all(tp[tp >= 0] == tc[tp >= 0])
+                subset <- TRUE
+                s <- 1
+                while (subset & s <= length(tprimes[[i]])) {
+                    if (tprimes[[i]][[s]] >= 0) {
+                        subset <- is.element(tprimes[[i]][[s]], tconfigs[[j]][[s]])
+                    }
+                    s <- s + 1
+                }
+                mtrx[i, j] <- subset
             }
         }
         colnames(mtrx) <- names(tconfigs)
