@@ -76,7 +76,7 @@ Version 3.1
       simplifying assumptions
     o Fixed: minor bug in the classical QMC algorithm when the PI chart has
       exactly one column, irrelevant PIs were reported as sufficient (thanks
-      to Michael Baumgartner for reporting)
+      to Michael Baumgartner for the report)
     o Fixed: minimization in the classical QMC with exactly two observed
       configurations
     o Fixed: error in the truth table production when imposing a frequency
@@ -95,7 +95,7 @@ Version 3.0
     o New: arguments "enhance" and "model" added to function XYplot()
     o New: reactivated the argument "add" to functions pof() and superSubset(),
       to allow for more parameter of fit measures in the output
-    o Improved: function intersection() now accept entire minimization objects
+    o Improved: function intersection() now accepts entire minimization objects
       of class "qca" as input
     o Improved: function minimize() gains three new arguments "depth", "min.pin"
       and "method"

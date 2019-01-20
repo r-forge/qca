@@ -55,8 +55,8 @@ hundreds of times faster than the previous eQMC.
     \tabular{ll}{
     Package: \tab QCA\cr
     Type:    \tab Package\cr
-    Version: \tab 3.4\cr
-    Date:    \tab 2019-01-18\cr
+    Version: \tab 3.4-1\cr
+    Date:    \tab 2019-01-20\cr
     License: \tab GPL (>= 2)\cr
     }
 }
@@ -102,10 +102,10 @@ Multivalue Output Functions With eQMC} \emph{Journal of Mathematical Sociology}
 vol.39, no.2, pp.92-108,\cr
 DOI: \href{http://dx.doi.org/10.1080/0022250X.2014.897949}{10.1080/0022250X.2014.897949}
 
-Dusa, A. (2017) \dQuote{Consistency Cubes: A Fast, Efficient Method for Boolean
-Minimization}, unpublished working paper on
-\href{https://www.researchgate.net/profile/Adrian_Dusa}{ResearchGate}, DOI:
-\href{http://dx.doi.org/10.13140/RG.2.2.36359.19361/4}{RG.2.2.36359.19361/1}
+Dusa, A. (2018) \dQuote{Consistency Cubes: A Fast, Efficient Method for Boolean
+Minimization}, R Journal
+\href{https://journal.r-project.org/archive/2018/RJ-2018-062/index.html}{R Journal}, DOI:
+\href{http://dx.doi.org/10.32614/RJ-2018-062}{10.32614/RJ-2018-062}
 
 Ragin, C.C. (1987) \emph{The Comparative Method: Moving beyond Qualitative and 
 Quantitative Strategies}. Berkeley: University of California Press.

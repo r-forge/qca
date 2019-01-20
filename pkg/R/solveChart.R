@@ -43,9 +43,14 @@ function(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...) {
         row.numbers <- rowDominance(chart)
         chart <- chart[row.numbers, ]
     }
-    if (findmin(chart) == 0) { 
+    foundm <- findmin(chart)
+    if (foundm == 0) { 
         cat("\n")
         stop(simpleError("The PI chart cannot be solved.\n\n"))
+    }
+    else if (foundm < 0) {
+        cat("\n")
+        stop(simpleError("The PI chart is too complex for an exact solution.\n\n"))
     }
     if (all(dim(chart) > 1)) {
         if (is.null(depth)) depth <- 0L

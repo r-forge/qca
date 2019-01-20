@@ -316,6 +316,10 @@ function(input, include = "", exclude = NULL, dir.exp = "",
                             min.pin = min.pin, row.dom = row.dom, all.sol = all.sol, sol.cons = sol.cons,
                             sol.cov = sol.cov, data = extended.data, fs = tt$fs),
                             PACKAGE = "QCA")
+            if (is.null(expressions)) {
+                cat(enter)
+                stop(simpleError(paste0("The PI chart is too complex for an exact solution.", enter, enter)))
+            }
         }
         p.sol <- getSolution(expressions=expressions, mv=mv, use.tilde=use.tilde, collapse=collapse, inputt=inputt, row.dom=row.dom, initial=rownms, all.sol=all.sol, indata=indata, excl.matrix=excl.matrix, ...=...)
     }
