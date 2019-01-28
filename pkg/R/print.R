@@ -262,10 +262,10 @@ function(x, ...) {
         sufnec <- logical(length(x$i.sol))
         for (i in seq(length(x$i.sol))) {
             if (is.element("overall", names(x$i.sol[[i]]$IC))) {
-                sufnec[i] <- agteb(x$i.sol[[i]]$IC$overall$sol.incl.cov[3], sol.cov)
+                sufnec[i] <- all(agteb(x$i.sol[[i]]$IC$overall$sol.incl.cov[3], sol.cov))
             }
             else {
-                sufnec[i] <- agteb(x$i.sol[[i]]$IC$sol.incl.cov[3], sol.cov)
+                sufnec[i] <- all(agteb(x$i.sol[[i]]$IC$sol.incl.cov[3], sol.cov))
             }
         }
         sufnec.char <- rep("", length(sufnec))
@@ -314,7 +314,7 @@ function(x, ...) {
             cat("Number of multiple-covered cases:", mult.cov, "\n\n")
         }
         if (length(x$solution) == 1) {
-            sufnec <- agteb(x$IC$sol.incl.cov[3], sol.cov)
+            sufnec <- all(agteb(x$IC$sol.incl.cov[3], sol.cov))
             sufnec <- paste(ifelse(sufnec, "<", ""), "=>", sep="")
             cat(sprintf("M1: %s\n", prettyString(x$solution[[1]], line.length - 4, 4, "+", sufnec, outcome)))
         }
@@ -322,7 +322,7 @@ function(x, ...) {
             prettyNums <- formatC(seq(length(x$solution)), digits = nchar(length(x$solution)) - 1, flag = 0)
             sufnec <- logical(length(x$solution))
             for (i in seq(length(x$solution))) {
-                sufnec[i] <- agteb(x$IC$individual[[i]]$sol.incl.cov[3], sol.cov)
+                sufnec[i] <- all(agteb(x$IC$individual[[i]]$sol.incl.cov[3], sol.cov))
             }
             sufnec.char <- rep("", length(sufnec))
             for (i in seq(length(x$solution))) {
@@ -870,10 +870,10 @@ print.chain <- function(x, ...) {
                     sufnec <- logical(length(x$i.sol))
                     for (i in seq(length(x$i.sol))) {
                         if (is.element("overall", names(x$i.sol[[i]]$IC))) {
-                            sufnec[i] <- agteb(x$i.sol[[i]]$IC$overall$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov))
+                            sufnec[i] <- all(agteb(x$i.sol[[i]]$IC$overall$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov)))
                         }
                         else {
-                            sufnec[i] <- agteb(x$i.sol[[i]]$IC$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov))
+                            sufnec[i] <- all(agteb(x$i.sol[[i]]$IC$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov)))
                         }
                     }
                     if (any(sufnec)) {
@@ -894,7 +894,7 @@ print.chain <- function(x, ...) {
                 else {
                     sufnec <- logical(length(x$solution))
                     if (length(x$solution) == 1) {
-                        sufnec <- agteb(x$IC$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov))
+                        sufnec <- all(agteb(x$IC$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov)))
                         if (sufnec) {
                             cat(paste("M1: ", prettyString(x$solution[[1]], line.length - 4, 4, "+", "<=>", outcome), "\n", sep=""))
                             toreturn <- TRUE
@@ -902,7 +902,7 @@ print.chain <- function(x, ...) {
                     }
                     else {
                         for (i in seq(length(x$solution))) {
-                            sufnec[i] <- agteb(x$IC$individual[[i]]$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov))
+                            sufnec[i] <- all(agteb(x$IC$individual[[i]]$sol.incl.cov[c(1, 3)], c(sol.cons, sol.cov)))
                         }
                         if (any(sufnec)) {
                             prettyNums <- formatC(seq(length(x$solution)), digits = nchar(length(x$solution)) - 1, flag = 0)

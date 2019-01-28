@@ -1,3 +1,15 @@
+Version 3.5
+    o New: first implementation of conjunctural directional expectations
+      (thanks to Carsten Schneider for insisting)
+    o Improved: function simplify() now able to solve even further
+      simplifications, using a method advanced by Quine
+    o Improved: to avoid infinite running times for very complex PI charts,
+      only the first exact solution is returned, with a warning message
+      (thanks to Konan Seny Kan for the example)
+    o Changed: function pof() no longer evaluates matrices of implicants
+      and line numbers from the implicants matrix, this was never used and
+      became obsolete after introducing DNF expressions.
+      
 Version 3.4
     o New: function findRows() gains a three dots argument "..." to allow
       passing a combination of cutoff values to function truthTable() for

@@ -52,17 +52,9 @@
     }
     for (i in seq(length(funargs))) {
         tc <- tryCatch(eval.parent(parse(text = funargs[i])), error = function(e) e, warning = function(w) w)
-        tc <- capture.output(dim(tc))[1]
-        if (identical(substring(gsub("[[:space:]]", "", tc), 1, 9), "function(")) {
-            tc <- simpleError("simpleError")
-        }
-        if (grepl("simpleError", tc)) {
+        if (is.function(tc) | inherits(tc, "error")) {
             tc <- tryCatch(eval.parent(parse(text = toupper(funargs[i]))), error = function(e) e, warning = function(w) w)
-            tc <- capture.output(dim(tc))[1]
-            if (identical(substring(gsub("[[:space:]]", "", tc), 1, 9), "function(")) {
-                tc <- simpleError("simpleError")
-            }
-            if (grepl("simpleError", tc)) {
+            if (is.function(tc) | inherits(tc, "error")) {
                 cat("\n")
                 stop(simpleError(sprintf("Object '%s' not found.\n\n", funargs[i])))
             }

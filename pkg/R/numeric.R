@@ -31,9 +31,12 @@ function(x) {
 function(x) {
     return(suppressWarnings(as.numeric(as.character(x))))
 }
+`aeqb` <- function(a, b) {
+    abs(a - b) <= .Machine$double.eps^0.5
+}
 `agteb` <- function(a, b) {
-    all(a > b | abs(a - b) <= .Machine$double.eps^0.5)
+    a > b | aeqb(a, b)
 }
 `alteb` <- function(a, b) {
-    all(a < b | abs(a - b) <= .Machine$double.eps^0.5)
+    a < b | aeqb(a, b)
 }

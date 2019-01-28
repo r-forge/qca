@@ -152,14 +152,14 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut =
     ipc <- ipc[1:3, , drop = FALSE]
     rownames(minmat) <- rownames(data)
     rownames(ipc) <- c("n", "incl", "PRI")
-    exclude <- ipc[1, ] < n.cut | ipc[3, ] < pri.cut
+    exclude <- ipc[1, ] < n.cut 
     if (sum(!exclude) == 0) {
         cat("\n")
         stop(simpleError(paste0("There are no configurations, using these cutoff values.", ifelse(enter, "\n\n", ""))))
     }
     tt$OUT <- "?"
-    tt$OUT[!exclude] <- as.numeric(ipc[2, !exclude] >= (ic1 - .Machine$double.eps ^ 0.5))
-    tt$OUT[ipc[2, !exclude] <= (ic1 - .Machine$double.eps ^ 0.5) & ipc[2, !exclude] >= (ic0 - .Machine$double.eps ^ 0.5)] <- "C"
+    tt$OUT[!exclude] <- 1 * (agteb(ipc[2, !exclude], ic1) & agteb(ipc[3, !exclude], pri.cut))
+    tt$OUT[ipc[2, !exclude] < ic1 & agteb(ipc[2, !exclude], ic0)] <- "C"
     tt <- cbind(tt, t(ipc))
     cases <- sapply(rownstt, function(x) {
         paste(rownames(data)[line.data == x], collapse = ",")
@@ -172,8 +172,8 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut =
     cases <- cases[!exclude]
     DCC <- DCC[!exclude]
     excluded <- tt[exclude, , drop = FALSE]
-    excluded$OUT <- as.numeric(ipc[2, exclude] >= (ic1 - .Machine$double.eps ^ 0.5))
-    excluded$OUT[ipc[2, exclude] < ic1 & ipc[2, exclude] >= (ic0 - .Machine$double.eps ^ 0.5)]  <- "C"
+    excluded$OUT <- 1 * (agteb(ipc[2, exclude], ic1) & agteb(ipc[3, exclude], pri.cut))
+    excluded$OUT[ipc[2, exclude] < ic1 & agteb(ipc[2, exclude], ic0)]  <- "C"
     if (length(conditions) < 8) {
         ttc <- as.data.frame(matrix(nrow = prod(noflevels), ncol = ncol(tt)))
         colnames(ttc) <- colnames(tt)

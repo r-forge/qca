@@ -85,9 +85,9 @@ It can be specified as a vector of truth table line numbers, or as a matrix of
 causal combinations.
 
 The argument \bold{\code{dir.exp}} is used to specify directional expectations, as
-described by Ragin (2003). They can be specified using SOP expressions, which opens
-up the possibility to experiment with conjunctural directional expectations. Don't care
-conditions are simply left unspecified.
+described by Ragin (2003). They can be specified using DNF (disjunctive normal form)
+expressions, which opens up the possibility to experiment with conjunctural
+directional expectations. Don't care conditions are simply left unspecified.
 
 Activating the \bold{\code{details}} argument has the effect of printing parameters
 of fit for each prime implicant and each overall solution, the essential prime

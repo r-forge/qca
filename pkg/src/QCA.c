@@ -407,6 +407,7 @@ static R_INLINE SEXP simplifyChart(SEXP pichart, int *survrows, int *survcols, i
     }
     int c = 0;
     while (c < picols && *keep_searching) {
+        sortcol[c] = c;
         colsums[c] = 0;
         for (int r = 0; r < pirows; r++) {
             colsums[c] += p_pichart[c * pirows + r];
@@ -416,7 +417,6 @@ static R_INLINE SEXP simplifyChart(SEXP pichart, int *survrows, int *survcols, i
         if (!p_cols[c]) {
             --(*survcols);
         }
-        sortcol[c] = c;
         if (colsums[c] == pirows) {
             *keep_searching = FALSE;
             *survcols = 0; 
@@ -439,7 +439,7 @@ static R_INLINE SEXP simplifyChart(SEXP pichart, int *survrows, int *survcols, i
             if (p_cols[sortcol[c1]]) {
                 for (int c2 = c1 + 1; c2 < picols; c2++) {
                     if (p_cols[sortcol[c2]]) {
-                        if (colsums[sortcol[c1]] > colsums[sortcol[c2]]) {
+                        if (colsums[sortcol[c1]] >= colsums[sortcol[c2]]) {
                             Rboolean itcovers = TRUE; 
                             int r = 0;
                             while (r < pirows && itcovers) {
@@ -559,7 +559,7 @@ static R_INLINE SEXP transpose(SEXP matrix) {
     UNPROTECT(1);
     return(out);
 }
-static R_INLINE Rboolean allcovered(int p_basemat[], int pirows, int foundPI) {
+static R_INLINE Rboolean allCovered(int p_basemat[], int pirows, int foundPI) {
     Rboolean allrows = TRUE;
     int r = 0;
     while (r < pirows && allrows) {
@@ -598,7 +598,7 @@ static R_INLINE SEXP resize(SEXP obj, int len) {
     UNPROTECT(1);
     return(obj);
 }
-static R_INLINE Rboolean all_different(int mat[], int rows, int endrow, int col, int c) {
+static R_INLINE Rboolean allDifferent(int mat[], int rows, int endrow, int col, int c) {
     Rboolean same = FALSE;
     int r = 0;
     while (r < endrow && !same) {
@@ -628,7 +628,7 @@ static R_INLINE int getmin(SEXP pichart, int foundPI, int sol[]) {
     int survcpos[foundPI]; 
     int totcols  = foundPI;
     Rboolean keep_searching = TRUE;
-    if (allcovered(p_basemat, pirows, foundPI)) { 
+    if (allCovered(p_basemat, pirows, foundPI)) { 
         int survrows = pirows;
         int survcols = foundPI;
         Rboolean identical = FALSE;
@@ -672,7 +672,7 @@ static R_INLINE int getmin(SEXP pichart, int foundPI, int sol[]) {
                     int c = 0;
                     while (c < survcols && keep_searching) {
                         sums[c] = 0;
-                        if (all_different(p_estimat, survrows, newminrows, tc, c)) {
+                        if (allDifferent(p_estimat, survrows, newminrows, tc, c)) {
                             for (int r = 0; r < survrows; r++) {
                                 sums[c] += 1 * (p_coverage[tc * survrows + r] || p_basemat[c * survrows + r]);
                             }
@@ -695,17 +695,11 @@ static R_INLINE int getmin(SEXP pichart, int foundPI, int sol[]) {
                                 }
                                 newcheck++;
                                 if (newcheck == estimcheck) {
-                                    estimcheck *= 2;
-                                    if ((survrows * estimcheck) < pow(2, 25)) {
+                                    estimcheck *= 2; 
                                         SET_VECTOR_ELT(usage, 3, temp = resize(temp, survrows * estimcheck));
                                         p_temp = INTEGER(temp);
                                         SET_VECTOR_ELT(usage, 3, tempcov = resize(tempcov, survrows * estimcheck));
                                         p_tempcov = LOGICAL(tempcov);
-                                    }
-                                    else {
-                                        keep_searching = FALSE;
-                                        newminrows = -2;
-                                    }
                                 }
                             }    
                         }
@@ -733,12 +727,7 @@ static R_INLINE int getmin(SEXP pichart, int foundPI, int sol[]) {
         }
     }
     int totsol;
-    if (newminrows >= 0) {
         totsol = mincols + newminrows;
-    }
-    else {
-        totsol = -1;
-    }
     UNPROTECT(1);
     return(totsol);
 }
@@ -800,6 +789,25 @@ SEXP C_solveChart(SEXP pichart, SEXP allsol, SEXP vdepth) {
                 p_temp2[i] = i + 1;
             }
             solfound = 1;
+        }
+        int nck = choose(picols, k);
+        if (nck == NA_INTEGER) {
+            solfound = 1;
+            SET_VECTOR_ELT(usage, 2, temp2 = allocMatrix(REALSXP, k, 1));
+            double *p_tempreal = REAL(temp2);
+            for (int i = 0; i < k; i++) {
+                p_tempreal[i] = sol[i] + 1;
+            }
+            int tempcopy;
+            for (int r1 = 0; r1 < k; r1++) {
+                for (int r2 = r1 + 1; r2 < k; r2++) {
+                    if (p_tempreal[r1] > p_tempreal[r2]) {
+                        tempcopy = p_tempreal[r2];
+                        p_tempreal[r2] = p_tempreal[r1];
+                        p_tempreal[r1] = tempcopy;
+                    }
+                }
+            }
         }
         if (solfound == 0) {
             if (LOGICAL(allsol)[0]) {
@@ -1214,7 +1222,7 @@ static R_INLINE void fill_mbase(int mbase[], int tempk[], int noflevels[], int k
         mbase[c] = mbase[c - 1] * noflevels[tempk[c - 1]];
     }
 }
-static R_INLINE void get_decimals(int posrows, int negrows, int k, int decpos[], int decneg[], int p_posmat[], int p_negmat[], int tempk[], int mbase[]) {
+static R_INLINE void getDecimals(int posrows, int negrows, int k, int decpos[], int decneg[], int p_posmat[], int p_negmat[], int tempk[], int mbase[]) {
     for (int r = 0; r < posrows; r++) {
         decpos[r] = 0;
         for (int c = 0; c < k; c++) {
@@ -1228,7 +1236,7 @@ static R_INLINE void get_decimals(int posrows, int negrows, int k, int decpos[],
         }
     }
 }
-static R_INLINE void get_uniques(int posrows, int *found, int decpos[], Rboolean possiblePI[], int possiblePIrows[]) {
+static R_INLINE void getUniques(int posrows, int *found, int decpos[], Rboolean possiblePI[], int possiblePIrows[]) {
     for (int r = 1; r < posrows; r++) {
         int prev = 0;
         Rboolean unique = TRUE; 
@@ -1291,7 +1299,7 @@ SEXP C_Cubes(SEXP list) {
     get_noflevels(noflevels, p_tt, nconds, ttrows);
     int foundPI = 0;
     int prevfoundPI = 0;
-    int estimpi = 10;
+    int estimpi = 10000;
     SET_VECTOR_ELT(usage, 3, pichart = allocMatrix(LGLSXP, posrows, estimpi));
     p_pichart = LOGICAL(pichart);
     memset(p_pichart, FALSE, posrows * estimpi * sizeof(int));
@@ -1345,13 +1353,13 @@ SEXP C_Cubes(SEXP list) {
                 increment(k, &e, &h, nconds + last, tempk, 0);
                 last = FALSE;
                 fill_mbase(mbase, tempk, noflevels, k);
-                get_decimals(posrows, neresizes, k, decpos, decneg, p_posmat, p_negmat, tempk, mbase);
+                getDecimals(posrows, neresizes, k, decpos, decneg, p_posmat, p_negmat, tempk, mbase);
                 int possiblePIrows[posrows];
                 possiblePIrows[0] = 0; 
                 Rboolean possiblePI[posrows];
                 possiblePI[0] = TRUE; 
                 int found = 1;
-                get_uniques(posrows, &found, decpos, possiblePI, possiblePIrows);
+                getUniques(posrows, &found, decpos, possiblePI, possiblePIrows);
                 int compare = found;
                 if (picons > 0) {
                     int val[k];
@@ -1462,120 +1470,114 @@ SEXP C_Cubes(SEXP list) {
         }
         k += 1;
     }
-    if (checkmin >= 0) {
-        SEXP dimnames, ttcolnms,  colnms;
-        SET_VECTOR_ELT(usage, 6, dimnames = allocVector(VECSXP, 2));
-        if (hasColnames(tt)) {
-            SET_VECTOR_ELT(usage, 7, ttcolnms = VECTOR_ELT(getAttrib(tt, R_DimNamesSymbol), 1));
-            SET_VECTOR_ELT(usage, 8, colnms = allocVector(STRSXP, nconds));
-            for (int i = 0; i < nconds; i++) {
-                SET_STRING_ELT(colnms, i, STRING_ELT(ttcolnms, i));
-            }
-            SET_VECTOR_ELT(dimnames, 1, colnms); 
+    SEXP dimnames, ttcolnms,  colnms;
+    SET_VECTOR_ELT(usage, 6, dimnames = allocVector(VECSXP, 2));
+    if (hasColnames(tt)) {
+        SET_VECTOR_ELT(usage, 7, ttcolnms = VECTOR_ELT(getAttrib(tt, R_DimNamesSymbol), 1));
+        SET_VECTOR_ELT(usage, 8, colnms = allocVector(STRSXP, nconds));
+        for (int i = 0; i < nconds; i++) {
+            SET_STRING_ELT(colnms, i, STRING_ELT(ttcolnms, i));
         }
-        int posallsol = getpos(list, "all.sol");
-        if (posallsol >= 0) { 
-            int posrowdom = getpos(list, "row.dom");
-            Rboolean rowdom = (posrowdom >= 0) ? (LOGICAL(VECTOR_ELT(list, posrowdom))[0]) : FALSE;
-            SEXP out = PROTECT(allocVector(VECSXP, 3));
-            SEXP cols;
-            SET_VECTOR_ELT(usage, 7, cols = allocVector(LGLSXP, foundPI));
-            int *p_cols = INTEGER(cols);
-            memset(p_cols, TRUE, foundPI * sizeof(int));
-            if (rowdom) { 
-                int survcols = foundPI;
-                rowDominance(p_pichart, posrows, &survcols, p_cols, p_ck);
-                if (survcols < foundPI) {
-                    int s = 0;
-                    for (int c = 0; c < foundPI; c++) {
-                        if (p_cols[c]) {
-                            for (int r = 0; r < nconds; r++) {
-                                p_temp[s * nconds + r] = p_temp[c * nconds + r];
-                            }
-                            s++;
-                        }
-                    }
-                    foundPI = survcols;
-                }
-            }
-            SET_VECTOR_ELT(usage, 8, tempcpy = allocVector(INTSXP, foundPI));
-            p_tempcpy = INTEGER(tempcpy);
-            sortmat(p_temp, p_tempcpy, p_ck, nconds, foundPI);
-            SET_VECTOR_ELT(out, 0, result = allocMatrix(INTSXP, foundPI, nconds));
-            p_result = INTEGER(result);
-            SET_VECTOR_ELT(out, 1, pic = allocMatrix(LGLSXP, posrows, foundPI));
-            p_pic = LOGICAL(pic);
-            for (int c = 0; c < foundPI; c++) {
-                for (int r = 0; r < posrows; r++) {
-                    p_pic[c * posrows + r] = p_pichart[p_tempcpy[c] * posrows + r];
-                }
-                for (int r = 0; r < nconds; r++) {
-                    p_result[foundPI * r + c] = p_temp[p_tempcpy[c] * nconds + r];
-                }
-            }
-            if (hasColnames(tt)) {
-                setAttrib(result, R_DimNamesSymbol, dimnames);  
-            }
-            int posolcons = getpos(list, "sol.cons");
-            int posolcov  = getpos(list, "sol.cov");
-            if (REAL(VECTOR_ELT(list, posolcons))[0] > 0) { 
-                SEXP temptemp;
-                SET_VECTOR_ELT(usage, 1, temptemp = duplicate(ck)); 
-                int *p_temptemp = INTEGER(temptemp);
-                SET_VECTOR_ELT(usage, 6, ck = allocVector(INTSXP, foundPI));
-                p_ck = INTEGER(ck);
+        SET_VECTOR_ELT(dimnames, 1, colnms); 
+    }
+    int posallsol = getpos(list, "all.sol");
+    if (posallsol >= 0) { 
+        int posrowdom = getpos(list, "row.dom");
+        Rboolean rowdom = (posrowdom >= 0) ? (LOGICAL(VECTOR_ELT(list, posrowdom))[0]) : FALSE;
+        SEXP out = PROTECT(allocVector(VECSXP, 3));
+        SEXP cols;
+        SET_VECTOR_ELT(usage, 7, cols = allocVector(LGLSXP, foundPI));
+        int *p_cols = INTEGER(cols);
+        memset(p_cols, TRUE, foundPI * sizeof(int));
+        if (rowdom) { 
+            int survcols = foundPI;
+            rowDominance(p_pichart, posrows, &survcols, p_cols, p_ck);
+            if (survcols < foundPI) {
+                int s = 0;
                 for (int c = 0; c < foundPI; c++) {
-                    p_ck[c] = p_temptemp[p_tempcpy[c]];
-                }
-                SET_VECTOR_ELT(usage, 1, temptemp = duplicate(indx)); 
-                p_temptemp = INTEGER(temptemp);
-                SET_VECTOR_ELT(usage, 5, indx = allocMatrix(INTSXP, foundPI, pidepth));
-                p_indx = INTEGER(indx);
-                for (int r = 0; r < foundPI; r++) {
-                    for (int c = 0; c < pidepth; c++) {
-                        p_indx[c * foundPI + r] = p_temptemp[p_tempcpy[r] * pidepth + c] - 1;
+                    if (p_cols[c]) {
+                        for (int r = 0; r < nconds; r++) {
+                            p_temp[s * nconds + r] = p_temp[c * nconds + r];
+                        }
+                        s++;
                     }
                 }
-                SET_VECTOR_ELT(out, 2,
-                    solveChartCons(result, 
-                                ck, 
-                                indx, 
-                                VECTOR_ELT(list, posdata), 
-                                VECTOR_ELT(list, posfs), 
-                                ((nrows(pic) < ncols(pic)) ? nrows(pic) : ncols(pic)), 
-                                REAL(VECTOR_ELT(list, posolcons))[0], 
-                                REAL(VECTOR_ELT(list, posolcov))[0], 
-                                LOGICAL(VECTOR_ELT(list, posallsol))[0], 
-                                soldepth
-                                )
-                            );
+                foundPI = survcols;
+            }
+        }
+        SET_VECTOR_ELT(usage, 8, tempcpy = allocVector(INTSXP, foundPI));
+        p_tempcpy = INTEGER(tempcpy);
+        sortmat(p_temp, p_tempcpy, p_ck, nconds, foundPI);
+        SET_VECTOR_ELT(out, 0, result = allocMatrix(INTSXP, foundPI, nconds));
+        p_result = INTEGER(result);
+        SET_VECTOR_ELT(out, 1, pic = allocMatrix(LGLSXP, posrows, foundPI));
+        p_pic = LOGICAL(pic);
+        for (int c = 0; c < foundPI; c++) {
+            for (int r = 0; r < posrows; r++) {
+                p_pic[c * posrows + r] = p_pichart[p_tempcpy[c] * posrows + r];
+            }
+            for (int r = 0; r < nconds; r++) {
+                p_result[foundPI * r + c] = p_temp[p_tempcpy[c] * nconds + r];
+            }
+        }
+        if (hasColnames(tt)) {
+            setAttrib(result, R_DimNamesSymbol, dimnames);  
+        }
+        int posolcons = getpos(list, "sol.cons");
+        int posolcov  = getpos(list, "sol.cov");
+        if (REAL(VECTOR_ELT(list, posolcons))[0] > 0) { 
+            SEXP temptemp;
+            SET_VECTOR_ELT(usage, 1, temptemp = duplicate(ck)); 
+            int *p_temptemp = INTEGER(temptemp);
+            SET_VECTOR_ELT(usage, 6, ck = allocVector(INTSXP, foundPI));
+            p_ck = INTEGER(ck);
+            for (int c = 0; c < foundPI; c++) {
+                p_ck[c] = p_temptemp[p_tempcpy[c]];
+            }
+            SET_VECTOR_ELT(usage, 1, temptemp = duplicate(indx)); 
+            p_temptemp = INTEGER(temptemp);
+            SET_VECTOR_ELT(usage, 5, indx = allocMatrix(INTSXP, foundPI, pidepth));
+            p_indx = INTEGER(indx);
+            for (int r = 0; r < foundPI; r++) {
+                for (int c = 0; c < pidepth; c++) {
+                    p_indx[c * foundPI + r] = p_temptemp[p_tempcpy[r] * pidepth + c] - 1;
+                }
+            }
+            SET_VECTOR_ELT(out, 2,
+                solveChartCons(result, 
+                            ck, 
+                            indx, 
+                            VECTOR_ELT(list, posdata), 
+                            VECTOR_ELT(list, posfs), 
+                            ((nrows(pic) < ncols(pic)) ? nrows(pic) : ncols(pic)), 
+                            REAL(VECTOR_ELT(list, posolcons))[0], 
+                            REAL(VECTOR_ELT(list, posolcov))[0], 
+                            LOGICAL(VECTOR_ELT(list, posallsol))[0], 
+                            soldepth
+                            )
+                        );
+        }
+        else {
+            int sol[foundPI];
+            if (picons > 0 && getmin(pic, foundPI, sol) == 0) {
+                SET_VECTOR_ELT(out, 2, R_NilValue);
             }
             else {
-                int sol[foundPI];
-                if (picons > 0 && getmin(pic, foundPI, sol) == 0) {
-                    SET_VECTOR_ELT(out, 2, R_NilValue);
-                }
-                else {
-                    INTEGER(VECTOR_ELT(list, posdepth))[0] = INTEGER(VECTOR_ELT(list, posdepth))[1];
-                    SET_VECTOR_ELT(out, 2, C_solveChart(pic, VECTOR_ELT(list, posallsol), VECTOR_ELT(list, posdepth)));
-                }
+                INTEGER(VECTOR_ELT(list, posdepth))[0] = INTEGER(VECTOR_ELT(list, posdepth))[1];
+                SET_VECTOR_ELT(out, 2, C_solveChart(pic, VECTOR_ELT(list, posallsol), VECTOR_ELT(list, posdepth)));
             }
-            SET_VECTOR_ELT(out, 1, pic = transpose(pic));
-            UNPROTECT(2);
-            return(out);
         }
-        else {    
-            SET_VECTOR_ELT(usage, 6, result = transpose(temp));
-            if (hasColnames(tt)) {
-                setAttrib(result, R_DimNamesSymbol, dimnames);  
-            }
-            UNPROTECT(1);
-            return(result);
-        }
+        SET_VECTOR_ELT(out, 1, pic = transpose(pic));
+        UNPROTECT(2);
+        return(out);
     }
-    else {
+    else {    
+        SET_VECTOR_ELT(usage, 6, result = transpose(temp));
+        if (hasColnames(tt)) {
+            setAttrib(result, R_DimNamesSymbol, dimnames);  
+        }
         UNPROTECT(1);
-        return(R_NilValue);
+        return(result);
     }
 }
 SEXP C_findmin(SEXP pichart, SEXP quick) {

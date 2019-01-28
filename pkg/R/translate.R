@@ -84,6 +84,12 @@ function(expression = "", snames = "", noflevels, data) {
     else {
         noflevels <- splitstr(noflevels)
     }
+    expression <- gsub("[[:space:]]", "", expression)
+    if (identical("1-", substring(expression, 1, 2))) {
+        explist <- list(expression = gsub("1-", "", expression), snames = snames)
+        if (!missing(noflevels)) explist$noflevels <- noflevels
+        expression <- do.call("negate", explist)
+    }
     if (any(grepl(",", gsub(",[0-9]", "", expression)))) {
         expression <- splitstr(expression)
     }

@@ -19,11 +19,11 @@ pofind(data, outcome, conditions, relation = "necessity",
 }
 
 \arguments{
-  \item{setms}{A data frame of (calibrated) set memberships, or a matrix of implicants, 
-        or a vector of row numbers from the implicant matrix, or a character expression}
-  \item{data}{The calibrated data frame, in case the \bold{\code{outcome}} is a name.}
+  \item{setms}{A data frame or a single vector of (calibrated) set memberships, or an
+        expression written in disjunctive normal form.}
   \item{outcome}{The name of the outcome column from a calibrated data frame, or
         the actual numerical column from the data frame, representing the outcome.}
+  \item{data}{A calibrated data frame.}
   \item{conditions}{A single string containing the conditions' (columns) names
         separated by commas, or a character vector of conditions' names.}
   \item{relation}{The set relation to \bold{\code{outcome}}, either \bold{\code{"necessity"}}
@@ -59,17 +59,17 @@ of function \bold{\code{\link{superSubset}()}},
 - any other, custom created combinations of set memberships.
 
 When specified as a matrix, \bold{\code{setms}} contains the crisp causal combinations
-similar to those found in the truth table. If some of the causal conditions have
-been minimized, they can be replaced by the numerical value \bold{\code{-1}} (see
-examples section). The number of columns in the matrix should be equal to the number
-of causal conditions in the original \bold{\code{data}}.
+similar to those found in the truth table. The number of columns in the matrix should be
+equal to the number of causal conditions in the original \bold{\code{data}}. If some of
+them are minimized, they can be replaced by the numerical value \bold{\code{-1}} (see
+examples section). 
 
 More generally, \bold{\code{setms}} can be a numerical vector of line numbers from the
 implicant matrix (see function \bold{\code{\link{createMatrix}()}}), which are automatically
 transformed into their corresponding set membership scores. 
 
-The argument \bold{\code{setms}} can also be a string expression,
-written in sum of products (SOP) form.
+The argument \bold{\code{setms}} can also be a string expression, written in disjunctive
+normal form (DNF, also known as SOP - sum or products).
 
 For all situation when \bold{\code{setms}} is something else than a data frame, it
 requires the original \bold{\code{data}} to generate the set memberships.

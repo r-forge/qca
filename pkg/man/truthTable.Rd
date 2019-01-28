@@ -26,7 +26,7 @@ truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut
   \item{n.cut}{The minimum number of cases under which a truth table row is 
         declared as a remainder.}
   \item{pri.cut}{The minimal score for the \bold{\code{PRI}} - proportional reduction in
-        inconsistency, under which a truth table row is declared as a remainder.}
+        inconsistency, under which a truth table row is declared as negative.}
   \item{complete}{Logical, print complete truth table.}
   \item{use.letters}{Logical, use letters instead of causal conditions' names.}
   \item{show.cases}{Logical, print case names.}
@@ -82,7 +82,7 @@ A good practice advice is to specify both \bold{\code{outcome}} and
 to negate outcomes using lower case letters, a situation where it really does
 matter how the outcome and/or conditions are specified.
 
-The argument \bold{\code{incl.cut}} replaces the (deprecated, but still backwards
+The argument \bold{\code{incl.cut}} replaces both (deprecated, but still backwards
 compatible) former arguments \bold{\code{incl.cut1}} and \bold{\code{incl.cut0}}.
 Most of the analyses use the inclusion cutoff for the presence of the output
 (code \bold{\code{"1"}}). When users need both inclusion cutoffs (see below),
@@ -102,18 +102,20 @@ If not specifically declared, the argument \bold{\code{ic0}} is automatically se
 equal to \bold{\code{ic1}}, but otherwise \bold{\code{ic0}} should always be lower
 than \bold{\code{ic1}}.
 
-Using these two cutoffs, the observed combinations are coded with:
+Using these two cutoffs, as well as \bold{\code{pri.cut}} the observed combinations are
+coded with:
 
 \tabular{rl}{
-\bold{\code{"1"}} \tab if they have an inclusion score above \bold{\code{ic1}}\cr \cr
+\bold{\code{"1"}} \tab if they have an inclusion score of at least \bold{\code{ic1}}\cr
+                  \tab and a PRI score of at least \bold{\code{pri.cut}}\cr \cr
 \bold{\code{"C"}} \tab if they have an inclusion score below \bold{\code{ic1}} and
-                       above \bold{\code{ic0}} (contradiction)\cr \cr
-\bold{\code{"0"}} \tab if they have an inclusion score below \bold{\code{ic0}}\cr
+                       at least \bold{\code{ic0}} (contradiction)\cr \cr
+\bold{\code{"0"}} \tab if they have an inclusion score below \bold{\code{ic0}} or \cr
+                  \tab a PRI score below \bold{\code{pri.cut}}
 }
 
 The argument \bold{\code{n.cut}} specifies the frequency threshold under which a truth
-table row is coded as a remainder, irrespective of its inclusion score. The sample
-happens with the \bold{\code{pri.cut}}, that establishes a minimal cutoff for the PRI.
+table row is coded as a remainder, irrespective of its inclusion score.
 
 When argument \bold{\code{show.cases}} is set to \bold{\code{TRUE}}, the case names will be
 printed at their corresponding row in the truth table. The resulting object always contains
