@@ -127,18 +127,11 @@ function(input, include = "", exclude = NULL, dir.exp = "",
         outcome <- toupper(outcome)
         outcome.copy <- outcome
         indata <- input 
-        if (tilde1st(outcome)) {
-            neg.out <- TRUE
-            outcome <- substring(outcome, 2)
-        }
-        if (!is.element(toupper(curlyBrackets(outcome, outside = TRUE)), colnames(input))) {
+        if (!is.element(toupper(curlyBrackets(notilde(outcome), outside = TRUE)), colnames(input))) {
             cat(enter)
             stop(simpleError(paste0("Inexisting outcome name.", enter, enter)))
         }
-        outcome.name <- ifelse (tilde1st(outcome), substring(outcome, 2), outcome)
-        if (grepl("\\{|\\}", outcome)) {
-            outcome.name <- curlyBrackets(outcome.name, outside = TRUE)
-        }
+        outcome.name <- curlyBrackets(notilde(outcome), outside = TRUE)
         if (identical(conditions, "")) {
             conditions <- names(input)[-which(names(input) == outcome.name)]
         }
@@ -367,19 +360,18 @@ function(input, include = "", exclude = NULL, dir.exp = "",
             conds <- conditions[match(colnames(p.sol$reduced$expressions), LETTERS)]
         }
     }
-    if (length(output$solution) == 1) {
-        listIC <- pof(p.sol$reduced$expressions - 1, tt$options$outcome, indata, showc=TRUE, cases=expr.cases, neg.out=neg.out,
-                      relation = "sufficiency", conditions = conds)
-        listIC$options$show.cases <- show.cases
+    poflist <- list(setms = paste(rownames(p.sol$reduced$expressions), collapse = "+"),
+                    outcome = tt$options$outcome, data = indata, neg.out = neg.out,
+                    use.letters = tt$options$use.letters, show.cases = TRUE, cases = expr.cases,
+                    conditions = conds, relation = "sufficiency", minimize = TRUE)
+    if (length(output$solution) > 1) {
+        poflist$solution.list <- output$solution
+        poflist$essential <- output$essential
     }
-    else {
-        listIC <- pof(p.sol$reduced$expressions - 1, tt$options$outcome, indata, showc=TRUE, cases=expr.cases, neg.out=neg.out,
-                      relation = "sufficiency", conditions = conds, solution.list=output$solution, essential=output$essential)
-        listIC$options$show.cases <- show.cases
-    }
+    listIC <- do.call("pof", poflist)
+    listIC$options$show.cases <- show.cases
     output$pims <- listIC$pims
-    attr(output$pims, "conditions") <- conds
-    listIC$pims <- NULL
+    attr(output$pims, "conditions") <- conditions
     output$IC <- listIC
     output$numbers <- c(OUT1 = nofcases1, OUT0 = nofcases0, OUTC = nofcasesC, Total = nofcases1 + nofcases0 + nofcasesC)
     mtrx <- p.sol$mtrx[p.sol$all.PIs, , drop = FALSE]
@@ -422,16 +414,29 @@ function(input, include = "", exclude = NULL, dir.exp = "",
         prettyNums <- formatC(seq(length(p.sol$solution.list[[1]])), digits = nchar(length(p.sol$solution.list[[1]])) - 1, flag = 0)
         if (!identical(dir.exp, "") & !identical(include, "") & !identical(c.sol$solution.list, NA)) {
             dir.exp <- verify.dir.exp(recdata, outcome, conditions, noflevels, dir.exp)
-            EClist <- .Call("C_getEC", dir.exp, c.sol$expressions, c.sol$sol.matrix, p.sol$expressions, p.sol$sol.matrix, output$SA, PACKAGE = "QCA")
+            if (!is.null(output$SA[[1]])) {
+                EClist <- .Call("C_getEC", dir.exp, c.sol$expressions, c.sol$sol.matrix, p.sol$expressions, p.sol$sol.matrix, output$SA, PACKAGE = "QCA")
+            }
+            else {
+                ECmat <- as.data.frame(matrix(ncol = length(conditions), nrow = 0))
+                colnames(ECmat) <- colnames(inputt)
+            }
             i.sol <- vector("list", ncol(c.sol$sol.matrix)*ncol(p.sol$sol.matrix))
             index <- 1
             for (c.s in seq(ncol(c.sol$sol.matrix))) {
                 for (p.s in seq(ncol(p.sol$sol.matrix))) {
                     names(i.sol)[index] <- paste("C", c.s, "P", p.s, sep = "")
-                    i.sol[[index]]$EC <- EClist[[index]]
-                    i.sol[[index]]$DC <- output$SA[[p.s]][setdiff(rownames(output$SA[[p.s]]), rownames(EClist[[index]])), , drop = FALSE]
-                    i.sol[[index]]$NSEC <- matrix(ncol = ncol(EClist[[index]]), nrow = 0)
-                    colnames(i.sol[[index]]$NSEC) <- colnames(EClist[[index]])
+                    if (is.null(output$SA[[1]])) {
+                        i.sol[[index]]$EC <- ECmat
+                        i.sol[[index]]$DC <- ECmat
+                        i.sol[[index]]$NSEC <- ECmat
+                    }
+                    else {
+                        i.sol[[index]]$EC <- EClist[[index]]
+                        i.sol[[index]]$DC <- output$SA[[p.s]][setdiff(rownames(output$SA[[p.s]]), rownames(EClist[[index]])), , drop = FALSE]
+                        i.sol[[index]]$NSEC <- matrix(ncol = ncol(EClist[[index]]), nrow = 0)
+                        colnames(i.sol[[index]]$NSEC) <- colnames(EClist[[index]])
+                    }
                     nsecs <- TRUE
                     while (nsecs) {
                         pos.matrix.i.sol <- unique(rbind(pos.matrix, i.sol[[index]]$EC + 1))
@@ -452,7 +457,7 @@ function(input, include = "", exclude = NULL, dir.exp = "",
                             }
                         }
                         pos.matrix.i.sol <- pos.matrix.i.sol[!tomit, , drop = FALSE]
-                        expressions <- .Call("C_QMC", pos.matrix.i.sol, noflevels, PACKAGE = "QCA") 
+                        expressions <- .Call("C_QMC", as.matrix(pos.matrix.i.sol), noflevels, PACKAGE = "QCA") 
                         i.sol.index <- getSolution(expressions=expressions, mv=mv, use.tilde=use.tilde, collapse=collapse, inputt=inputt, row.dom=row.dom, initial=rownms, all.sol=all.sol, indata=indata, ...=...)
                         i.sol.index$expressions <- i.sol.index$expressions[rowSums(i.sol.index$mtrx) > 0, , drop = FALSE]
                         if (nrow(i.sol[[index]]$EC) > 0) {
@@ -504,18 +509,16 @@ function(input, include = "", exclude = NULL, dir.exp = "",
                     for (l in seq(length(expr.cases))) {
                         expr.cases[l] <- paste(inputcases[which(mtrxlines[l, ])], collapse="; ")
                     }
-                    if (length(i.sol.index$solution.list[[1]]) == 1) {
-                        i.sol[[index]]$IC <- pof(i.sol.index$reduced$expressions - 1, outcome, indata, showc = TRUE,
-                                                 cases = expr.cases, relation = "sufficiency", neg.out = neg.out,
-                                                 conditions = conditions)
-                        i.sol[[index]]$IC$options$show.cases <- show.cases
+                    poflist <- list(setms = paste(rownames(i.sol.index$reduced$expressions), collapse = "+"),
+                                    outcome = tt$options$outcome, data = indata, neg.out = neg.out,
+                                    use.letters = tt$options$use.letters, show.cases = TRUE, cases = expr.cases,
+                                    conditions = conditions, relation = "sufficiency", minimize = TRUE)
+                    if (length(i.sol.index$solution.list[[1]]) > 1) {
+                        poflist$solution.list <- i.sol.index$solution.list[[1]]
+                        poflist$essential <- i.sol.index$solution.list[[2]]
                     }
-                    else {
-                        i.sol[[index]]$IC <- pof(i.sol.index$reduced$expressions - 1, outcome, indata, showc = TRUE,
-                                                 cases = expr.cases, relation = "sufficiency", neg.out = neg.out, conditions = conditions,
-                                                 solution.list = i.sol.index$solution.list[[1]], essential = i.sol.index$solution.list[[2]])
-                        i.sol[[index]]$IC$options$show.cases <- show.cases
-                    }
+                    i.sol[[index]]$IC <- do.call("pof", poflist)
+                    i.sol[[index]]$IC$options$show.cases <- show.cases
                     i.sol[[index]]$pims <- i.sol[[index]]$IC$pims
                     attr(i.sol[[index]]$pims, "conditions") <- conditions
                     i.sol[[index]]$IC$pims <- NULL

@@ -55,7 +55,6 @@ function(x, ...) {
 function(x, ...) {
     other.args <- list(...)
     enter <- ifelse (is.element("enter", names(as.list(x$call))), as.list(x$call)$enter, TRUE)
-    PRI <- TRUE
     if (!is.null(x$rowsorder)) {
         x$tt <- x$tt[x$rowsorder, ]
     }
@@ -109,15 +108,10 @@ function(x, ...) {
         inclusion <- x$tt[, "incl"]
         missincl <- x$tt[, "incl"] == "-"
         x$tt[!missincl, "incl"] <- formatC(as.numeric(inclusion[!missincl]), digits=3, format="f")
-        whichpri <- which(colnames(x$tt) == "PRI")
-        if (PRI) {
-            pri <- x$tt[, whichpri[length(whichpri)]]
-            misspri <- x$tt[, whichpri[length(whichpri)]] == "-"
-            x$tt[!misspri, whichpri[length(whichpri)]] <- formatC(as.numeric(pri[!misspri]), digits=3, format="f")
-        }
-        else {
-            x$tt[, whichpri[length(whichpri)]] <- NULL 
-        }
+        whichpri <- tail(which(colnames(x$tt) == "PRI"), 1)
+        pri <- x$tt[, whichpri]
+        misspri <- x$tt[, whichpri] == "-"
+        x$tt[!misspri, whichpri] <- formatC(as.numeric(pri[!misspri]), digits = 3, format = "f")
         if (any(names(x$tt) == "pval1")) {
             x$tt[x$tt[, "pval1"] != "-", "pval1"] <- formatC(as.numeric(x$tt[x$tt[, "pval1"] != "-", "pval1"]), digits=3, format="f")
             if (length(x$options$incl.cut) > 1) {
@@ -127,10 +121,8 @@ function(x, ...) {
         if (any(missincl)) {
             x$tt[missincl, "incl"] <- "  -"
         }
-        if (PRI) {
-            if (any(misspri)) {
-                x$tt[misspri, "PRI"] <- "  -"
-            }
+        if (any(misspri)) {
+            x$tt[misspri, "PRI"] <- "  -"
         }
         if (!is.element("excluded", names(x$options))) {
             cat("  OUT: output value\n")
@@ -200,7 +192,7 @@ function(x, ...) {
     }
     sol.cons <- x$options$sol.cons
     sol.cov  <- x$options$sol.cov
-    outcome <- x$tt$options$outcome
+    outcome <- toupper(x$tt$options$outcome)
     if (grepl("\\{|\\}", outcome)) {
         if (x$options$neg.out) {
             outcome <- paste("~", notilde(toupper(outcome)), sep = "")
@@ -210,12 +202,32 @@ function(x, ...) {
         }
     }
     else {
-        if (x$options$neg.out) {
-            if (x$options$use.tilde) {
-                outcome <- paste("~", notilde(toupper(outcome)), sep = "")
+        if (x$options$use.tilde) {
+            if (x$options$neg.out) {
+                if (tilde1st(outcome)) {
+                    outcome <- notilde(outcome)
+                }
+                else {
+                    outcome <- paste("~", toupper(outcome), sep = "")
+                }
+            }
+        }
+        else {
+            if (x$options$neg.out) {
+                if (tilde1st(outcome)) {
+                    outcome <- toupper(notilde(outcome))
+                }
+                else {
+                    outcome <- tolower(outcome)
+                }
             }
             else {
-                outcome <- notilde(tolower(outcome))
+                if (tilde1st(outcome)) {
+                    outcome <- tolower(notilde(outcome))
+                }
+                else {
+                    outcome <- toupper(outcome)
+                }
             }
         }
     }
@@ -229,7 +241,6 @@ function(x, ...) {
             x$IC$incl.cov$cases <- NULL
         }
     }
-    PRI <- TRUE
     if (is.element("details", names(other.args))) {
         if (is.logical(other.args$details)) {
             details <- other.args$details
@@ -238,7 +249,7 @@ function(x, ...) {
         }
     }
     if (x$options$print.truth.table) {
-        print.tt(x$tt, PRI=PRI)
+        print.tt(x$tt)
     }
     else {
         nofconditions <- length(x$tt$noflevels)
@@ -302,7 +313,7 @@ function(x, ...) {
                 }
             }
             if (x$options$details) {
-                print.pof(x$i.sol[[i]]$IC, PRI = PRI, show.cases = x$options$show.cases)
+                print.pof(x$i.sol[[i]]$IC, show.cases = x$options$show.cases)
             }
         }
     }
@@ -343,7 +354,7 @@ function(x, ...) {
             }
         }
         if (x$options$details) {
-            print.pof(x$IC, PRI = PRI, show.cases = x$options$show.cases, line.length=line.length)
+            print.pof(x$IC, show.cases = x$options$show.cases, line.length=line.length)
         }
     }
     if (!x$options$details & enter) {
@@ -384,7 +395,6 @@ function(x, ...) {
     if (is.element("line.length", names(other.args))) {
         line.length <- other.args$line.length
     }
-    PRI <- TRUE
     if (!is.element("show.cases", names(x$options))) {
         x$options$show.cases <- FALSE
     }
@@ -395,9 +405,6 @@ function(x, ...) {
     }
     if (overall) {
         incl.cov <- x$overall$incl.cov
-        if (!PRI) {
-            incl.cov <- incl.cov[, -grep("PRI", colnames(incl.cov))]
-        }
         nrow.incl.cov <- nrow(incl.cov)
         nchar.nrow <- nchar(nrow.incl.cov)
         ind.len <- length(x$individual)
@@ -444,11 +451,8 @@ function(x, ...) {
             }
         }
         sol.incl.cov <- matrix(unlist(lapply(x$individual, "[", "sol.incl.cov")),
-                               nrow=length(x$individual), ncol=3, byrow=TRUE)
+                               nrow = length(x$individual), ncol = 3, byrow = TRUE)
         rownames(sol.incl.cov) <- paste("M", seq(length(x$individual)), sep="")
-        if (!PRI) {
-            sol.incl.cov <- sol.incl.cov[, -2, drop=FALSE]
-        }
         sol.exists <- TRUE
     }
     else {
@@ -467,16 +471,16 @@ function(x, ...) {
         incl.cov$cases <- NULL
         for (i in seq(ncol(incl.cov))) {
             NAs <- is.na(incl.cov[, i])
-            incl.cov[!NAs, i] <- formatC(incl.cov[!NAs, i], digits=3, format="f")
+            incl.cov[!NAs, i] <- formatC(incl.cov[!NAs, i], digits = 3, format = "f")
             incl.cov[NAs, i] <- "  -  "
         }
         for (i in seq(ncol(x$optionals))) {
             NAs <- is.na(x$optionals)
-            x$optionals[!NAs, i] <- formatC(x$optionals[!NAs, i], digits=3, format="f")
+            x$optionals[!NAs, i] <- formatC(x$optionals[!NAs, i], digits = 3, format = "f")
             x$optionals[NAs, i] <- "  -  "
         }
         if (is.element("sol.incl.cov", names(x))) {
-            sol.incl.cov <- t(as.matrix(x$sol.incl.cov))
+            sol.incl.cov <- as.matrix(x$sol.incl.cov)
             rownames(sol.incl.cov) <- "M1"
             sol.exists <- TRUE
         }
@@ -492,19 +496,18 @@ function(x, ...) {
         nchar.rownames <- max(nchar.rownames, max(nchar(rownames(incl.cov.e))))
         rownames(incl.cov.e) <- format(rownames(incl.cov.e), width=max(2, nchar.rownames))
     }
-    if (nec(x$relation)) {
-        incl.cov <- incl.cov[, !grepl("covU", colnames(incl.cov)), drop = FALSE]
-    }
-    rownames(incl.cov) <- format(rownames(incl.cov), width=max(2, nchar.rownames))
+    rownames(incl.cov) <- format(rownames(incl.cov), width = max(2, nchar.rownames))
     if (sol.exists) {
-        rownames(sol.incl.cov) <- format(rownames(sol.incl.cov), width=nchar.rownames)
-        sol.incl.cov <- formatC(sol.incl.cov, digits=3, format="f")
+        rownames(sol.incl.cov) <- format(rownames(sol.incl.cov), width = nchar.rownames)
+        NAs <- is.na(sol.incl.cov)
+        sol.incl.cov[!NAs] <- formatC(sol.incl.cov[!NAs], digits = 3, format = "f")
+        sol.incl.cov[NAs] <- ""
     }
     incl.cov[incl.cov == "  NA"] <- "  -  "
     max.chars <- 1
-    if (is.element(x$relation, c("sufficiency", "suf"))) {
+    if (is.element(x$options$relation, c("sufficiency", "suf"))) {
         if (ncol(incl.cov) > (3 + any(grepl("PRI|RoN", colnames(incl.cov)))) & is.null(x$options$add)) {
-            first.printed.row <- paste(c(rep(" ", nchar.rownames + nchar.nrow + 25 - 7 * !PRI), rep("-", 7 * (ncol(incl.cov) - (2 + valid.covU) + !PRI) - 2)), collapse="")
+            first.printed.row <- paste(c(rep(" ", nchar.rownames + nchar.nrow + 25), rep("-", 7 * (ncol(incl.cov) - (2 + valid.covU)) - 2)), collapse="")
             max.chars <- nchar(first.printed.row)
         }
     }

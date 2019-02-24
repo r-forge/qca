@@ -27,7 +27,6 @@
 function(data, outcome = "", conditions = "", relation = "necessity", incl.cut = 1,
     cov.cut = 0, ron.cut = 0, pri.cut = 0, use.tilde = FALSE, use.letters = FALSE,
     depth = NULL, add = NULL, ...) {
-    memcare <- FALSE 
     funargs <- lapply(match.call(), deparse)
     other.args <- list(...)
     colnames(data) <- toupper(colnames(data))
@@ -87,7 +86,6 @@ function(data, outcome = "", conditions = "", relation = "necessity", incl.cut =
     if (neg.out) {
         data[, outcome] <- 1 - data[, outcome]
     }
-    fc <- apply(data[, conditions, drop = FALSE], 2, function(x) any(x %% 1 > 0))
     if (mv <- any(data[, conditions] > 1)) {
         use.tilde <- FALSE
     }
@@ -100,6 +98,7 @@ function(data, outcome = "", conditions = "", relation = "necessity", incl.cut =
         collapse <- ifelse(mv | use.tilde, "*", "")
     }
     noflevels <- apply(data[, conditions, drop = FALSE], 2, max) + 1L
+    fc <- apply(data[, conditions, drop = FALSE], 2, function(x) any(x %% 1 > 0))
     noflevels[fc] <- 2
     mbase <- c(rev(cumprod(rev(noflevels + 1L))), 1)[-1]
     noflevels[noflevels == 1] <- 2 
@@ -185,6 +184,7 @@ function(data, outcome = "", conditions = "", relation = "necessity", incl.cut =
     }
     result <- result[tokeep, , drop = FALSE]
     mins <- mins[, tokeep, drop = FALSE]
+    attr(mins, "conditions") <- conditions 
     if (nrow(result) == 0) {
         cat("\n")
         stop(simpleError(paste("There are no combinations with", ifelse(nec(relation), paste("ron.cut =", round(ron.cut, 3)), paste("pri.cut =", round(pri.cut, 3))), "\n\n")))
@@ -202,9 +202,9 @@ function(data, outcome = "", conditions = "", relation = "necessity", incl.cut =
         }
         result <- cbind(result, toadd)
     }
-    out.list <- list(incl.cov=result, coms=mins, use.letters=use.letters)
+    out.list <- list(incl.cov = result, coms = mins, use.letters = use.letters)
     if (use.letters & !alreadyletters) {
-        out.list$letters=replacements
+        out.list$letters <- replacements
     }
     out.list$options <- list(
         outcome = outcome,
@@ -216,5 +216,5 @@ function(data, outcome = "", conditions = "", relation = "necessity", incl.cut =
         use.tilde = use.tilde,
         use.letters = use.letters
     )
-    return(structure(out.list, class="sS"))
+    return(structure(out.list, class = "sS"))
 }

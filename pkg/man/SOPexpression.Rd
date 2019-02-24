@@ -29,11 +29,11 @@ Ragin (1987: 144-147), and extended to multi-value sets.
 }
 
 \usage{
-translate(expression = "", snames = "", noflevels, data)
+translate(expression = "", snames = "", noflevels = NULL, data = NULL)
 
-compute(expression = "", data, separate = FALSE)
+compute(expression = "", data = NULL, separate = FALSE)
 
-simplify(expression = "", snames = "", noflevels, use.tilde = FALSE)
+simplify(expression = "", snames = "", noflevels = NULL, use.tilde = FALSE)
 }
 
 \arguments{

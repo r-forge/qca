@@ -24,7 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `compute` <-
-function(expression = "", data, separate = FALSE) { 
+function(expression = "", data = NULL, separate = FALSE) { 
     expression <- gsub("[[:space:]]", "", expression)
     enchar <- nchar(expression)
     if (identical(substring(expression, 1, 2), "~(") & identical(substring(expression, enchar, enchar), ")")) {
@@ -32,7 +32,7 @@ function(expression = "", data, separate = FALSE) {
     }
     negated <- identical(unname(substring(expression, 1, 2)), "1-")
     expression <- gsub("1-", "", expression)
-    if (missing(data)) {
+    if (is.null(data)) {
         syscalls <- parse(text = paste(unlist(lapply(sys.calls(), deparse)), collapse = "\n"))
         if (any(withdata <- grepl("with\\(", syscalls))) {
             withdata <- which(withdata)
@@ -40,7 +40,7 @@ function(expression = "", data, separate = FALSE) {
             data <- get(unlist(strsplit(gsub("with\\(", "", syscalls[withdata]), split = ","))[1], envir = length(syscalls) - withdata)
         }
         else {
-            colnms <- validateNames(notilde(expression), sort(toupper(eval.parent(parse(text = "ls()", n = 1)))))
+            colnms <- colnames(validateNames(notilde(expression), sort(toupper(eval.parent(parse(text = "ls()", n = 1))))))
             data <- vector(mode = "list", length = length(colnms))
             for (i in seq(length(data))) {
                 data[[i]] <- eval.parent(parse(text = sprintf("get(\"%s\")", colnms[i]), n = 1))

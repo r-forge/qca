@@ -409,15 +409,15 @@ function(allargs) {
         }
     }
 }
-`verify.multivalue` <- function(expression, snames = "", noflevels, data) {
+`verify.multivalue` <- function(expression, snames = "", noflevels = NULL, data = NULL) {
     if (length(unlist(gregexpr("[{]+", expression))) != length(unlist(gregexpr("[}]+", expression)))) {
         cat("\n")
         stop(simpleError("Incorrect expression, opened and closed brackets don't match.\n\n"))
     }
     tempexpr <- gsub("[*|,|;|(|)]", "", expression)
-    pp <- unlist(strsplit(tempexpr, split="[+]"))
+    pp <- unlist(strsplit(tempexpr, split = "[+]"))
     insb <- curlyBrackets(gsub("[*|(|)]", "", expression))
-    tempexpr <- curlyBrackets(tempexpr, outside=TRUE)
+    tempexpr <- curlyBrackets(tempexpr, outside = TRUE)
     if (length(insb) != length(tempexpr)) {
         cat("\n")
         stop(simpleError("Incorrect expression, some snames don't have brackets.\n\n"))
@@ -427,8 +427,8 @@ function(allargs) {
         stop(simpleError("Invalid {multi}values, levels should be numeric.\n\n"))
     }
     conds <- sort(unique(toupper(notilde(curlyBrackets(pp, outside = TRUE)))))
-    if (missing(data)) {
-        if (missing(noflevels)) {
+    if (is.null(data)) {
+        if (is.null(noflevels)) {
             if (any(hastilde(expression))) {
                 cat("\n")
                 stop(simpleError("Negating a multivalue condition requires the number of levels.\n\n"))
@@ -458,12 +458,10 @@ function(allargs) {
         }
     }
     else { 
-        if (identical(snames, "")) {
             if (length(setdiff(conds, colnames(data))) > 0) {
                 cat("\n")
                 stop(simpleError("Parts of the expression don't match the column names from \"data\" argument.\n\n"))
             }
-        }
     }
     if (!identical(snames, "")) {
         if (length(setdiff(conds, toupper(splitstr(snames)))) > 0) {

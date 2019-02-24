@@ -23,7 +23,7 @@
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-`simplify` <- function(expression, snames = "", noflevels, use.tilde = FALSE) {
+`simplify` <- function(expression, snames = "", noflevels = NULL, use.tilde = FALSE) {
     syscalls <- unlist(lapply(sys.calls(), deparse))
     if (any(withdata <- grepl("with\\(", syscalls))) {
         snames <- get(unlist(strsplit(gsub("with\\(", "", syscalls), split = ","))[1], envir = length(syscalls) - which(withdata))
@@ -175,7 +175,7 @@
         return(bl)
     }
     tlist <- list(expression = bl, snames = snames)
-    if (!missing(noflevels)) tlist$noflevels <- noflevels
+    if (!is.null(noflevels)) tlist$noflevels <- noflevels
     bl <- do.call("translate", tlist)
     expressions <- matrix(nrow = 0, ncol = ncol(bl))
     colnames(expressions) <- colnames(bl)
@@ -251,7 +251,7 @@
         expressions <- gsub("[*]", "", expressions)
     }
     mlist <- list(primes = expressions, configs = mint)
-    if (!missing(noflevels)) mlist$noflevels <- noflevels
+    if (!is.null(noflevels)) mlist$noflevels <- noflevels
     if (!identical(snames, "")) mlist$snames <- snames
     return(paste(expressions, collapse = " + "))
 }

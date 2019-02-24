@@ -1,7 +1,7 @@
 import(shiny)
 import(venn)
 import(fastdigest)
-importFrom("utils", "packageDescription", "remove.packages", "capture.output", "data", "loadhistory", "savehistory")
+importFrom("utils", "packageDescription", "remove.packages", "capture.output", "data", "loadhistory", "savehistory", "tail")
 importFrom("stats", "glm", "predict", "quasibinomial", "binom.test", "cutree", "dist", "hclust", "na.omit", "dbinom", "setNames")
 importFrom("grDevices", "dev.cur", "dev.new", "dev.list")
 importFrom("graphics", "abline", "axis", "box", "mtext", "par", "title", "text")

@@ -59,8 +59,9 @@ zero).
 
 The outcome can be negated using a tilde operator \bold{\code{~X}}. The logical
 argument \bold{\code{neg.out}} is now deprecated, but still backwards compatible.
-Replaced by the tilde in front of the outcome name, it controls whether
-\bold{\code{outcome}} is to be explained or its negation.
+Replaced by the tilde in front of the outcome name, it controls whether \bold{\code{outcome}}
+is to be explained or its negation. Note that using both \bold{\code{neg.out = TRUE}} and a
+tilde \bold{\code{~}} in the outcome name cancel each other out.
 
 If the outcome column is multi-value, the argument \bold{\code{outcome}} should use
 the standard curly-bracket notation \bold{\code{X{value}}}. Multiple values are
@@ -68,10 +69,6 @@ allowed, separated by a comma (for example \bold{\code{X{1,2}}}). Negation of th
 outcome can also be performed using the tilde \bold{\code{~}} operator, for example
 \bold{\code{~X{1,2}}}, which is interpreted as: "all values in X except 1 and 2"
 and it becomes the new outcome to be explained.
-
-Using both \bold{\code{neg.out = TRUE}} and a tilde \bold{\code{~}} in the outcome
-name don't cancel each other out, either one (or even both) signaling if the
-\bold{\code{outcome}} should be negated.
 
 The argument \bold{\code{conditions}} specifies the causal conditions' names among the other
 columns in the data. When this argument is not specified, all other columns except for

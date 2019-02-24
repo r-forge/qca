@@ -2499,6 +2499,81 @@ SEXP C_findSubsets(SEXP rowno, SEXP noflevels, SEXP mbase, SEXP max) {
     UNPROTECT(1);
     return(temp1);
 }
+SEXP C_pof(SEXP x, SEXP y, SEXP nec) {
+    SEXP pmin, max_ec;
+    SEXP usage = PROTECT(allocVector(VECSXP, 5));
+    SET_VECTOR_ELT(usage, 0, x = coerceVector(x, REALSXP));
+    SET_VECTOR_ELT(usage, 1, y = coerceVector(y, REALSXP));
+    double *p_x = REAL(x);
+    double *p_y = REAL(y);
+    int nrows_x = nrows(x);
+    int ncols_x = ncols(x);
+    SET_VECTOR_ELT(usage, 2, pmin = allocMatrix(REALSXP, nrows_x, ncols_x));
+    double *p_pmin = REAL(pmin);
+    SET_VECTOR_ELT(usage, 3, max_ec = allocMatrix(REALSXP, nrows_x, ncols_x));
+    double *p_max_ec = REAL(max_ec);
+    double sum_y = 0;
+    double sum_x[ncols_x];
+    double sum_neg_x[ncols_x];
+    double sum_pmin[ncols_x];
+    double sum_pmin_negy[ncols_x];
+    double sum_neg_pmin[ncols_x];
+    double sum_min_max_ec[ncols_x];
+    for (int c = 0; c < ncols_x; c++) {
+        sum_x[c] = 0;
+        sum_neg_x[c] = 0;
+        sum_pmin[c] = 0;
+        sum_neg_pmin[c] = 0;
+        sum_min_max_ec[c] = 0;
+    }
+    for (int r = 0; r < nrows_x; r++) {
+        sum_y += p_y[r];
+        for (int c = 0; c < ncols_x; c++) {
+            sum_x[c] += p_x[c * nrows_x + r];
+            sum_neg_x[c] += 1 - p_x[c * nrows_x + r];
+            p_pmin[c * nrows_x + r] = (p_x[c * nrows_x + r] < p_y[r]) ? p_x[c * nrows_x + r] : p_y[r];
+            sum_pmin[c] += p_pmin[c * nrows_x + r];
+            sum_neg_pmin[c] += 1 - p_pmin[c * nrows_x + r];
+            sum_pmin_negy[c] += (p_pmin[c * nrows_x + r] < (1 - p_y[r])) ? p_pmin[c * nrows_x + r] : (1 - p_y[r]);
+            p_max_ec[c * nrows_x + r] = 0;
+        }
+    }
+    for (int r = 0; r < nrows_x; r++) {
+        for (int c = 0; c < ncols_x - 1; c++) { 
+            for (int cu = 0; cu < ncols_x - 1; cu++) {
+                if (cu != c) {
+                    if (p_max_ec[c * nrows_x + r] < p_pmin[cu * nrows_x + r]) {
+                        p_max_ec[c * nrows_x + r] = p_pmin[cu * nrows_x + r];
+                    }
+                }
+            }
+        }
+    }
+    for (int r = 0; r < nrows_x; r++) {
+        for (int c = 0; c < ncols_x - 1; c++) {
+            sum_min_max_ec[c] += (p_pmin[c * nrows_x + r] < p_max_ec[c * nrows_x + r]) ? p_pmin[c * nrows_x + r]: p_max_ec[c * nrows_x + r];
+        }
+    }
+    SEXP inclcov;
+    SET_VECTOR_ELT(usage, 4, inclcov = allocMatrix(REALSXP, ncols_x, 4));
+    double *p_inclcov = REAL(inclcov);
+    for (int c = 0; c < ncols_x; c++) {
+        if (LOGICAL(nec)[0]) {
+            p_inclcov[c] = sum_pmin[c] / sum_y;
+            p_inclcov[ncols_x + c] = sum_neg_x[c] / sum_neg_pmin[c];
+            p_inclcov[2 * ncols_x + c] = sum_pmin[c] / sum_x[c];
+            p_inclcov[3 * ncols_x + c] = 0; 
+        }
+        else {
+            p_inclcov[c] = sum_pmin[c] / sum_x[c];
+            p_inclcov[ncols_x + c] = (sum_pmin[c] - sum_pmin_negy[c]) / (sum_x[c] - sum_pmin_negy[c]);
+            p_inclcov[2 * ncols_x + c] = sum_pmin[c] / sum_y;
+            p_inclcov[3 * ncols_x + c] = p_inclcov[2 * ncols_x + c] - (sum_min_max_ec[c] / sum_y);
+        }
+    }
+    UNPROTECT(1);
+    return(inclcov);
+}
 SEXP C_getEC(SEXP aleabune, SEXP veverita, SEXP catelus, SEXP ursulet, SEXP ratusca, SEXP ametist) {
     SEXP usage = PROTECT(allocVector(VECSXP, 6));
     int *p_aleabune   = INTEGER(aleabune);

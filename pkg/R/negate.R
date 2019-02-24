@@ -48,13 +48,23 @@ function(expression, snames = "", noflevels, use.tilde = FALSE) {
     }
     if (is.character(expression)) {
         star <- any(grepl("[*]", expression))
+        if (!identical(snames, "")) {
+            snames <- splitstr(snames)
+            if (any(nchar(snames) > 1)) {
+                star <- TRUE
+            }
+        }
         if (any(hastilde(expression))) {
             use.tilde <- TRUE
         }
         mv <- any(grepl("[{|}]", expression))
+        if (mv) start <- FALSE
         negateit <- function(x, snames, noflevels) {
-            x <- simplify(x, snames = snames, noflevels = noflevels)
-            trexp <- translate(x, snames = snames, noflevels = noflevels)
+            callist <- list(expression = x)
+            if (!missing(snames)) callist$snames <- snames
+            if (!missing(noflevels)) callist$noflevels <- noflevels
+            x <- do.call("simplify", callist)
+            trexp <- do.call("translate", callist)
             snames <- colnames(trexp)
             if (missing(noflevels)) {
                 noflevels <- rep(2, ncol(trexp))

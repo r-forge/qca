@@ -24,7 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `translate` <-
-function(expression = "", snames = "", noflevels, data) {
+function(expression = "", snames = "", noflevels = NULL, data = NULL) {
     if (identical(expression, "")) {
         cat("\n")
         stop(simpleError("Empty expression.\n\n"))
@@ -39,7 +39,7 @@ function(expression = "", snames = "", noflevels, data) {
         cat("\n")
         stop(simpleError("Set names should be a single string or a vector of names.\n\n"))
     }
-    if (!missing(data)) {
+    if (!is.null(data)) {
         if (is.null(colnames(data))) {
             cat("\n")
             stop(simpleError("Data does not have column names.\n\n"))
@@ -49,7 +49,7 @@ function(expression = "", snames = "", noflevels, data) {
             colnames(data) <- toupper(colnames(data))
         }
     }
-    if (missing(data) & (identical(snames, "") | missing(noflevels))) {
+    if (is.null(data) & (identical(snames, "") | is.null(noflevels))) {
         syscalls <- parse(text = paste(unlist(lapply(sys.calls(), deparse)), collapse = "\n"))
         if (length(withdata <- grep("with\\(", syscalls)) > 0) {
             withdata <- withdata[length(withdata)]
@@ -58,22 +58,22 @@ function(expression = "", snames = "", noflevels, data) {
     }
     if (identical(snames, "")) {
         snamesorig <- snames
-        if (!missing(data)) {
+        if (!is.null(data)) {
             snames <- colnames(data)
         }
     }
     else { 
         snames <- toupper(splitstr(snames))
-        if (!missing(data)) {
+        if (!is.null(data)) {
             if (length(setdiff(snames, colnames(data))) > 0) {
                 cat("\n")
                 stop(simpleError("Part(s) of the \"snames\" not in the column names from the data.\n\n"))
             }
         }
     }
-    if (missing(noflevels)) {
-        if (!missing(data)) {
-            if (missing(snames)) {
+    if (is.null(noflevels)) {
+        if (!is.null(data)) {
+            if (identical(snames, "")) {
                 noflevels <- getInfo(data)
             }
             else {
@@ -87,14 +87,14 @@ function(expression = "", snames = "", noflevels, data) {
     expression <- gsub("[[:space:]]", "", expression)
     if (identical("1-", substring(expression, 1, 2))) {
         explist <- list(expression = gsub("1-", "", expression), snames = snames)
-        if (!missing(noflevels)) explist$noflevels <- noflevels
+        if (!is.null(noflevels)) explist$noflevels <- noflevels
         expression <- do.call("negate", explist)
     }
     if (any(grepl(",", gsub(",[0-9]", "", expression)))) {
         expression <- splitstr(expression)
     }
     arglist <- list(snames = snames)
-    if (!missing(noflevels)) {
+    if (!is.null(noflevels)) {
         arglist$noflevels <- noflevels
     }
     expression <- unlist(lapply(expression, function(x) {
@@ -111,8 +111,13 @@ function(expression = "", snames = "", noflevels, data) {
     aftermessage <- "does not match the set names from \"snames\" argument"
     if (syscalls[1] != "translate") {
         if (syscalls[which(syscalls == "translate")[1] - 1] == "validateNames") {
-            beforemessage <- "Object"
-            aftermessage <- "not found"
+            if (is.null(data)) {
+                beforemessage <- "Object"
+                aftermessage <- "not found"
+            }
+            else {
+                aftermessage <- "not found in the data"
+            }
         }
     }
     if (multivalue) {
@@ -122,7 +127,7 @@ function(expression = "", snames = "", noflevels, data) {
         pp <- unlist(strsplit(expression, split="[+]"))
         conds <- sort(unique(toupper(notilde(curlyBrackets(pp, outside=TRUE)))))
         if (identical(snames, "")) {
-            if (!missing(data)) {
+            if (!is.null(data)) {
                     conds <- intersect(colnames(data), conds)
             }
         }
@@ -141,7 +146,7 @@ function(expression = "", snames = "", noflevels, data) {
             }
         }
         if (any(hastilde(expression))) {
-            if (missing(noflevels)) {
+            if (is.null(noflevels)) {
                 noflevels <- getInfo(data, conds)$noflevels
             }
         }
@@ -193,9 +198,9 @@ function(expression = "", snames = "", noflevels, data) {
             }
             conds <- sort(unique(toupper(conds)))
             if (!identical(snames, "")) {
-                if (!missing(data)) {
+                if (!is.null(data)) {
                     if (all(is.element(conds, snames)) & all(is.element(conds, toupper(colnames(data))))) {
-                        infodata <- getInfo(cbind(data, YYYYYYYYY = 1), conditions = snames)
+                        infodata <- getInfo(cbind(data[, conds, drop = FALSE], YYYYYYYYY = 1), conditions = conds)
                         valid <- which(infodata$noflevels >= 2)
                         invalid <- !any(infodata$hastime[valid]) & any(infodata$noflevels[valid] > 2)
                         if (invalid) {
@@ -247,7 +252,7 @@ function(expression = "", snames = "", noflevels, data) {
         }
         else {
             conds <- sort(unique(toupper(notilde(pp))))
-            if (!missing(data)) {
+            if (!is.null(data)) {
                 if (all(is.element(conds, snames)) & all(is.element(conds, toupper(colnames(data))))) {
                     if (any(getLevels(data[, conds]) > 2)) {
                         cat("\n")

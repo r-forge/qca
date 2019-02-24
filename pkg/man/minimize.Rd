@@ -13,7 +13,7 @@ Quine-McCluskey, the enhanced Quine-McCluskey and the latest Consistency Cubes
 algorithm that is built for performance.
 
 All algorithms return the same, exact solutions, see
-\href{http://dx.doi.org/10.13140/RG.2.2.36359.19361/4}{Dusa (2017)}
+\href{https://doi.org/10.32614/RJ-2018-080}{Dusa (2018)}
 and \href{http://dx.doi.org/10.1080/0022250X.2014.897949}{Dusa and Thiem (2015)}.
 }
 
@@ -100,7 +100,7 @@ a sufficiency relation with the outcome, using a tilde sign \bold{\code{"~"}}. I
 is ignored if the data is multivalent.
 
 By default, the package \pkg{QCA} employes a different search algorithm based on Consistency
-Cubes (Dusa, 2017), analysing all possible combinations of causal conditions and all
+Cubes (Dusa, 2018), analysing all possible combinations of causal conditions and all
 possible combinations of their respective levels. The structure of the input dataset
 (number of causal conditions, number of levels, number of unique rows in the truth
 table) has a direct implication on the search time, as all of those characteristics
@@ -135,7 +135,7 @@ disjunctions of \bold{\code{k}} prime implicants which do cover those configurat
 
 The argument \bold{\code{min.pin}} introduces an additional
 parameter to control when to stop the search for prime implicants. It is based on the
-observation by \href{http://dx.doi.org/10.13140/RG.2.2.36359.19361/4}{Dusa (2017)} that
+observation by \href{https://doi.org/10.32614/RJ-2018-080}{Dusa (2018)} that
 out of the entire set of non redundant prime implicants, only a subset actually contribute
 to solving the chart with disjunctions of \bold{\code{k}} PIs. The search depth can be
 shortened at the level where the next subset of PIs do not contribute to solving the
@@ -223,10 +223,9 @@ Multivalue Output Functions With eQMC} \emph{Journal of Mathematical Sociology}
 vol.39, no.2, pp.92-108,\cr
 DOI: \href{http://dx.doi.org/10.1080/0022250X.2014.897949}{10.1080/0022250X.2014.897949}.
 
-Dusa, A. (2017) \dQuote{Consistency Cubes: A Fast, Efficient Method for Boolean
-Minimization}, unpublished working paper on
-\href{https://www.researchgate.net/profile/Adrian_Dusa}{ResearchGate}, DOI:
-\href{http://dx.doi.org/10.13140/RG.2.2.36359.19361/1}{RG.2.2.36359.19361/1}
+Dusa, A. (2018) \dQuote{Consistency Cubes: A Fast, Efficient Method for Boolean
+Minimization}, R Journal vol.10, issue 2, pp. 357-370, DOI:
+\href{https://doi.org/10.32614/RJ-2018-080}{10.32614/RJ-2018-080}
 
 Ragin, C. (2003) \emph{Recent Advances in Fuzzy-Set Methods and Their Application to Policy Questions}.
 WP 2003-9, \href{http://www.compasss.org/wpseries/Ragin2003a.pdf}{COMPASSS}.

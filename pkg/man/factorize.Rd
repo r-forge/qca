@@ -10,7 +10,7 @@ written in SOP - Sum Of Products form.
 }
 
 \usage{
-factorize(input, snames = "", noflevels, pos = FALSE, use.tilde = FALSE, ...)
+factorize(input, snames = "", noflevels = NULL, pos = FALSE, use.tilde = FALSE, ...)
 }
 
 \arguments{

@@ -24,7 +24,7 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `factorize` <- 
-function(input, snames = "", noflevels, pos = FALSE, use.tilde = FALSE, ...) {
+function(input, snames = "", noflevels = NULL, pos = FALSE, use.tilde = FALSE, ...) {
     other.args <- list(...)
     if (any(names(other.args) == "tilde")) {
         use.tilde <- other.args$tilde

@@ -38,14 +38,17 @@ function(x, rules, cuts, values, ...) {
         stop(simpleError("All values are missing in x.\n\n"))
     }
     other.args <- list(...)
-    as.factor.result <- ifelse("as.factor.result" %in% names(other.args), other.args$as.factor.result, FALSE)
-    as.numeric.result <- ifelse("as.numeric.result" %in% names(other.args), other.args$as.numeric.result, TRUE)
-    factor.ordered <- ifelse("ordered" %in% names(other.args), other.args$ordered, FALSE)
-    factor.ordered <- ifelse("ordered_result" %in% names(other.args), other.args$ordered_result, FALSE)
-    factor.levels <- if ("levels" %in% names(other.args)) other.args$levels else c()
-    factor.labels <- if ("labels" %in% names(other.args)) other.args$labels else c()
+    as.factor.result <- ifelse(is.element("as.factor.result", names(other.args)), other.args$as.factor.result, FALSE)
+    as.numeric.result <- ifelse(is.element("as.numeric.result", names(other.args)), other.args$as.numeric.result, TRUE)
+    factor.ordered <- ifelse(is.element("ordered", names(other.args)), other.args$ordered, FALSE)
+    factor.ordered <- ifelse(is.element("ordered_result", names(other.args)), other.args$ordered_result, FALSE)
+    factor.levels <- if (is.element("levels", names(other.args))) other.args$levels else c()
+    factor.labels <- if (is.element("labels", names(other.args))) other.args$labels else c()
     if (is.logical(factor.labels)) {
         factor.labels <- c()
+    }
+    if (is.character(x)) {
+        x <- trimstr(x)
     }
     getFromRange <- function(a, b) {
         copya <- a
@@ -72,9 +75,9 @@ function(x, rules, cuts, values, ...) {
     if (missing(cuts)) {
         rules <- gsub("\n|\t", "", gsub("'", "", gsub(")", "", gsub("c(", "", rules, fixed = TRUE))))
         if (length(rules) == 1) {
-             rules <- unlist(strsplit(rules, split=";"))
+             rules <- unlist(strsplit(rules, split = ";"))
         }
-        rulsplit <- strsplit(rules, split="=")
+        rulsplit <- strsplit(rules, split = "=")
         oldval <- unlist(lapply(lapply(rulsplit, trimstr), "[", 1))
         newval <- unlist(lapply(lapply(rulsplit, trimstr), "[", 2))
         temp <- rep(NA, length(x))
@@ -99,7 +102,7 @@ function(x, rules, cuts, values, ...) {
             oldval <- c(oldval[-whichelse], oldval[whichelse])
             newval <- c(newval[-whichelse], newval[whichelse])
         }
-        oldval <- lapply(lapply(lapply(oldval, strsplit, split=","), "[[", 1), function(y) {
+        oldval <- lapply(lapply(lapply(oldval, strsplit, split = ","), "[[", 1), function(y) {
             lapply(strsplit(y, split=":"), trimstr)
         })
         newval <- trimstr(rep(newval, unlist(lapply(oldval, length))))
@@ -121,7 +124,7 @@ function(x, rules, cuts, values, ...) {
                 torecode <- getFromRange(from[i], to[i])
                 if (!is.null(torecode)) {
                     vals <- uniques[torecode]
-                    temp[x %in% vals] <- newval[i]
+                    temp[is.element(x, vals)] <- newval[i]
                     recoded <- c(recoded, vals)
                 }
             }

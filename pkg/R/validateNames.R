@@ -24,7 +24,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `validateNames` <-
-function(expression = "", snames = "") {
-    ppm <- translate(expression = expression, snames = snames)
-    return(colnames(ppm)[apply(ppm, 2, function(x) any(x >= 0))])
+function(expression = "", snames = "", data = NULL) {
+    if (is.null(data)) {
+        ppm <- translate(expression = expression, snames = snames)
+    }
+    else {
+        ppm <- translate(expression = expression, data = data)
+    }
+    return(ppm[, apply(ppm, 2, function(x) any(x >= 0)), drop = FALSE])
 }

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>truthTable. QCA 3.4-1</title>
+<title>truthTable. QCA 3.4-2</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-1</a>
+      <a class="brand" href="#">QCA 3.4-2</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -162,17 +162,14 @@ zero).</p>
       <p>The outcome can be negated using a tilde operator <b><code>~X</code></b>. The logical argument
 <b><code>neg.out</code></b> is now deprecated, but still backwards compatible. Replaced by the tilde
 in front of the outcome name, it controls whether <b><code>outcome</code></b> is to be explained or
-its negation.</p>
+its negation. Note that using both <b><code>neg.out = TRUE</code></b> and a tilde <b><code>~</code></b>
+in the outcome name cancel each other out.</p>
   
       <p>If the outcome column is multi-value, the argument <b><code>outcome</code></b> should use the standard
 curly-bracket notation <b><code>X{value}</code></b>. Multiple values are allowed, separated by a comma
 (for example <b><code>X{1,2}</code></b>). Negation of the outcome can also be performed using the tilde
 <b><code>~</code></b> operator, for example <b><code>~X{1,2}</code></b>, which is interpreted as:
 "all values in X except 1 and 2" and it becomes the new outcome to be explained.</p>
-  
-      <p>Using both <b><code>neg.out = TRUE</code></b> and a tilde <b><code>~</code></b> in the outcome name don't cancel
-each other out, either one (or even both) signaling if the <b><code>outcome</code></b> should be
-negated.</p>
   
       <p>The argument <b><code>conditions</code></b> specifies the causal conditions' names among the other
 columns in the data. When this argument is not specified, all other columns except for

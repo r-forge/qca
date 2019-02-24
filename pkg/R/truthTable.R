@@ -63,12 +63,8 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut =
     }
     outcome.copy <- outcome
     initial.data <- as.data.frame(data) 
-    if (tilde1st(outcome)) {
-        neg.out <- TRUE
-        outcome <- substring(outcome, 2)
-    }
     if (!identical(outcome, "")) {
-        if (!is.element(toupper(curlyBrackets(outcome, outside = TRUE)), colnames(data))) {
+        if (!is.element(toupper(curlyBrackets(notilde(outcome), outside = TRUE)), colnames(data))) {
             cat("\n")
             stop(simpleError(paste0("Inexisting outcome name.", ifelse(enter, "\n\n", ""))))
         }
@@ -76,10 +72,10 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut =
     if (grepl("[{|}]", outcome)) {
         outcome.value <- curlyBrackets(outcome)
         outcome <- curlyBrackets(outcome, outside = TRUE)
-        data[, toupper(outcome)] <- is.element(data[, toupper(outcome)], splitstr(outcome.value)) * 1
+        data[, toupper(notilde(outcome))] <- is.element(data[, toupper(notilde(outcome))], splitstr(outcome.value)) * 1
     }
     if (identical(conditions, "")) {
-        conditions <- setdiff(colnames(data), outcome)
+        conditions <- toupper(setdiff(colnames(data), notilde(outcome)))
     }
     else {
         if (is.character(conditions) & length(conditions) == 1) {
@@ -115,11 +111,13 @@ function(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut =
         }
         initial.data <- data
     }
-    verify.tt(data, outcome, conditions, complete, show.cases, ic1, ic0, inf.test)
-    data <- data[, c(conditions, outcome)]
+    verify.tt(data, notilde(outcome), conditions, complete, show.cases, ic1, ic0, inf.test)
     colnames(data) <- toupper(colnames(data))
-    conditions <- toupper(conditions)
-    outcome <- toupper(outcome)
+    data <- data[, c(conditions, notilde(outcome))]
+    if (tilde1st(outcome)) {
+        data[, notilde(outcome)] <- 1 - data[, notilde(outcome)]
+    }
+    outcome <- notilde(outcome)
     if (neg.out) {
         data[, outcome] <- 1 - data[, outcome]
     }
