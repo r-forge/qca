@@ -4,7 +4,7 @@
 
 \alias{HC}
 
-\title{Ethnic protest in Europe}
+\title{Time-Difference}
 
 \description{
 This data set was used by Hino (2009), to demonstrate the Time-Difference QCA.

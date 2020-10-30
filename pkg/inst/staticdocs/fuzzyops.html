@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>fuzzyand, fuzzyor. QCA 3.4-2</title>
+<title>fuzzyand, fuzzyor. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -64,8 +64,8 @@ set membership scores.</p>
     
     <h2>Usage</h2>
     <pre>
-        <div>fuzzyand(..., na.rm = FALSE, use.tilde = FALSE)<br>
-fuzzyor(..., na.rm = FALSE, use.tilde = FALSE)</div>
+        <div>fuzzyand(..., na.rm = FALSE)<br>
+fuzzyor(..., na.rm = FALSE)</div>
     </pre>
     
     <h2>Arguments</h2>
@@ -81,25 +81,18 @@ fuzzyor(..., na.rm = FALSE, use.tilde = FALSE)</div>
             <td></td><td></td><td></td>
             <td>Logical, indicating whether missing values should be removed.</td>
         </tr>
-        <tr>
-            <td valign="top"><b><code>use.tilde</code></b></td>
-            <td></td><td></td><td></td>
-            <td>Logical, construct the expression in the <code>name</code> attribute
-          using a tilde to signal a negation.</td>
-        </tr>
     </table>
 
     <div class="Value">
       <h2>Value</h2>
 
-      <p>A numerical vector of class <code>&quot;fuzzy&quot;</code>, with a <code>name</code> attribute expression.</p>
+      <p>A numerical vector of class <code>&quot;QCA_fuzzy&quot;</code>, with a <code>name</code> attribute expression.</p>
   
     </div>
     
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'># -----
 # Cebotari &amp; Vink (2013, 2015)
-data(CVF)
 
 # DEMOC*GEOCON*NATPRIDE
 with(CVF, fuzzyand(DEMOC, GEOCON, NATPRIDE))
@@ -117,7 +110,7 @@ fuzzyand(CVF[, c(1,3,5)])
 </div>
 <div class='input'>
 
-# DEMOC*geocon*NATPRIDE
+# DEMOC*~GEOCON*NATPRIDE
 fa &lt;- with(CVF, fuzzyand(DEMOC, 1 - GEOCON, NATPRIDE))
 fa
 </div>
@@ -128,7 +121,7 @@ fa
 
 attr(fa, &quot;name&quot;)
 </div>
-<div class='output'>[1] &quot;DEMOC*geocon*NATPRIDE&quot;
+<div class='output'>[1] &quot;DEMOC*~GEOCON*NATPRIDE&quot;
 </div>
 <div class='input'>
 
@@ -148,7 +141,6 @@ fuzzyor(CVF[, c(2,4)])
 </div>
 <div class='input'>
 
-# ETHFRACT + poldis
 fo &lt;- with(CVF, fuzzyor(ETHFRACT, 1 - POLDIS))
 fo
 </div>
@@ -157,14 +149,6 @@ fo
 </div>
 <div class='input'>
 attr(fo, &quot;name&quot;)
-</div>
-<div class='output'>[1] &quot;ETHFRACT + poldis&quot;
-</div>
-<div class='input'>
-
-# ETHFRACT + ~POLDIS
-fo &lt;- with(CVF, fuzzyor(ETHFRACT, 1 - POLDIS, use.tilde = TRUE))
-attr(fo, "name")
 </div>
 <div class='output'>[1] &quot;ETHFRACT + ~POLDIS&quot;
 </div>

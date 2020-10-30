@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,53 +24,57 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `getSolution` <-
-function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol, indata, ...) {
+function(expressions, mv, collapse, inputt, row.dom, initial, all.sol, indata, curly, ...) {
     mtrx <- NULL
     sol.matrix <- NULL
     other.args <- list(...)
     enter <- ifelse (is.element("enter", names(other.args)), other.args$enter, TRUE)
+    complex <- FALSE
     if (is.list(expressions)) {
         mtrx <- expressions[[2]]
         sol.matrix <- expressions[[3]]
-        if (ncol(sol.matrix) == 1 & is.double(sol.matrix)) {
-            warning(simpleWarning("The PI chart is too complex, only the first minimal solution returned.\n\n"))
+        if (length(expressions) > 3) {
+            complex <- expressions[[4]]
         }
         if (is.null(sol.matrix)) {
             if (enter) cat("\n")
             stop(simpleError(paste("There are no solutions, given these constraints.", ifelse(enter, "\n\n", ""))))
         }
         expressions <- expressions[[1]]
-    }
-    else if (is.matrix(expressions)) { 
-        if (nrow(expressions) == 1 & identical(unique(as.vector(expressions)), 0L)) {
-            if (enter) cat("\n")
-            stop(simpleError(paste0("All truth table configurations are used, all conditions are minimized.\n",
-                   "       Please check the truth table.", ifelse(enter, "\n\n", ""))))
+        if (nrow(unique(expressions)) != nrow(expressions)) {
+            expressions <- unique(expressions)
+            mtrx <- NULL
+            sol.matrix <- NULL
         }
+    }
+    if (nrow(expressions) == 1 & identical(unique(as.vector(expressions)), 0L)) {
+        if (enter) cat("\n")
+        stop(simpleError(paste0("All truth table configurations are used, all conditions are minimized.\n",
+                "       Please check the truth table.", ifelse(enter, "\n\n", ""))))
     }
     if (FALSE) {
-    if (!missing(indata)) {
-        hastime <- logical(ncol(expressions))
-        for (i in seq(ncol(expressions))) {
-            if (any(indata[, i] %in% c("-", "dc", "?"))) {
-                hastime[i] <- TRUE
+        if (!missing(indata)) {
+            hastime <- logical(ncol(expressions))
+            for (i in seq(ncol(expressions))) {
+                if (any(is.element(indata[, i], c("-", "dc", "?")))) {
+                    hastime[i] <- TRUE
+                }
+            }
+            indata <- indata[, !hastime, drop = FALSE]
+            expressions <- expressions[, !hastime, drop = FALSE]
+            inputt <- inputt[, !hastime, drop = FALSE]
+            relevant <- apply(expressions, 1, sum) > 0
+            if (any(!relevant)) {
+                sol.matrix <- NULL
+                mtrx <- mtrx[relevant, , drop = FALSE]
+                expressions <- expressions[relevant, , drop = FALSE]
             }
         }
-        indata <- indata[, !hastime, drop = FALSE]
-        expressions <- expressions[, !hastime, drop = FALSE]
-        inputt <- inputt[, !hastime, drop = FALSE]
-        relevant <- apply(expressions, 1, sum) > 0
-        if (any(!relevant)) {
-            sol.matrix <- NULL
-            mtrx <- mtrx[relevant, , drop = FALSE]
-            expressions <- expressions[relevant, , drop = FALSE]
-        }
     }
-    }
-    PI <- writePrimeimp(expressions, mv = mv, use.tilde = use.tilde, collapse = collapse)
+    PI <- admisc::writePrimeimp(expressions, mv = mv, collapse = collapse, curly = curly)
     rownames(expressions) <- PI
     if (is.null(mtrx)) {
-        mtrx <- makeChart(expressions, inputt, mv = mv, use.tilde = use.tilde, collapse = collapse)
+        mtrx <- makeChart(expressions, inputt, mv = mv, collapse = collapse, getSolution = TRUE, curly = curly)
     }
     else {
         rownames(mtrx) <- PI
@@ -78,7 +82,7 @@ function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol
     notempty <- apply(mtrx, 1, any)
         expressions <- expressions[notempty, , drop = FALSE]
         mtrx <- mtrx[notempty, , drop = FALSE]
-    setColnames(mtrx, rownames(inputt)) 
+    setColnames(mtrx, initial)
     reduced <- list(expressions = expressions, mtrx = mtrx)
     if (nrow(mtrx) > 0) {
         if (row.dom & is.null(sol.matrix)) {
@@ -91,14 +95,11 @@ function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol
         mtrx <- reduced$mtrx
         setColnames(mtrx, initial)
         if (is.null(sol.matrix)) {
-            if (nrow(mtrx) > 150 & nrow(mtrx) * ncol(mtrx) > 1500) {
-                message(sprintf("Starting to search all possible solutions in a PI chart with %d rows and %d columns.\nThis will take some time...", nrow(mtrx), ncol(mtrx)))
-            }
             sol.matrix <- solveChart(mtrx, all.sol = all.sol, ... = ...)
         }
         tokeep <- sort(unique(as.vector(unique(sol.matrix))))
         all.PIs <- rownames(mtrx)[tokeep]
-        solm <- sol.matrix
+        solm <- matrix(as.integer(sol.matrix), nrow = nrow(sol.matrix))
         sol.matrix[sol.matrix == 0] <- NA
         sol.matrix <- matrix(rownames(mtrx)[sol.matrix], nrow = nrow(sol.matrix))
         reduced$expressions <- reduced$expressions[tokeep, , drop = FALSE]
@@ -109,5 +110,5 @@ function(expressions, mv, use.tilde, collapse, inputt, row.dom, initial, all.sol
         solution.list <- NA
         solm <- NA
     }
-    return(list(expressions=expressions, mtrx=mtrx, reduced=reduced, all.PIs=all.PIs, solution.list=solution.list, sol.matrix=solm))
+    return(list(expressions=expressions, mtrx=mtrx, reduced=reduced, all.PIs=all.PIs, solution.list=solution.list, sol.matrix=solm, complex = complex))
 }

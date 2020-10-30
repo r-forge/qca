@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>superSubset, findSubsets, findSupersets. QCA 3.4-2</title>
+<title>superSubset, findSubsets, findSupersets. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -66,10 +66,10 @@ or supersets, of a (prime) implicant or an initial causal configuration.</p>
     
     <h2>Usage</h2>
 <pre><div>superSubset(data, outcome = "", conditions = "", relation = "necessity",
-            incl.cut = 1, cov.cut = 0, ron.cut = 0, pri.cut = 0, use.tilde = FALSE,
-            use.letters = FALSE, depth = NULL, add = NULL, ...)</div>
-<div>findSubsets(noflevels, input, stop)</div>
-<div>findSupersets(noflevels, input)</div></pre>
+            incl.cut = 1, cov.cut = 0, ron.cut = 0, pri.cut = 0, use.letters = FALSE,
+            depth, add, ...)</div>
+<div>findSubsets(noflevels, input, stop, ...)</div>
+<div>findSupersets(noflevels, input, ...)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -114,11 +114,6 @@ or supersets, of a (prime) implicant or an initial causal configuration.</p>
             <td valign="top"><b><code>pri.cut</code></b></td>
             <td></td><td></td><td></td>
             <td>The minimal score for the <b><code>PRI</code></b> - proportional reduction in inconsistency.</td>
-        </tr>
-        <tr>
-            <td valign="top"><b><code>use.tilde</code></b></td>
-            <td></td><td></td><td></td>
-            <td>Logical, use tilde for negation with bivalent variables.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>use.letters</code></b></td>
@@ -214,11 +209,11 @@ bases $n$, each causal condition having three or more levels (Dusa, 2007, 2010).
     <p>For every two levels of a binary causal conditions (values 0 and 1), there are three
 levels in the implicants matrix:</p>
   
-    <p>0 to mark a minimized literal</p>
-  
-    <p>1 to replace the value of 0 in the original binary condition</p>
-  
-    <p>2 to replace the value of 1 in the original binary condition</p>
+<ul style="list-style-type:none">
+<li>0 to mark a minimized literal</li>
+<li>1 to replace the value of 0 in the original binary condition</li>
+<li>2 to replace the value of 1 in the original binary condition</li>
+</ul>
   
     <p>A prime implicant is a superset of an initial combination of causal conditions, and 
 the reverse is also true: the initial combination is a subset of a prime implicant.</p>
@@ -278,8 +273,9 @@ to all possible subsets, or supersets, of a (prime) implicant.</p>
 
     <p>Cebotari, V.; Vink, M.P. (2013) &#147;A Configurational Analysis of Ethnic
 Protest in Europe&#148;. <em>International Journal of Comparative Sociology</em>
-vol.54, no.4, pp.298-324.</p>
-  
+vol.54, no.4, pp.298-324, DOI:
+<a href = 'http://dx.doi.org/10.1177/0020715213508567'>10.1177/0020715213508567</a>.</p>
+              
     <p>Cebotari, Victor; Vink, Maarten Peter (2015) <em>Replication Data for: A
 configurational analysis of ethnic protest in Europe</em>, Harvard Dataverse, V2,
 DOI: <a href = 'http://dx.doi.org/10.7910/DVN/PT2IB9'>http://dx.doi.org/10.7910/DVN/PT2IB9</a></p>
@@ -288,7 +284,8 @@ DOI: <a href = 'http://dx.doi.org/10.7910/DVN/PT2IB9'>http://dx.doi.org/10.7910/
 2007-49. URL: <a href = 'http://www.compasss.org/wpseries/Dusa2007b.pdf'>http://www.compasss.org/wpseries/Dusa2007b.pdf</a>.</p>
   
     <p>Dusa, Adrian (2010) &#147;A Mathematical Approach to the Boolean Minimization 
-Problem.&#148; <em>Quality & Quantity</em> vol.44, no.1, pp.99-113.</p>
+Problem.&#148; <em>Quality & Quantity</em> vol.44, no.1, pp.99-113,
+DOI: <a href = 'http://dx.doi.org/10.1007/s11135-008-9183-x'>http://dx.doi.org/10.1007/s11135-008-9183-x</a>.</p>
   
     <p>Lipset, S. M. (1959) &#147;Some Social Requisites of Democracy: Economic Development
 and Political Legitimacy&#148;, <em>American Political Science Review</em> vol.53, pp.69-105.</p>
@@ -301,7 +298,6 @@ Cambridge: Cambridge University Press.</p>
     
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'># Lipset binary crisp sets
-data(LC)
 ssLC &lt;- superSubset(LC, &quot;SURV&quot;)
 
 require(venn)
@@ -310,11 +306,10 @@ x = list(&quot;SURV&quot; = which(LC$SURV == 1),
          &quot;LIT&quot; = which(ssLC$coms[, 2] == 1))
 venn(x, cexil = 0.7)
 </div>
-<p><img src='subsetsAndSupersets-2.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/subsetsAndSupersets-2.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # Lipset multi-value sets
-data(LM)
 superSubset(LM, &quot;SURV&quot;)
 </div>
 <div class='output'>
@@ -332,28 +327,26 @@ superSubset(LM, &quot;SURV&quot;)
 <div class='input'>
 
 # Cebotari &amp; Vink (2013) fuzzy data
-data(CVF)
-
 # all necessary combinations with at least 0.9 inclusion and 0.6 coverage cut-off
 ssCVF &lt;- superSubset(CVF, outcome = &quot;PROTEST&quot;, incl.cut = 0.90, cov.cut = 0.6)
 ssCVF
 </div>
 <div class='output'>
-                                     inclN  RoN    covN  
--------------------------------------------------------- 
- 1  GEOCON                           0.904  0.492  0.624 
- 2  DEMOC+ETHFRACT+geocon            0.930  0.470  0.626 
- 3  DEMOC+ethfract+POLDIS            0.918  0.506  0.637 
- 4  DEMOC+ETHFRACT+POLDIS            0.906  0.502  0.630 
- 5  DEMOC+ethfract+natpride          0.905  0.527  0.641 
- 6  DEMOC+ETHFRACT+natpride          0.935  0.530  0.656 
- 7  DEMOC+geocon+POLDIS              0.920  0.539  0.654 
- 8  DEMOC+geocon+natpride            0.908  0.584  0.671 
- 9  DEMOC+POLDIS+natpride            0.916  0.596  0.682 
-10  ethfract+POLDIS+natpride         0.911  0.554  0.657 
-11  democ+ETHFRACT+POLDIS+natpride   0.913  0.532  0.647 
-12  ETHFRACT+geocon+POLDIS+natpride  0.911  0.613  0.688 
--------------------------------------------------------- 
+                                       inclN   RoN   covN  
+---------------------------------------------------------- 
+ 1  GEOCON                             0.904  0.492  0.624 
+ 2  DEMOC+ETHFRACT+~GEOCON             0.930  0.470  0.626 
+ 3  DEMOC+~ETHFRACT+POLDIS             0.918  0.506  0.637 
+ 4  DEMOC+ETHFRACT+POLDIS              0.906  0.502  0.630 
+ 5  DEMOC+~ETHFRACT+~NATPRIDE          0.905  0.527  0.641 
+ 6  DEMOC+ETHFRACT+~NATPRIDE           0.935  0.530  0.656 
+ 7  DEMOC+~GEOCON+POLDIS               0.920  0.539  0.654 
+ 8  DEMOC+~GEOCON+~NATPRIDE            0.908  0.584  0.671 
+ 9  DEMOC+POLDIS+~NATPRIDE             0.916  0.596  0.682 
+10  ~ETHFRACT+POLDIS+~NATPRIDE         0.911  0.554  0.657 
+11  ~DEMOC+ETHFRACT+POLDIS+~NATPRIDE   0.913  0.532  0.647 
+12  ETHFRACT+~GEOCON+POLDIS+~NATPRIDE  0.911  0.613  0.688 
+---------------------------------------------------------- 
 
 </div>
 <div class='input'>
@@ -368,12 +361,12 @@ ssCVF$coms$GEOCON
 superSubset(CVF, outcome = &quot;~PROTEST&quot;, incl.cut = 0.90, cov.cut = 0.6)
 </div>
 <div class='output'>
-                    inclN  RoN    covN  
---------------------------------------- 
-1  NATPRIDE         0.932  0.622  0.693 
-2  democ+ethfract   0.951  0.548  0.663 
-3  ethfract+poldis  0.927  0.443  0.603 
---------------------------------------- 
+                      inclN   RoN   covN  
+----------------------------------------- 
+1  NATPRIDE           0.932  0.622  0.693 
+2  ~DEMOC+~ETHFRACT   0.951  0.548  0.663 
+3  ~ETHFRACT+~POLDIS  0.927  0.443  0.603 
+----------------------------------------- 
 
 </div>
 <div class='input'>
@@ -405,15 +398,15 @@ getRow(sub, noflevels + 1)
 </div>
 <div class='input'>
 # implicant matrix   normal values
-#      A  B  C    |       A  B  C       
-#   5  0  1  1    |    5  -  0  0      bc    
-#   8  0  2  1    |    8  -  1  0      Bc
-#  11  1  0  1    |   11  0  -  0      ac
-#  14  1  1  1    |   14  0  0  0      abc
-#  17  1  2  1    |   17  0  1  0      aBc
-#  20  2  0  1    |   20  1  -  0      Ac
-#  23  2  1  1    |   23  1  0  0      Abc               
-#  26  2  2  1    |   26  1  1  0      ABc 
+#      a  b  c    |       a  b  c       
+#   5  0  1  1    |    5  -  0  0      ~b~c    
+#   8  0  2  1    |    8  -  1  0      b~c
+#  11  1  0  1    |   11  0  -  0      ~a~c
+#  14  1  1  1    |   14  0  0  0      ~a~b~c
+#  17  1  2  1    |   17  0  1  0      ~ab~c
+#  20  2  0  1    |   20  1  -  0      a~c
+#  23  2  1  1    |   23  1  0  0      a~b~c               
+#  26  2  2  1    |   26  1  1  0      ab~c 
 
 
 # stopping at maximum row number 20
@@ -442,8 +435,8 @@ findSupersets(input = 17, noflevels + 1)
 </div>
 <div class='input'>
 # implicant matrix   normal values
-#  14  1  1  1    |   14  0  0  0       abc
-#  17  1  2  1    |   17  0  1  0       aBc
+#  14  1  1  1    |   14  0  0  0       ~a~b~c
+#  17  1  2  1    |   17  0  1  0       ~ab~c
 
 
 sup &lt;- findSupersets(input = im, noflevels + 1)
@@ -469,18 +462,18 @@ getRow(sup, noflevels + 1)
 </div>
 <div class='input'>
 # implicant matrix   normal values
-#      A  B  C    |       A  B  C       
-#   2  0  0  1    |    2  -  -  0       c      
-#   4  0  1  0    |    4  -  0  -       b
-#   5  0  1  1    |    5  -  0  0       bc
-#   7  0  2  0    |    7  -  1  -       B
-#   8  0  2  1    |    8  -  1  0       Bc
-#  10  1  0  0    |   10  0  -  -       a  
-#  11  1  0  1    |   11  0  -  0       ac                 
-#  13  1  1  0    |   13  0  0  -       ab   
-#  14  1  1  1    |   14  0  0  0       abc
-#  16  1  2  0    |   16  0  1  -       aB
-#  17  1  2  1    |   17  0  1  0       aBc
+#      a  b  c    |       a  b  c       
+#   2  0  0  1    |    2  -  -  0       ~c      
+#   4  0  1  0    |    4  -  0  -       ~b
+#   5  0  1  1    |    5  -  0  0       ~b~c
+#   7  0  2  0    |    7  -  1  -       b
+#   8  0  2  1    |    8  -  1  0       b~c
+#  10  1  0  0    |   10  0  -  -       ~a  
+#  11  1  0  1    |   11  0  -  0       ~a~c                 
+#  13  1  1  0    |   13  0  0  -       ~a~b   
+#  14  1  1  1    |   14  0  0  0       ~a~b~c
+#  16  1  2  0    |   16  0  1  -       ~ab
+#  17  1  2  1    |   17  0  1  0       ~ab~c
                              
 </div></pre>
   </div>

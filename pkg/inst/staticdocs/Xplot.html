@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>Xplot. QCA 3.4-2</title>
+<title>Xplot. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -63,7 +63,7 @@ horizontally from minimum to maximum.</p>
     </div>
     
     <h2>Usage</h2>
-    <pre><div>Xplot(x, jitter = FALSE, at = NULL, ...)</div></pre>
+    <pre><div>Xplot(x, jitter = FALSE, at, ...)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -126,27 +126,25 @@ height.</p>
 
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'># Lipset's raw data
-data(LR)
-
 # plot the DEV (level of developent) causal condition
 Xplot(LR$DEV)
 </div>
-<p><img src='Xplot-1.svgz' alt='' width='400' height='100' /></p>
+<p><img src='img/Xplot-1.svg' alt='' width='400' height='100' /></p>
 <div class='input'>
 # jitter the points vertically
 Xplot(LR$DEV, jitter = TRUE)
 </div>
-<p><img src='Xplot-2.svgz' alt='' width='400' height='100' /></p>
+<p><img src='img/Xplot-2.svg' alt='' width='400' height='100' /></p>
 <div class='input'>
 # make the x axis large enough to accommodate all values
 Xplot(LR$DEV, jitter = TRUE, at = pretty(LR$DEV))
 </div>
-<p><img src='Xplot-3.svgz' alt='' width='400' height='100' /></p>
+<p><img src='img/Xplot-3.svg' alt='' width='400' height='100' /></p>
 <div class='input'>
 # clip plotting between the range of min and max
 Xplot(LR$DEV, jitter = TRUE, at = range(LR$DEV))
 </div>
-<p><img src='Xplot-4.svgz' alt='' width='400' height='100' /></p>
+<p><img src='img/Xplot-4.svg' alt='' width='400' height='100' /></p>
 
 <div class='input'></div></pre>
   </div>

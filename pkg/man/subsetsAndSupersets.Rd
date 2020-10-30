@@ -14,12 +14,12 @@ or supersets, of a (prime) implicant or an initial causal configuration.
 
 \usage{
 superSubset(data, outcome = "", conditions = "", relation = "necessity",
-    incl.cut = 1, cov.cut = 0, ron.cut = 0, pri.cut = 0, use.tilde = FALSE,
-    use.letters = FALSE, depth = NULL, add = NULL, ...)
+    incl.cut = 1, cov.cut = 0, ron.cut = 0, pri.cut = 0, use.letters = FALSE,
+    depth, add, ...)
 
-findSubsets(input, noflevels, stop, ...)
+findSubsets(input, noflevels = NULL, stop = NULL, ...)
 
-findSupersets(input, noflevels, ...)
+findSupersets(input, noflevels = NULL, ...)
 }
 
 \arguments{
@@ -37,7 +37,6 @@ findSupersets(input, noflevels, ...)
   \item{ron.cut}{The minimal score for the \bold{\code{RoN}} - relevance of necessity.}
   \item{pri.cut}{The minimal score for the \bold{\code{PRI}} - proportional reduction in
         inconsistency.}
-  \item{use.tilde}{Logical, use tilde for negation with bivalent variables.}
   \item{use.letters}{Logical, use simple letters instead of original conditions'
         names.}
   \item{noflevels}{A vector containing the number of levels for each causal
@@ -77,7 +76,7 @@ When \bold{\code{relation = "necsuf"}}, the relation is interpreted as necessity
 \bold{\code{relation = "sufnec"}}, when relation is interpreted as sufficiency.
 
 The argument \bold{\code{outcome}} specifies the name of the outcome, and if
-multi-value the argument can also specify the level to explain, using curly brackets
+multi-value the argument can also specify the level to explain, using square brackets
 notation.
 
 Outcomes can be negated using a tilde operator \bold{\code{~X}}. The logical argument
@@ -159,17 +158,19 @@ implicant.
 \references{
 Cebotari, V.; Vink, M.P. (2013) \dQuote{A Configurational Analysis of Ethnic
 Protest in Europe}. \emph{International Journal of Comparative Sociology}
-vol.54, no.4, pp.298-324.
+vol.54, no.4, pp.298-324, DOI:
+\href{http://dx.doi.org/10.1177/0020715213508567}{10.1177/0020715213508567}.
 
 Cebotari, Victor; Vink, Maarten Peter (2015) \emph{Replication Data for: A
 configurational analysis of ethnic protest in Europe}, Harvard Dataverse, V2,
-DOI: \href{http://dx.doi.org/10.7910/DVN/PT2IB9}{10.7910/DVN/PT2IB9}
+DOI: \href{http://dx.doi.org/10.7910/DVN/PT2IB9}{10.7910/DVN/PT2IB9}.
 
-Dusa, A. (2007) \emph{Enhancing Quine-McCluskey}. 
-\href{http://www.compasss.org/wpseries/Dusa2007b.pdf}{WP 2007-49, COMPASSS}.
+Dusa, A. (2007b) \emph{Enhancing Quine-McCluskey}.
+WP 2007-49, \href{http://compasss.org/working-papers-series/}{COMPASSS Working Papers series}.
 
 Dusa, Adrian (2010) \dQuote{A Mathematical Approach to the Boolean Minimization 
-Problem.} \emph{Quality & Quantity} vol.44, no.1, pp.99-113.
+Problem.} \emph{Quality & Quantity} vol.44, no.1, pp.99-113, DOI:
+\href{http://dx.doi.org/10.1007/s11135-008-9183-x}{10.1007/s11135-008-9183-x}.
 
 Lipset, S. M. (1959) \dQuote{Some Social Requisites of Democracy: Economic Development
 and Political Legitimacy}, \emph{American Political Science Review} vol.53, pp.69-105.
@@ -184,22 +185,18 @@ Cambridge: Cambridge University Press.
 \examples{
     
 # Lipset binary crisp sets
-data(LC)
 ssLC <- superSubset(LC, "SURV")
 
-require(venn)
+library(venn)
 x = list("SURV" = which(LC$SURV == 1),
          "STB" = which(ssLC$coms[, 1] == 1),
          "LIT" = which(ssLC$coms[, 2] == 1))
 venn(x, cexil = 0.7)
 
 # Lipset multi-value sets
-data(LM)
 superSubset(LM, "SURV")
 
 # Cebotari & Vink (2013) fuzzy data
-data(CVF)
-
 # all necessary combinations with at least 0.9 inclusion and 0.6 coverage cut-offs
 ssCVF <- superSubset(CVF, outcome = "PROTEST", incl.cut = 0.90, cov.cut = 0.6)
 ssCVF
@@ -224,15 +221,15 @@ noflevels <- c(2, 2, 2)
 getRow(sub, noflevels + 1)
 
 # implicant matrix   normal values
-#      A  B  C    |       A  B  C       
-#   5  0  1  1    |    5  -  0  0      bc    
-#   8  0  2  1    |    8  -  1  0      Bc
-#  11  1  0  1    |   11  0  -  0      ac
-#  14  1  1  1    |   14  0  0  0      abc
-#  17  1  2  1    |   17  0  1  0      aBc
-#  20  2  0  1    |   20  1  -  0      Ac
-#  23  2  1  1    |   23  1  0  0      Abc               
-#  26  2  2  1    |   26  1  1  0      ABc 
+#      a  b  c    |       a  b  c       
+#   5  0  1  1    |    5  -  0  0      ~b~c    
+#   8  0  2  1    |    8  -  1  0      b~c
+#  11  1  0  1    |   11  0  -  0      ~a~c
+#  14  1  1  1    |   14  0  0  0      ~a~b~c
+#  17  1  2  1    |   17  0  1  0      ~ab~c
+#  20  2  0  1    |   20  1  -  0      a~c
+#  23  2  1  1    |   23  1  0  0      a~b~c               
+#  26  2  2  1    |   26  1  1  0      ab~c 
 
 
 # stopping at maximum row number 20
@@ -252,8 +249,8 @@ findSupersets(input = 17, noflevels + 1)
 (im <- getRow(c(14, 17), noflevels + 1))
 
 # implicant matrix   normal values
-#  14  1  1  1    |   14  0  0  0       abc
-#  17  1  2  1    |   17  0  1  0       aBc
+#  14  1  1  1    |   14  0  0  0       ~a~b~c
+#  17  1  2  1    |   17  0  1  0       ~ab~c
 
 
 sup <- findSupersets(input = im, noflevels + 1)
@@ -264,18 +261,18 @@ sup
 getRow(sup, noflevels + 1)
 
 # implicant matrix   normal values
-#      A  B  C    |       A  B  C       
-#   2  0  0  1    |    2  -  -  0       c      
-#   4  0  1  0    |    4  -  0  -       b
-#   5  0  1  1    |    5  -  0  0       bc
-#   7  0  2  0    |    7  -  1  -       B
-#   8  0  2  1    |    8  -  1  0       Bc
-#  10  1  0  0    |   10  0  -  -       a  
-#  11  1  0  1    |   11  0  -  0       ac                 
-#  13  1  1  0    |   13  0  0  -       ab   
-#  14  1  1  1    |   14  0  0  0       abc
-#  16  1  2  0    |   16  0  1  -       aB
-#  17  1  2  1    |   17  0  1  0       aBc
+#      a  b  c    |       a  b  c       
+#   2  0  0  1    |    2  -  -  0       ~c      
+#   4  0  1  0    |    4  -  0  -       ~b
+#   5  0  1  1    |    5  -  0  0       ~b~c
+#   7  0  2  0    |    7  -  1  -       b
+#   8  0  2  1    |    8  -  1  0       b~c
+#  10  1  0  0    |   10  0  -  -       ~a  
+#  11  1  0  1    |   11  0  -  0       ~a~c                 
+#  13  1  1  0    |   13  0  0  -       ~a~b   
+#  14  1  1  1    |   14  0  0  0       ~a~b~c
+#  16  1  2  0    |   16  0  1  -       ~ab
+#  17  1  2  1    |   17  0  1  0       ~ab~c
                              
 }
 

@@ -135,8 +135,9 @@ Cheli, B.; Lemmi, A. (1995) \dQuote{A 'Totally' Fuzzy and Relative
 Approach to the Multidimensional Analysis of Poverty}. In \emph{Economic Notes},
 vol.1, pp.115-134.
 
-Dusa, A. (2018) \emph{QCA with R. A Comprehensive Resource}.
-New York: Springer International Publishing.
+Dusa, A. (2019) \emph{QCA with R. A Comprehensive Resource}. 
+Springer International Publishing, DOI:
+\href{http://dx.doi.org/10.1007/978-3-319-75668-4}{10.1007/978-3-319-75668-4}.
 
 Ragin, C. (2008) \dQuote{Fuzzy Sets: Calibration Versus Measurement.}
 In \emph{The Oxford Handbook of Political Methodology}, edited by Janet

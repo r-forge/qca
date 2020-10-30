@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -26,9 +26,9 @@
 `findTh` <-
 function(x, n = 1, hclustm = "complete", distm = "euclidean", ...) {
     other.args <- list(...)
-        if ("groups" %in% names(other.args)) {
-            n <- other.args$groups - 1
-        }
+    if (is.element("groups", names(other.args))) {
+        n <- other.args$groups - 1
+    }
     x <- sort(x)
     cutpoints <- cumsum(rle(cutree(hclust(dist(x, method = distm), method = hclustm), k = n + 1))[[1]])
     values <- rep(NA, n)

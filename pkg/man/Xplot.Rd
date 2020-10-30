@@ -10,15 +10,15 @@ horizontally on the X axis from minimum to maximum.
 }
 
 \usage{
-Xplot(x, jitter = FALSE, at = NULL, ...)
+Xplot(x, jitter = FALSE, at = pretty(x), ...)
 }
 
 \arguments{
   \item{x}{A numeric vector.}
   \item{jitter}{Logical, vertically jitter the points.}
   \item{at}{The points at which tick-marks are to be drawn. Non-finite (infinite, NaN or NA)
-            values are omitted. By default (when NULL) tickmark locations are automatically
-            computed, see the help file for \bold{\code{?axis}}.}
+            values are omitted. By default, tickmark locations are automatically
+            computed, see the help file for \bold{\code{?pretty}}.}
   \item{...}{Other graphical parameters from \bold{\code{?par}}}
 }
 
@@ -60,16 +60,11 @@ Adrian Dusa
 \examples{
 
 # Lipset's raw data
-data(LR)
-
 # plot the DEV (level of developent) causal condition
 Xplot(LR$DEV)
 
 # jitter the points vertically
 Xplot(LR$DEV, jitter = TRUE)
-
-# make the x axis large enough to accommodate all values
-Xplot(LR$DEV, jitter = TRUE, at = pretty(LR$DEV))
 
 # clip plotting between the range of min and max
 Xplot(LR$DEV, jitter = TRUE, at = range(LR$DEV))

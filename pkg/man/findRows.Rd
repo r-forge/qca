@@ -6,7 +6,7 @@
 
 \description{
 This function takes a truth table as the input, and finds various types of untenable
-assumptions that are usually used in function \code{\link{minimize}()} when excluding
+assumptions that are usually used in function \bold{\code{\link{minimize}()}} when excluding
 certain remainders or some observed configurations from the minimization process.
 }
 
@@ -16,12 +16,12 @@ findRows(expression = "", obj, remainders = TRUE, type = 1, ...)
 
 \arguments{
   \item{expression}{String: a QCA expression written in sum of products form.}
-  \item{obj}{A truth table (an object of class \code{"tt"}) or an equivalent
+  \item{obj}{A truth table (an object of class \code{"QCA_tt"}) or an equivalent
         numerical matrix.}
   \item{remainders}{Logical: find remainders only or also observed configurations,
         when \code{obj} is a truth table.}
   \item{type}{Numeric vector, specifying the type(s) of untenable configurations.}
-  \item{...}{Additional arguments to be passed to function \code{\link{truthTable}()},
+  \item{...}{Additional arguments to be passed to function \bold{\code{\link{truthTable}()}},
         for the negation of the outcome.}
 }
 
@@ -78,7 +78,7 @@ input object. If the inclusion cut-off has a single value, the same is used for 
 outcome, and if it has two values the second is used.
 
 If very specific cutoff values are needed for the negation of the outcome, these can be provided
-via the \bold{\code{...}} argument, that will be passed to function \bold{\code{truthTable()}}.
+via the \bold{\code{...}} argument, that will be passed to function \bold{\code{\link{truthTable}()}}.
 }
 
 
@@ -94,17 +94,15 @@ Adrian Dusa
 
 \examples{
 # Lipset's binary crisp version
-data(LC)
 ttLC <- truthTable(LC, "SURV", show.cases = TRUE)
 
-findRows("DEV*ind*STB", ttLC)
+findRows("DEV*~IND*STB", ttLC)
 
 ## all subset rows from the truth table, not only the remainders
-findRows("DEV*ind*STB", ttLC, remainders = FALSE)
+findRows("DEV*~IND*STB", ttLC, remainders = FALSE)
 
 
 # Lipset's fuzzy version
-data(LF)
 ttLF <- truthTable(LF, outcome = "SURV", incl.cut = 0.8)
 
 findRows(obj = ttLF, type = 2) # contradictory simplifying assumptions

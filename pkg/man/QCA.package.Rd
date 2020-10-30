@@ -21,7 +21,7 @@ understood by quantitative researchers).
 
 The Quine-McCluskey minimization algorithms implemented in this package are
 mathematically exact, as described by Dusa (2007b), Dusa (2010), Dusa and Thiem (2015)
-and Dusa (2017). They all return the same, relevant set of prime implicants for \dfn{csQCA}
+and Dusa (2018). They all return the same, relevant set of prime implicants for \dfn{csQCA}
 (binary crisp sets QCA), \dfn{mvQCA} (multi-value QCA) and \dfn{fsQCA} (fuzzy-sets QCA).
 
 Between versions 1.0-0 and up to version 1.1-3, the package welcomed a second co-author
@@ -48,16 +48,17 @@ gained a web-based command console to offer a complete experience of available f
 
 Version 3.0 brings major improvements and additions, most notably the
 implementation of a new minimization algorithm called CCubes (Consistency Cubes), that is
-hundreds of times faster than the previous eQMC. 
+hundreds of times faster than the previous eQMC. Starting with version 3.5, it is possible to
+specify conjunctural directional expectations in the minimization function.
 }
 
 \details{
     \tabular{ll}{
     Package: \tab QCA\cr
     Type:    \tab Package\cr
-    Version: \tab 3.4-2\cr
-    Date:    \tab 2019-02-24\cr
-    License: \tab GPL (>= 2)\cr
+    Version: \tab 3.10.1\cr
+    Date:    \tab 2020-10-30\cr
+    License: \tab GPL (>= 3)\cr
     }
 }
 
@@ -84,14 +85,14 @@ Temporality to Qualitative Comparative Analysis.}
 
 Cronqvist, L. (2016) \emph{Tosmana: Tool for Small-N Analysis, Version 1.522 
 [Computer Program]}. Trier: University of Trier.\cr
-URL: \url{http://www.tosmana.net}
+URL: \url{https://www.tosmana.net}
 
 Dusa, A. (2007a) \dQuote{User manual for the QCA(GUI) package in R}.
 \emph{Journal of Business Research} vol.60, no.5, pp.576-586, DOI: 
 \href{https://doi.org/10.1016/j.jbusres.2007.01.002}{10.1016/j.jbusres.2007.01.002}
 
-Dusa, A. (2007b) \emph{Enhancing Quine-McCluskey}. 
-\href{http://www.compasss.org/wpseries/Dusa2007b.pdf}{WP 2007-49, COMPASSS}.
+Dusa, A. (2007b) \emph{Enhancing Quine-McCluskey}.
+WP 2007-49, \href{http://compasss.org/working-papers-series/}{COMPASSS Working Papers series}.
 
 Dusa, A. (2010) \dQuote{A Mathematical Approach to the Boolean Minimization 
 Problem.} \emph{Quality & Quantity} vol.44, no.1, pp.99-113, DOI:
@@ -103,9 +104,8 @@ vol.39, no.2, pp.92-108,\cr
 DOI: \href{http://dx.doi.org/10.1080/0022250X.2014.897949}{10.1080/0022250X.2014.897949}
 
 Dusa, A. (2018) \dQuote{Consistency Cubes: A Fast, Efficient Method for Boolean
-Minimization}, R Journal
-\href{https://journal.r-project.org/archive/2018/RJ-2018-062/index.html}{R Journal}, DOI:
-\href{http://dx.doi.org/10.32614/RJ-2018-062}{10.32614/RJ-2018-062}
+Minimization}, R Journal, DOI:
+\href{http://dx.doi.org/10.32614/RJ-2018-080}{10.32614/RJ-2018-080}
 
 Ragin, C.C. (1987) \emph{The Comparative Method: Moving beyond Qualitative and 
 Quantitative Strategies}. Berkeley: University of California Press.

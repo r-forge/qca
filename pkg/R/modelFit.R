@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `modelFit` <-
-function(model, theory) {
-    if (!(methods::is(model, "qca") | methods::is(model, "deMorgan"))) {
+function(model, theory = "") {
+    if (!(methods::is(model, "QCA_min") | methods::is(model, "admisc_deMorgan"))) {
         cat("\n")
         stop(simpleError("The model should be a minimization object or its negation.\n\n"))
     }
+    theory <- admisc::recreate(substitute(theory))
     if (is.character(theory)) {
         if (length(theory) != 1) {
             cat("\n")
@@ -44,9 +45,8 @@ function(model, theory) {
     if (model$tt$options$use.letters) {
         snames <- LETTERS[seq(length(snames))]
     }
-    use.tilde <- model$options$use.tilde
     pims <- model$pims
-    if ("i.sol" %in% names(model)) {
+    if (is.element("i.sol", names(model))) {
         pims <- lapply(model$i.sol, function(x) x$pims)
         names(pims) <- NULL
         pims <- do.call("cbind", pims)
@@ -74,25 +74,25 @@ function(model, theory) {
         names(models) <- paste(mnum, rep(names(solutions), slengths), sep = "-")
     }
     result <- intersections <- vector(mode = "list", length = length(models))
-    arglist <- list(snames = snames, use.tilde = use.tilde, noflevels = noflevels)
+    arglist <- list(snames = snames, noflevels = noflevels)
     for (i in seq(length(models))) {
         expression <- models[i]
         cpims <- pims[, unlist(strsplit(expression, split = " \\+ ")), drop = FALSE]
-        cpims$MODEL <- compute(expression, data = model$tt$initial.data)
-        cpims$THEORY <- compute(theory, data = model$tt$initial.data)
+        cpims$model <- admisc::compute(expression, data = model$tt$initial.data)
+        cpims$theory <- admisc::compute(theory, data = model$tt$initial.data)
         intersections <- rep("", 4)
-        intersections[1] <- do.call("intersection", c(list(theory, expression), arglist))
-        intersections[2] <- do.call("intersection", c(list(negate(theory, snames = snames), expression), arglist))
-        intersections[3] <- do.call("intersection", c(list(theory, negate(expression, snames = snames)), arglist))
-        intersections[4] <- do.call("intersection", c(list(negate(theory, snames = snames), negate(expression, snames = snames)), arglist))
-        intnms <- c("MODEL*THEORY", "MODEL*theory", "model*THEORY", "model*theory")
+        intersections[1] <- do.call(admisc::intersection, c(list(theory, expression), arglist))
+        intersections[2] <- do.call(admisc::intersection, c(list(negate(theory, snames = snames), expression), arglist))
+        intersections[3] <- do.call(admisc::intersection, c(list(theory, negate(expression, snames = snames)), arglist))
+        intersections[4] <- do.call(admisc::intersection, c(list(negate(theory, snames = snames), negate(expression, snames = snames)), arglist))
+        intnms <- c("model*theory", "model*~theory", "~model*theory", "~model*~theory")
         for (nm in seq(4)) {
             int <- intersections[nm]
             if (int == "") {
                 cpims[[intnms[nm]]] <- rep(0, nrow(model$tt$initial.data))
             }
             else {
-                cpims[[intnms[nm]]] <- compute(int, data = model$tt$initial.data)
+                cpims[[intnms[nm]]] <- admisc::compute(int, data = model$tt$initial.data)
             }
         }
         intersections[intersections == ""] <- "-"
@@ -106,5 +106,5 @@ function(model, theory) {
     if (length(result) == 1) {
         return(result[[1]])
     }
-    return(structure(result, class = "modelFit"))
+    return(structure(result, class = "QCA_modelFit"))
 }

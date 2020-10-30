@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2019, Adrian Dusa
+Copyright (c) 2020, Adrian Dusa
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -38,6 +38,16 @@ $.extend($.fn.disableTextSelection = function() {
          .css('user-select', 'none')
          .on('selectstart', false);
 });
+function makePapers(obj, papers) {
+    papers[obj.name] = new Array();
+    papers[obj.name]["main"] = Raphael(obj.name + "_main", obj.width, obj.height);
+    if (obj.inside !== undefined) {
+        var keys = getKeys(obj.inside);
+        for (var i = 0; i < keys.length; i++) {
+            papers[obj.name][keys[i]] = Raphael(obj.name + "_" + keys[i], obj.inside[keys[i]].width, obj.inside[keys[i]].height);
+        }
+    }
+}
 function addDiv(parent, child, settings) {
     var div1 = document.getElementById(parent + "_main");
     var div2 = document.createElement("div");

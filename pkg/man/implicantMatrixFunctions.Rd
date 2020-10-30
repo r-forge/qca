@@ -18,11 +18,11 @@ of values (either binary or multi-value).
 }
 
 \usage{
-allExpressions(noflevels, arrange = FALSE, depth = NULL, raw = FALSE, ...)
+allExpressions(noflevels = NULL, arrange = FALSE, depth, raw = FALSE, ...)
 
-createMatrix(noflevels, ...)
+createMatrix(noflevels = NULL, ...)
 
-getRow(row.no, noflevels, zerobased = FALSE, ...)
+getRow(row.no = NULL, noflevels = NULL, zerobased = FALSE, ...)
 }
 
 \arguments{
@@ -42,7 +42,7 @@ A truth table for binary crisp conditions is a matrix with \eqn{2^k} rows, where
 
 For multi-value causal conditions, the same equation can be generalised to:
 
-\eqn{v_{1} \cdot v_{2} \cdot ... \cdot v_{k}}
+\eqn{v_{1} \cdot v_{2} \cdot \dots \cdot v_{k}}{v1 * v2 * ... * vk}
 
 where \eqn{v} is the number of values (levels) for every causal condition from \eqn{1}
 to \eqn{k}.
@@ -57,11 +57,11 @@ truth table configurations.
 
 In fact, \eqn{3^k} is also obtained by the product:
 
-\eqn{(2 + 1) \cdot (2 + 1) \cdot ... \cdot (2 + 1)}
+\eqn{(2 + 1) \cdot (2 + 1) \cdot \dots \cdot (2 + 1)}{(2 + 1) * (2 + 1) * ... * (2 + 1)}
 
 For multi-value causal conditions, the same equation can be generalised to:
 
-\eqn{(v_{1} + 1) \cdot (v_{2} + 1) \cdot ... \cdot (v_{k} + 1)}
+\eqn{(v_{1} + 1) \cdot (v_{2} + 1) \cdot \dots \cdot (v_{k} + 1)}{(v1 + 1) * (v2 + 1) * ... * (vk + 1)}
 
 where every number of levels in each causal conditions is incremented with 1, to allow
 coding the minimization of literals in each (prime) implicant (see examples).
@@ -95,9 +95,9 @@ translated into the number 1, unless the argument \bold{\code{zerobased}} is act
 \value{
 A matrix with \eqn{k} columns and:
 
-\eqn{v_{1} \cdot v_{2} \cdot ... \cdot v_{k}} rows if a truth table;
+\eqn{v_{1} \cdot v_{2} \cdot \dots \cdot v_{k}}{v1 * v2 * ... * vk} rows if a truth table;
 
-\eqn{(v_{1} + 1) \cdot (v_{2} + 1) \cdot ... \cdot (v_{k} + 1)} rows if an implicant matrix;
+\eqn{(v_{1} + 1) \cdot (v_{2} + 1) \cdot \dots \cdot (v_{k} + 1)}{(v1 + 1) * (v2 + 1) * ... * (vk + 1)} rows if an implicant matrix;
 
 \eqn{x} rows, equal to the length of \bold{\code{row.no}}.
 }
@@ -107,8 +107,8 @@ Adrian Dusa
 }
 
 \references{
-Dusa, Adrian. 2007. \emph{Enhancing Quine-McCluskey}.
-\href{http://www.compasss.org/wpseries/Dusa2007b.pdf}{COMPASSS: Working Paper 2007-49}
+Dusa, A. (2007b) \emph{Enhancing Quine-McCluskey}.
+WP 2007-49, \href{http://compasss.org/working-papers-series/}{COMPASSS Working Papers series}.
 
 Dusa, Adrian. 2010. \dQuote{A Mathematical Approach to the Boolean Minimization 
 Problem.} \emph{Quality & Quantity} vol.44, no.1, pp.99-113.
@@ -122,7 +122,7 @@ Chicago Press.
 }
 
 \examples{
-# three binary causal conditions, having two levels each: 0 and 1=
+# three binary causal conditions, having two levels each: 0 and 1
 noflevels <- c(2, 2, 2)
 
 
@@ -161,17 +161,17 @@ mat
 # implicant matrix     normal values
 # 
 #       A  B  C    |       A  B  C       
-#    2  0  0  1    |    2  -  -  0       c      
-#    4  0  1  0    |    4  -  0  -       b
-#    5  0  1  1    |    5  -  0  0       bc
+#    2  0  0  1    |    2  -  -  0       ~C      
+#    4  0  1  0    |    4  -  0  -       ~B
+#    5  0  1  1    |    5  -  0  0       ~B~C
 #    7  0  2  0    |    7  -  1  -       B
-#    8  0  2  1    |    8  -  1  0       Bc
-#   10  1  0  0    |   10  0  -  -       a  
-#   11  1  0  1    |   11  0  -  0       ac                 
-#   13  1  1  0    |   13  0  0  -       ab   
-#   14  1  1  1    |   14  0  0  0       abc
-#   16  1  2  0    |   16  0  1  -       aB
-#   17  1  2  1    |   17  0  1  0       aBc                   
+#    8  0  2  1    |    8  -  1  0       B~C
+#   10  1  0  0    |   10  0  -  -       ~A  
+#   11  1  0  1    |   11  0  -  0       ~A~C                 
+#   13  1  1  0    |   13  0  0  -       ~A~B   
+#   14  1  1  1    |   14  0  0  0       ~A~B~C
+#   16  1  2  0    |   16  0  1  -       ~AB
+#   17  1  2  1    |   17  0  1  0       ~AB~C                   
 }
 
 \keyword{functions}

@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>PI chart functions: makeChart, findmin, solveChart. QCA 3.4-2</title>
+<title>PI chart functions: makeChart, findmin, solveChart. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -65,9 +65,10 @@ show how to solve it using a minimum number of prime implicants.</p>
     <h2>Usage</h2>
 <pre>
 <div>makeChart(primes = &quot;&quot;, configs = &quot;&quot;, snames = &quot;&quot;, mv = FALSE, 
-          use.tilde = FALSE, collapse = &quot;*&quot;, ...)</div>
+          collapse = &quot;*&quot;, ...)</div>
 <div>findmin(chart)</div>
-<div>solveChart(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...)</div></pre>
+<div>solveChart(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, max.comb = 0,
+          first.min = FALSE, ...)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -94,11 +95,6 @@ show how to solve it using a minimum number of prime implicants.</p>
             <td>Logical, write row and column names in multi-value notation.</td>
         </tr>
         <tr>
-            <td valign="top"><b><code>use.tilde</code></b></td>
-            <td></td><td></td><td></td>
-            <td>Logical, row and column names indicating absence with a tilde.</td>
-        </tr>
-        <tr>
             <td valign="top"><b><code>collapse</code></b></td>
             <td></td><td></td><td></td>
             <td>Scalar character, how to collapse different parts of the row or
@@ -107,7 +103,7 @@ show how to solve it using a minimum number of prime implicants.</p>
         <tr>
             <td valign="top"><b><code>chart</code></b></td>
             <td></td><td></td><td></td>
-            <td>An object of class <code>&quot;pic&quot;</code> or a logical matrix.</td>
+            <td>An object of class <code>&quot;QCA_pic&quot;</code> or a logical matrix.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>row.dom</code></b></td>
@@ -124,6 +120,17 @@ show how to solve it using a minimum number of prime implicants.</p>
             <td valign="top"><b><code>depth</code></b></td>
             <td></td><td></td><td></td>
             <td>A maximum number of prime implicants for any disjunctive solution.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>max.comb</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Numeric real, to limit the size of the PI chart (see Details).</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>first.min</code></b></td>
+            <td></td><td></td><td></td>
+            <td>Logical, to return only the very first minimal solution (see
+                Details).</td>
         </tr>
         <tr>
             <td valign="top"><b><code>...</code></b></td>
@@ -178,12 +185,20 @@ of rows <b><code>M</code></b> needed to cover all columns is larger. By default,
 disjunctive solutions to at most 5 prime implicants, but this number can be increased to widen
 the search space, with a cost of increasing the search time.</p>
   
+  <p>The argument <b><code>max.comb</code></b> sets a maximum number of combinations to find solutions.
+It is counted in (fractions of) billions, defaulted at zero to signal searching to the maximum
+possible extent. If too complex, the search is stopped and the algorithm returns all found solutions
+up to that point.</p>
+  
+<p>For extremly difficult PI charts, the argument<b><code>first.min</code></b> controls returning only
+one (the very first found) solution.</p>
+  
     </div>
 
     <div class="Value">
       <h2>Value</h2>
 
-<p>For <b><code>makeChart</code></b>: a logical matrix of class <code>&quot;pic&quot;</code>.</p>
+<p>For <b><code>makeChart</code></b>: a logical matrix of class <code>&quot;QCA_pic&quot;</code>.</p>
   
 <p>For <b><code>findmin</code></b>: a numerical scalar.</p>
 
@@ -206,13 +221,13 @@ quantitative strategies</em>, Berkeley: University of California Press</p>
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'>
 # non-standard products, it needs the set names
-chart &lt;- makeChart(&quot;A, B, c&quot;, &quot;ABC, Abc, AbC, aBc&quot;, snames =  &quot;A,B,C&quot;)
+chart &lt;- makeChart(&quot;a, b, ~c&quot;, &quot;abc, a~b~c, a~bc, ~ab~c&quot;)
 chart
 </div>
-<div class='output'>  ABC Abc AbC aBc
-A  x   x   x   - 
-B  x   -   -   x 
-c  -   x   -   x 
+<div class='output'>     abc   a~b~c a~bc  ~ab~c
+a      x     x     x     -  
+b      x     -     -     x  
+~c     -     x     -     x
 </div>
 <div class='input'>
 
@@ -223,47 +238,14 @@ findmin(chart)
 <div class='input'>
 
 solveChart(chart)
-# first and second rows (A + B)
-# and first and third rows (A + c)
-# A is an essential prime implicant
-# A + B  A + c
+# first and second rows (a + b)
+# and first and third rows (a + ~c)
+# a is an essential prime implicant
+#  a + b  a + ~c
 </div>
-<div class='output'>     [,1] [,2]
-[1,]    1    1
-[2,]    2    3
-</div>
-<div class='input'>
-
-# Quine&#39;s example, page 528
-rows &lt;- &quot;AB, BC, Ac, aC, abd, bcd&quot;
-cols &lt;- &quot;ABCD, ABCd, ABcD, ABcd, AbcD, Abcd, aBCD, aBCd, abCD, abCd, abcd&quot;
-
-chart &lt;- makeChart(rows, cols, &quot;A,B,C,D&quot;)
-chart
-</div>
-<div class='output'>    ABCD ABCd ABcD ABcd AbcD Abcd aBCD aBCd abCD abCd abcd
-AB   x    x    x    x    -    -    -    -    -    -    -  
-BC   x    x    -    -    -    -    x    x    -    -    -  
-Ac   -    -    x    x    x    x    -    -    -    -    -  
-aC   -    -    -    -    -    -    x    x    x    x    -  
-abd  -    -    -    -    -    -    -    -    -    x    x  
-bcd  -    -    -    -    -    x    -    -    -    -    x  
-</div>
-<div class='input'>
-
-findmin(chart)
-</div>
-<div class='output'>[1] 4
-</div>
-<div class='input'>
-
-solveChart(chart)
-</div>
-<div class='output'>     [,1] [,2] [,3] [,4]
-[1,]    1    1    2    2
-[2,]    3    3    3    3
-[3,]    4    4    4    4
-[4,]    5    6    5    6
+<div class='output'>     [,1]   [,2]
+[1,]    1      1
+[2,]    2      3
 </div>
 <div class='input'>
 
@@ -293,33 +275,33 @@ solveChart(chart)
 # using implicant matrices
 primes &lt;- matrix(c(2,2,1,0,2,2,0,2,2,2), nrow = 2)
 configs &lt;- matrix(c(2,2,2,1,1,2,2,2,2,1,2,2,2,2,2), nrow = 3)
-colnames(primes) &lt;- colnames(configs) &lt;- LETTERS[1:5]
+colnames(primes) &lt;- colnames(configs) &lt;- letters[1:5]
 
-# the prime implicants: AbCE and ACDE
+# the prime implicants: a~bce and acde
 primes
 </div>
-<div class='output'>     A B C D E
+<div class='output'>     a b c d e
 [1,] 2 1 2 0 2
 [2,] 2 0 2 2 2
 </div>
 <div class='input'>
 
-# the initial causal combinations: AbCdE, AbCDE and ABCDE
+# the initial causal combinations: a~bc~de, a~bcde and abcde
 configs
 </div>
-<div class='output'>     A B C D E
+<div class='output'>     a b c d e
 [1,] 2 1 2 1 2
 [2,] 2 1 2 2 2
 [3,] 2 2 2 2 2
 </div>
 <div class='input'>
 
-chartLC &lt;- makeChart(primes, configs)
+chartLC &lt;- makeChart(primes, configs, collapse = &quot;&quot;)
 chartLC
 </div>
-<div class='output'>     AbCdE AbCDE ABCDE
-AbCE   x     x     -  
-ACDE   -     x     x  
+<div class='output'>        a~bc~de a~bcde   abcde  
+a~bce      x       x       -   
+acde       -       x       x  
 </div>
 </pre>
   </div>

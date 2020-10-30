@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>pof. QCA 3.4-2</title>
+<title>pof. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -58,16 +58,15 @@ Adrian Dusa
       <h2>Description</h2>
 
       <p>These functions returns inclusion (consistency) and coverage, plus PRI for sufficiency
-and RoN for necessity. The function <b><code>pofind()</code></b> is a stripped down version
-of the <b><code>pof()</code></b> function, to calculate parameters of fit for single conditions.</p>
-  
+and RoN for necessity. The function <b><code><a href=''>pofind()</a></code></b> is a stripped down version
+of the <b><code><a href=''>pof()</a></code></b> function, to calculate parameters of fit for single conditions.</p>
+   
     </div>
     
     <h2>Usage</h2>
-    <pre><div>pof(setms, outcome, data, relation = "necessity", inf.test = "",
-    incl.cut = c(0.75, 0.5), add = NULL, ...)</div>
-    <div>pofind(data, outcome, conditions, relation = "necessity",
-    use.tilde = FALSE, ...)</div></pre>
+<pre><div>pof(setms, outcome, data, relation = "necessity", inf.test = "",
+    incl.cut = c(0.75, 0.5), add, ...)</div>
+<div>pofind(data, outcome, conditions, relation = "necessity", ...)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -120,11 +119,6 @@ of the <b><code>pof()</code></b> function, to calculate parameters of fit for si
             <td>A function, or a list containing functions, to add more parameters of fit.</td>
         </tr>
         <tr>
-            <td valign="top"><b><code>use.tilde</code></b></td>
-            <td></td><td></td><td></td>
-            <td>Logical, use tilde to signal the absence of conditions.</td>
-        </tr>
-        <tr>
             <td valign="top"><b><code>...</code></b></td>
             <td></td><td></td><td></td>
             <td>Other arguments to be passed to the main function.</td>
@@ -164,7 +158,7 @@ which are automatically transformed into their corresponding set membership scor
       <p>The argument <b><code>setms</code></b> can also be a string expression, written
 in sum of products (SOP) form.</p>
   
-      <p>For all situation when <b><code>setms</code></b> is something else than a data frame, it requires
+      <p>For all other situations when <b><code>setms</code></b> is something else than a data frame, it requires
 the original <b><code>data</code></b> to generate the set memberships.</p>
   
       <p>If character, the argument <b><code>outcome</code></b> is the name of the column
@@ -212,12 +206,6 @@ the colnames of the <b><code>setms</code></b> object are negated using
 <b><code>neg.out = TRUE</code></b> and a tilde <b><code>~</code></b> in the outcome name 
 don't cancel each other out, either one (or even both) signaling if the <b><code>outcome</code></b>
 should be negated.</p>
-  
-      <p>When argument <b><code>setms</code></b> is a SOP expression, it is the only situation when
-everything (including the <b><code>outcome</code></b>) can be negated using lower case letters, with
-or without a tilde. Lower case letters and a tilde does cancel each other out, for
-example <b><code>~X</code></b> is interpreted as <b><code>x</code></b>, while <b><code>~x</code></b> is interpreted
-as <b><code>X</code></b>.</p>
 
       <p>The arguments from function <b><code>pofind()</code></b> are passed to the main function
 <b><code>pof()</code></b> to calculate parameters of fit.
@@ -242,7 +230,6 @@ A Guide to Qualitative Comparative Analysis</em>. Cambridge: Cambridge Universit
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'># -----
 # Cebotari &amp; Vink (2013) fuzzy data
-data(CVF) 
 
 conds &lt;- CVF[, 1:5]
 PROTEST &lt;- CVF$PROTEST
@@ -332,21 +319,21 @@ nCVF &lt;- superSubset(CVF, outcome = &quot;PROTEST&quot;, incl.cut = 0.90, cov.
 pof(nCVF$coms, 1 - PROTEST)
 </div>
 <div class='output'>
-                                     inclN  RoN    covN  
--------------------------------------------------------- 
- 1  GEOCON                           0.784  0.436  0.529 
- 2  DEMOC+ETHFRACT+geocon            0.881  0.440  0.579 
- 3  DEMOC+ethfract+POLDIS            0.804  0.450  0.545 
- 4  DEMOC+ETHFRACT+POLDIS            0.821  0.458  0.558 
- 5  DEMOC+ethfract+natpride          0.809  0.476  0.560 
- 6  DEMOC+ETHFRACT+natpride          0.801  0.463  0.550 
- 7  DEMOC+geocon+POLDIS              0.792  0.474  0.550 
- 8  DEMOC+geocon+natpride            0.779  0.513  0.562 
- 9  DEMOC+POLDIS+natpride            0.708  0.492  0.515 
-10  ethfract+POLDIS+natpride         0.815  0.501  0.575 
-11  democ+ETHFRACT+POLDIS+natpride   0.843  0.491  0.584 
-12  ETHFRACT+geocon+POLDIS+natpride  0.768  0.533  0.567 
---------------------------------------------------------
+                                       inclN   RoN   covN  
+---------------------------------------------------------- 
+ 1  GEOCON                             0.784  0.436  0.529 
+ 2  DEMOC+ETHFRACT+~GEOCON             0.881  0.440  0.579 
+ 3  DEMOC+~ETHFRACT+POLDIS             0.804  0.450  0.545 
+ 4  DEMOC+ETHFRACT+POLDIS              0.821  0.458  0.558 
+ 5  DEMOC+~ETHFRACT+~NATPRIDE          0.809  0.476  0.560 
+ 6  DEMOC+ETHFRACT+~NATPRIDE           0.801  0.463  0.550 
+ 7  DEMOC+~GEOCON+POLDIS               0.792  0.474  0.550 
+ 8  DEMOC+~GEOCON+~NATPRIDE            0.779  0.513  0.562 
+ 9  DEMOC+POLDIS+~NATPRIDE             0.708  0.492  0.515 
+10  ~ETHFRACT+POLDIS+~NATPRIDE         0.815  0.501  0.575 
+11  ~DEMOC+ETHFRACT+POLDIS+~NATPRIDE   0.843  0.491  0.584 
+12  ETHFRACT+~GEOCON+POLDIS+~NATPRIDE  0.768  0.533  0.567 
+----------------------------------------------------------
 
 </div>
 <div class='input'>
@@ -362,14 +349,14 @@ cCVF &lt;- minimize(CVF, outcome = &quot;PROTEST&quot;, incl.cut = 0.8, details 
 pof(1 - cCVF$pims, PROTEST)
 </div>
 <div class='output'>
-                                          inclN  RoN    covN  
-------------------------------------------------------------- 
-1  democ+ethfract+geocon                  0.841  0.452  0.575 
-2  ethfract+geocon+poldis                 0.790  0.354  0.508 
-3  democ+ethfract+poldis+NATPRIDE         0.892  0.259  0.526 
-4  democ+geocon+poldis+natpride           0.893  0.304  0.542 
-5  DEMOC+ETHFRACT+geocon+POLDIS+NATPRIDE  0.945  0.299  0.567 
--------------------------------------------------------------
+                                           inclN   RoN   covN  
+-------------------------------------------------------------- 
+1  ~DEMOC+~ETHFRACT+~GEOCON                0.841  0.452  0.575 
+2  ~ETHFRACT+~GEOCON+~POLDIS               0.790  0.354  0.508 
+3  ~DEMOC+~ETHFRACT+~POLDIS+NATPRIDE       0.892  0.259  0.526 
+4  ~DEMOC+~GEOCON+~POLDIS+~NATPRIDE        0.893  0.304  0.542 
+5  DEMOC+ETHFRACT+~GEOCON+POLDIS+NATPRIDE  0.945  0.299  0.567 
+--------------------------------------------------------------
 
 </div>
 <div class='input'>
@@ -378,12 +365,12 @@ pof(1 - cCVF$pims, PROTEST)
 # using a SOP expression, translated using the function translate()
 
 # notice that lower case letters mean the absence of a causal condition
-pof(&quot;natpride + GEOCON =&gt; PROTEST&quot;, data = CVF)
+pof(&quot;~NATPRIDE + GEOCON =&gt; PROTEST&quot;, data = CVF)
 </div>
 <div class='output'>
-               inclS  PRI    covS   covU  
+               inclS   PRI   covS   covU  
 ----------------------------------------- 
-1  natpride    0.899  0.807  0.597  0.042 
+1  ~NATPRIDE   0.899  0.807  0.597  0.042 
 2  GEOCON      0.624  0.449  0.904  0.349 
 3  expression  0.633  0.462  0.946    -   
 -----------------------------------------
@@ -391,38 +378,25 @@ pof(&quot;natpride + GEOCON =&gt; PROTEST&quot;, data = CVF)
 </div>
 <div class='input'>
 # same for the negation of the outcome
-pof(&quot;natpride + GEOCON =&gt; ~PROTEST&quot;, data = CVF)
+pof(&quot;~NATPRIDE + GEOCON =&gt; ~PROTEST&quot;, data = CVF)
 </div>
 <div class='output'>
-               inclS  PRI    covS   covU  
+               inclS   PRI   covS   covU  
 ----------------------------------------- 
-1  natpride    0.561  0.156  0.381  0.018 
+1  ~NATPRIDE   0.561  0.156  0.381  0.018 
 2  GEOCON      0.529  0.309  0.784  0.421 
 3  expression  0.524  0.303  0.803    -   
 ----------------------------------------- 
-
-</div>
-<div class='input'>
-# same using lower letters for the negation
-pof(&quot;natpride + GEOCON =&gt; protest&quot;, data = CVF)
-</div>
-<div class='output'>
-               inclS  PRI    covS   covU  
------------------------------------------ 
-1  natpride    0.561  0.156  0.381  0.018 
-2  GEOCON      0.529  0.309  0.784  0.421 
-3  expression  0.524  0.303  0.803    -   
------------------------------------------
 
 </div>
 <div class='input'>
 # necessity is indicated by the reverse arrow
-pof(&quot;natpride + GEOCON &lt;= PROTEST&quot;, data = CVF)
+pof(&quot;~NATPRIDE + GEOCON &lt;= PROTEST&quot;, data = CVF)
 </div>
 <div class='output'>
-               inclN  RoN    covN  
+               inclN   RoN   covN  
 ---------------------------------- 
-1  natpride    0.597  0.952  0.899 
+1  ~NATPRIDE   0.597  0.952  0.899 
 2  GEOCON      0.904  0.492  0.624 
 3  expression  0.946  0.468  0.633 
 ---------------------------------- 
@@ -438,12 +412,12 @@ inclH &lt;- function(x, y) {
     sum(fuzzyand(x, y) + sqrt(fuzzyor(x - y, 0)*x))
 }
 
-pof(&quot;natpride + GEOCON => protest&quot;, data = CVF, add = inclH)
+pof(&quot;~NATPRIDE + GEOCON => ~PROTEST&quot;, data = CVF, add = inclH)
 </div>
 <div class='output'>
-               inclS  PRI    covS   covU   inclH 
+               inclS   PRI   covS   covU   inclH 
 ------------------------------------------------ 
-1  natpride    0.561  0.156  0.381  0.018  0.517 
+1  ~NATPRIDE   0.561  0.156  0.381  0.018  0.517 
 2  GEOCON      0.529  0.309  0.784  0.421  0.471 
 3  expression  0.524  0.303  0.803    -    0.467 
 ------------------------------------------------ 
@@ -467,8 +441,7 @@ Adrian Dusa
 
     <h2>See also</h2>
 <b><code><a href='minimize.html'>minimize</a></code></b>,
-<b><code><a href='subsetsAndSupersets.html'>superSubset</a></code></b>,
-<b><code><a href='SOPexpression.html'>translate</a></code></b>
+<b><code><a href='subsetsAndSupersets.html'>superSubset</a></code></b>
     
     
   </div>

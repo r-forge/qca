@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>findRows. QCA 3.4-2</title>
+<title>findRows. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -76,7 +76,7 @@ certain remainders or some observed configurations from the minimization process
         <tr>
             <td valign="top"><b><code>obj</code></b></td>
             <td></td><td></td><td></td>
-            <td>A truth table (an object of class <code>"tt"</code>) or a, equivalent numerical matrix.</td>
+            <td>A truth table (an object of class <code>"QCA_tt"</code>) or a, equivalent numerical matrix.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>remainders</code></b></td>
@@ -161,7 +161,8 @@ outcome, and if it has two values the second is used.</p>
 </tr></table></p>
   
       <p>If very specific cutoff values are needed for the negation of the outcome, these can be provided
-via the <b><code>...</code></b> argument, that will be passed to function <b><code>truthTable()</code></b>.</p>
+via the <b><code>...</code></b> argument, that will be passed to function 
+<b><code><a href='truthTable.html'>truthTable()</a></code></b>.</p>
 
       <p></p>
   
@@ -179,24 +180,16 @@ A numeric vector of length <b><code>n</code></b>.
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'>
 # Lipset's binary crisp version
-data(LC)
 ttLC <- truthTable(LC, "SURV", show.cases = TRUE)
 
-findRows("DEV*ind*STB", ttLC)
+findRows("DEV*~IND*STB", ttLC)
 </div>
 <div class='output'>[1] 18 26 30
 </div>
 <div class='input'>
 
-# find two thresholds to separate into two groups
-findRows(gdp, n = 2)
-</div>
-<div class='output'>[1]  8700 18000
-</div>
-<div class='input'>
-
 ## all subset rows from the truth table, not only the remainders
-findRows("DEV*ind*STB", ttLC, remainders = FALSE)
+findRows("DEV*~IND*STB", ttLC, remainders = FALSE)
 </div>
 <div class='output'>[1] 18 22 26 30
 </div>
@@ -204,7 +197,6 @@ findRows("DEV*ind*STB", ttLC, remainders = FALSE)
 <div class='input'>
 
 # Lipset's fuzzy version
-data(LF)
 ttLF <- truthTable(LF, outcome = "SURV", incl.cut = 0.8)
 
 findRows(obj = ttLF, type = 2) # contradictory simplifying assumptions
@@ -219,7 +211,7 @@ findRows(obj = ttLF, type = 2) # contradictory simplifying assumptions
 
 findRows(obj = ttLF, type = 2, incl.cut = 0.9, pri.cut = 0.7)
 </div>
-<div class='output'>[1] 10 12 16 17 18 21 25 26 28 29 30
+<div class='output'>[1] 10 12 17 18 21 25 26 28 29
 </div>
 
 

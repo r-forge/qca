@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -25,6 +25,7 @@
 
 `findRows` <-
 function(expression = "", obj, remainders = TRUE, type = 1, ...) {
+    expression <- admisc::recreate(substitute(expression))
     if (any(type == 0)) {
         type <- 0
     }
@@ -37,19 +38,17 @@ function(expression = "", obj, remainders = TRUE, type = 1, ...) {
         stop(simpleError("The truth table object is missing.\n\n"))
     }
     other.args <- list(...)
-    if (methods::is(obj, "tt")) {
+    if (methods::is(obj, "QCA_tt")) {
         noflevels <- obj$noflevels
         conditions <- obj$options$conditions
         if (any(is.element(type, c(0, 2, 3)))) {
             call <- as.list(obj$call)[-1]
             call$data <- obj$initial.data
-            if (obj$options$neg.out) {
-                if (tilde1st(call$outcome)) {
-                    call$outcome <- notilde(call$outcome)
-                }
+            if (admisc::tilde1st(call$outcome)) {
+                call$outcome <- admisc::notilde(call$outcome)
             }
             else {
-                call$outcome <- paste("~", call$outcome, sep = "")
+                call$outcome <- paste("~", call$outcome, sep = "")    
             }
             call$incl.cut <- rev(obj$options$incl.cut)
             if (length(other.args) > 0) {
@@ -82,10 +81,10 @@ function(expression = "", obj, remainders = TRUE, type = 1, ...) {
     CSA <- NULL
     SSR <- NULL
     if (any(is.element(type, 0:1))) {
-        trexp <- attr(translate(paste(expression, collapse = "+"), snames = conditions), "retlist")
+        trexp <- attr(admisc::translate(paste(expression, collapse = "+"), snames = conditions, retlist = TRUE), "retlist")
         result <- matrix(ncol = length(trexp[[1]]), nrow = 0)
         if (is.matrix(obj)) {
-            noflevels <- getLevels(obj)
+            noflevels <- admisc::getInfo(obj)$noflevels
         }
         for (i in seq(length(trexp))) {
             rowi <- trexp[[i]]
@@ -107,7 +106,7 @@ function(expression = "", obj, remainders = TRUE, type = 1, ...) {
                 result <- rbind(result, rowi)
             }
         }
-        if (methods::is(obj, "tt")) {
+        if (methods::is(obj, "QCA_tt")) {
             mbase <- rev(c(1, cumprod(rev(noflevels))))[-1]
             diffwith <- NULL
             if (remainders) {

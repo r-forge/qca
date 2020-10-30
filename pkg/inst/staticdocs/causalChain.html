@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>causalChain. QCA 3.4-2</title>
+<title>causalChain. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -63,7 +63,7 @@ finding all possible necessary and sufficient solutions for all possible outcome
     </div>
     
     <h2>Usage</h2>
-    <pre><div>causalChain(data, ordering = NULL, strict = FALSE, ...)</div></pre>
+    <pre><div>causalChain(data, ordering, strict = FALSE, ...)</div></pre>
     
     <h2>Arguments</h2>
     <table>
@@ -200,7 +200,6 @@ contains the result of the QCA minimization for that specific column acting as a
 # The following examples assume the package cna is installed
 
 library(cna)
-data(d.educate)
 cna(d.educate, what = &quot;a&quot;)
 </div>
 <div class='output'>--- Coincidence Analysis (CNA) ---
@@ -210,12 +209,12 @@ Factors: U, D, L, G, E
 Atomic solution formulas:
 -------------------------
 Outcome E:
-       condition consistency coverage complexity
-     L + G <-> E           1        1          2
+ solution        consistency coverage complexity
+ L + G <-> E               1        1          2
  U + D + G <-> E           1        1          3
 
 Outcome L:
-   condition consistency coverage complexity
+ solution    consistency coverage complexity
  U + D <-> L           1        1          2
 </div>
 
@@ -251,7 +250,6 @@ cc$E$IC
 
 
 # another example, function cna() requires specific complexity depths
-data(d.women)
 cna(d.women, maxstep = c(3, 4, 9), what = &quot;a&quot;)
 </div>
 <div class='output'>--- Coincidence Analysis (CNA) ---
@@ -261,7 +259,7 @@ Factors: ES, QU, WS, WM, LP, WNP
 Atomic solution formulas:
 -------------------------
 Outcome WNP:
-                          condition consistency coverage complexity
+ solution                           consistency coverage complexity
  WS + ES*WM + es*LP + QU*LP <-> WNP           1        1          7
  WS + ES*WM + QU*LP + WM*LP <-> WNP           1        1          7
 </div>
@@ -271,14 +269,13 @@ Outcome WNP:
 causalChain(d.women)
 </div>
 <div class='output'>
-M1: WS + es*LP + ES*WM + QU*LP <=> WNP
+M1: WS + ~ES*LP + ES*WM + QU*LP <=> WNP
 M2: WS + ES*WM + QU*LP + WM*LP <=> WNP
 </div>
 
 <div class='input'>
 
 # multivalue data require a different function in package cna
-data(d.pban)
 mvcna(d.pban, ordering = list(c(&quot;C&quot;, &quot;F&quot;, &quot;T&quot;, &quot;V&quot;), &quot;PB&quot;),
       cov = 0.95, maxstep = c(6, 6, 10), what = &quot;a&quot;)
 </div>
@@ -290,9 +287,9 @@ C, F, T, V < PB
 Atomic solution formulas:
 -------------------------
 Outcome PB=1:
-                                        condition consistency coverage complexity
-           C=1 + F=2 + C=0*F=1 + C=2*V=0 <-> PB=1           1    0.952          6
-           C=1 + F=2 + C=0*T=2 + C=2*V=0 <-> PB=1           1    0.952          6
+ solution                                         consistency coverage complexity
+ C=1 + F=2 + C=0*F=1 + C=2*V=0 <-> PB=1                     1    0.952          6
+ C=1 + F=2 + C=0*T=2 + C=2*V=0 <-> PB=1                     1    0.952          6
  C=1 + F=2 + C=2*F=0 + C=0*F=1 + F=1*V=0 <-> PB=1           1    0.952          8
  C=1 + F=2 + C=2*F=0 + C=0*T=2 + F=1*V=0 <-> PB=1           1    0.952          8
  C=1 + F=2 + C=0*F=1 + C=2*T=1 + T=2*V=0 <-> PB=1           1    0.952          8
@@ -334,15 +331,14 @@ C, F, T, V < PB
 Atomic solution formulas:
 -------------------------
 Outcome PB=1:
-                                    condition consistency coverage complexity
-           C=1 + F=2 + T=2 + C=2*T=1 <-> PB=1       0.955        1          5
+ solution                                     consistency coverage complexity
+ C=1 + F=2 + T=2 + C=2*T=1 <-> PB=1                 0.955        1          5
  C=1 + F=2 + T=2 + C=2*F=0 + F=1*T=1 <-> PB=1       0.955        1          7
 </div>
 
 <div class='input'>
 # same thing with
-causalChain(d.pban, ordering = &quot;C, F, T, V < PB&quot;, pi.cons = 0.93,
-            sol.cons = 0.95)
+causalChain(d.pban, ordering = &quot;C, F, T, V < PB&quot;, pi.cons = 0.93, sol.cons = 0.95)
 </div>
 <div class='output'>
 M1: C{1} + F{2} + T{2} + C{2}*T{1} <=> PB{1}
@@ -355,10 +351,8 @@ M2: C{1} + F{2} + T{2} + C{2}*F{0} + F{1}*T{1} <=> PB{1}
 # a coverage threshold for the solution (note that an yet another
 # function for fuzzy sets is needed in package cna)
 
-data(d.autonomy)
 dat2 <- d.autonomy[15:30, c(&quot;AU&quot;,&quot;RE&quot;, &quot;CN&quot;, &quot;DE&quot;)]
-fscna(dat2, ordering = list(&quot;AU&quot;), con = .9, con.msc = .85, cov = .85,
-      what = &quot;a&quot;)
+fscna(dat2, ordering = list(&quot;AU&quot;), con = .9, con.msc = .85, cov = .85, what = &quot;a&quot;)
 </div>
 <div class='output'>--- Coincidence Analysis (CNA) ---
 
@@ -368,35 +362,18 @@ RE, CN, DE < AU
 Atomic solution formulas:
 -------------------------
 Outcome AU:
-            condition consistency coverage complexity
+ solution             consistency coverage complexity
  RE*cn + re*CN <-> AU        0.92    0.851          4
  re*DE + cn*DE <-> AU        0.90    0.862          4
 </div>
 
 <div class='input'>
 # again, the same results using the same function:
-cc &lt;- causalChain(dat2, ordering = &quot;AU&quot;, sol.cons = 0.9, pi.cons = 0.85,
-            sol.cov = 0.85)
-cc
+causalChain(dat2, ordering = &quot;AU&quot;, sol.cons = 0.9, pi.cons = 0.85, sol.cov = 0.85)
 </div>
 <div class='output'>
-M1: re*CN + RE*cn <=> AU
-M2: re*DE + cn*DE <=> AU
-</div>
-
-<div class='input'> # the inclusion and coverage scores
-cc$AU$IC
-</div>
-<div class='output'>                               ------------------- 
-          inclS  PRI    covS   covU   (M1)   (M2)  
--------------------------------------------------- 
-1  re*CN  1.000  1.000  0.255  0.000  0.117        
-2  re*DE  0.932  0.800  0.436  0.021         0.117 
-3  RE*cn  0.908  0.841  0.734  0.074  0.596        
-4  cn*DE  0.886  0.820  0.745  0.021         0.426 
--------------------------------------------------- 
-   M1     0.920  0.854  0.851 
-   M2     0.900  0.833  0.862
+M1: ~RE*CN + RE*~CN <=> AU
+M2: ~RE*DE + ~CN*DE <=> AU
 </div>
 
 </pre>

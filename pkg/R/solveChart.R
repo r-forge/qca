@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,13 +24,13 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `solveChart` <-
-function(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...) {
+function(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, max.comb = 0, first.min = FALSE, ...) {
     if (!is.logical(chart) && length(setdiff(chart, 0:1)) > 0) {
         cat("\n")
-        stop(simpleError("Use a T/F matrix. See makeChart()'s output.\n\n"))
+        stop(simpleError("Use a logical, T/F matrix. See makeChart()'s output.\n\n"))
     }
     other.args <- list(...)
-    if ("min.dis" %in% names(other.args)) {
+    if (is.element("min.dis", names(other.args))) {
         if (is.logical(other.args$min.dis)) {
             all.sol <- !other.args$min.dis
         }
@@ -43,25 +43,18 @@ function(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...) {
         row.numbers <- rowDominance(chart)
         chart <- chart[row.numbers, ]
     }
-    foundm <- findmin(chart)
-    if (foundm == 0) { 
+    foundm <- findmin(chart, ... = ...) 
+    if (foundm == 0) {
         cat("\n")
         stop(simpleError("The PI chart cannot be solved.\n\n"))
     }
-    if (all(dim(chart) > 1)) {
-        if (is.null(depth)) depth <- 0L
-        output <- .Call("C_solveChart", t(matrix(as.logical(chart), nrow = nrow(chart))), all.sol, as.integer(depth), PACKAGE = "QCA")
-        if (ncol(output) == 1 & is.double(output)) {
-            warning(simpleWarning("The PI chart is too complex, only the first minimal solution returned.\n\n"))
-        }
-        output[output == 0] <- NA
+    if (is.null(depth)) depth <- 0L
+    output <- .Call("C_solveChart", matrix(as.logical(chart), nrow = nrow(chart)), all.sol, as.integer(depth), as.integer(foundm), max.comb, first.min, PACKAGE = "QCA")
+    if (output[[2]]) {
+        warning(simpleWarning("The PI chart is exceedingly complex, solution(s) not guaranteed to be exhaustive.\n\n"))
     }
-    else {
-        output <- matrix(seq(nrow(chart)))
-        if (ncol(chart) == 1) {
-            output <- t(output)
-        }
-    }
+    output <- output[[1]]
+    output[output == 0] <- NA
     output <- matrix(as.integer(row.numbers[output]), nrow = nrow(output))
     output[is.na(output)] <- 0L
     return(output)

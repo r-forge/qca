@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,12 +24,12 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `findSubsets` <-
-function(input, noflevels, stop, ...) {
+function(input, noflevels = NULL, stop = NULL, ...) {
     other.args <- list(...)
-        if ("row.no" %in% names(other.args)) {
+        if (is.element("row.no", names(other.args)) & missing(input)) {
             input <- other.args$row.no
         }
-        if ("maximum" %in% names(other.args)) {
+        if (is.element("maximum", names(other.args))) {
             stop <- other.args$maximum
         }
     stop <- ifelse(missing(stop), prod(noflevels), stop)

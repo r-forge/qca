@@ -12,12 +12,12 @@ show how to solve it using a minimum number of prime implicants.
 }
 
 \usage{
-makeChart(primes = "", configs = "", snames = "", mv = FALSE,
-          use.tilde = FALSE, collapse = "*", ...)
+makeChart(primes = "", configs = "", snames = "", mv = FALSE, collapse = "*", ...)
 
-findmin(chart)
+findmin(chart, ...)
 
-solveChart(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...)
+solveChart(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, max.comb = 0,
+           first.min = FALSE, ...)
 }
 
 \arguments{
@@ -27,14 +27,16 @@ solveChart(chart, row.dom = FALSE, all.sol = FALSE, depth = NULL, ...)
         or a matrix of causal configurations in the implicants space.}
   \item{snames}{A string containing the sets' names, separated by commas.}
   \item{mv}{Logical, row and column names in multi-value notation.}
-  \item{use.tilde}{Logical, row and column names indicating absence with a tilde.}
   \item{collapse}{Scalar character, how to collapse different parts of the row or
         column names.}
-  \item{chart}{An object of class \code{"pic"} or a logical matrix.}
+  \item{chart}{An object of class \code{"QCA_pic"} or a logical matrix.}
   \item{row.dom}{Logical, apply row dominance to eliminate redundant prime implicants.}
   \item{all.sol}{Derive all possible solutions, irrespective if the disjunctive number of
         prime implicants is minimal or not.}
   \item{depth}{A maximum number of prime implicants for any disjunctive solution.}
+  \item{max.comb}{Numeric, to stop searching for solutions (see Details).}
+  \item{first.min}{Logical, to return only the very first minimal solution (see
+        Details).}
   \item{...}{Other arguments (mainly for backwards compatibility).}
 }
 
@@ -45,7 +47,7 @@ on the columns. Such a chart is produced by \bold{\code{makeChart()}}, and it is
 visually determine which prime implicants (if any) are essential.
 
 When \bold{\code{primes}} and \bold{\code{configs}} are character, the individual sets
-are identified using the function \bold{\code{\link{translate}()}}, using the SOP - Sum Of
+are identified using the function \bold{\code{\link[admisc]{translate}()}}, using the SOP - Sum Of
 Products form, which needs the set names in the absence of any other information. If
 products are formed using the standard \bold{\code{*}} operator, specifying the set names
 is not mandatory.
@@ -77,10 +79,18 @@ activated, and it is automatically increased if the minimal number of rows \code
 cover all columns is larger. By default, it bounds the disjunctive solutions to at most 5 prime
 implicants, but this number can be increased to widen the search space, with a cost of
 increasing the search time.
+
+The argument \bold{\code{max.comb}} sets a maximum number of combinations to find solutions.
+It is counted in (fractions of) billions, defaulted at zero to signal searching to the maximum
+possible extent. If too complex, the search is stopped and the algorithm returns all found solutions
+up to that point.
+
+For extremly difficult PI charts, the argument \bold{\code{first.min}} controls returning only
+one (the very first found) solution.
 }
 
 \value{
-For \bold{\code{makeChart}}: a logical matrix of class \code{"pic"}.
+For \bold{\code{makeChart}}: a logical matrix of class \code{"QCA_pic"}.
 
 For \bold{\code{findmin}}: a numerical scalar.
 
@@ -101,52 +111,29 @@ quantitative strategies}, Berkeley: University of California Press
 }
 
 \examples{
-
 # non-standard products, it needs the set names
-chart <- makeChart("A, B, c", "ABC, Abc, AbC, aBc", snames =  "A,B,C")
+chart <- makeChart("a, b, ~c", "abc, a~b~c, a~bc, ~ab~c")
+
+# same with unquoted expressions
+chart <- makeChart(c(a, b, ~c), c(abc, a~b~c, a~bc, ~ab~c))
+
 chart
-#   ABC Abc AbC aBc
-# A  x   x   x   - 
-# B  x   -   -   x 
-# c  -   x   -   x 
+#      abc   a~b~c a~bc  ~ab~c
+# a      x     x     x     -  
+# b      x     -     -     x  
+# ~c     -     x     -     x
 
 findmin(chart)
 # 2
 
 solveChart(chart)
-# first and second rows (A + B)
-# and first and third rows (A + c)
-# A is an essential prime implicant
-#      A + B  A + c
+# first and second rows (a + b)
+# and first and third rows (a + ~c)
+# a is an essential prime implicant
+#      a + b  a + ~c
 #      [,1]   [,2]
 # [1,]    1      1
 # [2,]    2      3
-
-
-# Quine's example, page 528
-rows <- "AB, BC, Ac, aC, abd, bcd"
-cols <- "ABCD, ABCd, ABcD, ABcd, AbcD, Abcd, aBCD, aBCd, abCD, abCd, abcd"
-
-chart <- makeChart(rows, cols, "A,B,C,D")
-chart
-#     ABCD ABCd ABcD ABcd AbcD Abcd aBCD aBCd abCD abCd abcd
-# AB   x    x    x    x    -    -    -    -    -    -    -  
-# BC   x    x    -    -    -    -    x    x    -    -    -  
-# Ac   -    -    x    x    x    x    -    -    -    -    -  
-# aC   -    -    -    -    -    -    x    x    x    x    -  
-# abd  -    -    -    -    -    -    -    -    -    x    x  
-# bcd  -    -    -    -    -    x    -    -    -    -    x 
-
-findmin(chart)
-# 4
-
-solveChart(chart)
-#      [,1] [,2] [,3] [,4]
-# [1,]    1    1    2    2
-# [2,]    3    3    3    3
-# [3,]    4    4    4    4
-# [4,]    5    6    5    6
-
 
 # using SOP standard product sign
 rows <- "EF, ~GH, IJ"
@@ -169,26 +156,26 @@ solveChart(chart)
 # using implicant matrices
 primes <- matrix(c(2,2,1,0,2,2,0,2,2,2), nrow = 2)
 configs <- matrix(c(2,2,2,1,1,2,2,2,2,1,2,2,2,2,2), nrow = 3)
-colnames(primes) <- colnames(configs) <- LETTERS[1:5]
+colnames(primes) <- colnames(configs) <- letters[1:5]
 
-# the prime implicants: AbCE and ACDE
+# the prime implicants: a~bce and acde
 primes
-#      A B C D E
+#      a b c d e
 # [1,] 2 1 2 0 2
 # [2,] 2 0 2 2 2
 
-# the initial causal combinations: AbCdE, AbCDE and ABCDE
+# the initial causal combinations: a~bc~de, a~bcde and abcde
 configs
-#      A B C D E
+#      a b c d e
 # [1,] 2 1 2 1 2
 # [2,] 2 1 2 2 2
 # [3,] 2 2 2 2 2
 
-chartLC <- makeChart(primes, configs)
+chartLC <- makeChart(primes, configs, collapse = "")
 chartLC
-#      AbCdE AbCDE ABCDE
-# AbCE   x     x     -  
-# ACDE   -     x     x
+#         a~bc~de a~bcde   abcde  
+# a~bce      x       x       -   
+# acde       -       x       x   
 
 }
 

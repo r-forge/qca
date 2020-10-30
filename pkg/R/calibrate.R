@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -27,26 +27,32 @@
 function (x, type = "fuzzy", method = "direct", thresholds = NA,
           logistic = TRUE, idm = 0.95, ecdf = FALSE, below = 1, above = 1, ...) {
     other.args <- list(...)
+    funargs <- lapply(lapply(match.call(), deparse)[-1], function(x) gsub("\"|[[:space:]]", "", x))
     if (is.element("q", names(other.args))) {
         above <- other.args$q
     }
     if (is.element("p", names(other.args))) {
         below <- other.args$p
     }
-    if (possibleNumeric(x)) {
-        x <- asNumeric(x) 
+    if (admisc::possibleNumeric(x)) {
+        x <- admisc::asNumeric(x) 
     }
     else {
+        if (grepl("[$]", funargs$x) & is.null(x)) {
+            x <- unlist(strsplit(funargs$x, split = "\\$"))
+            cat("\n")
+            stop(simpleError(sprintf("There is no column \"%s\" in the dataframe %s.\n\n", x[2], x[1])))
+        }
         cat("\n")
-        stop(simpleError("x is not numeric.\n\n"))
+        stop(simpleError("The input is not numeric.\n\n"))
     }
     if (!is.element(type, c("crisp", "fuzzy"))) {
         cat("\n")
-        stop(simpleError("Unknown calibration type.\n\n"))
+        stop(simpleError("Incorrect calibration type.\n\n"))
     }
     if (!is.element(method, c("direct", "indirect", "TFR"))) {
         cat("\n")
-        stop(simpleError("Unknown calibration method.\n\n"))
+        stop(simpleError("Incorrect calibration method.\n\n"))
     }
     if (method != "TFR") {
         if(all(is.na(thresholds))) {
@@ -54,14 +60,14 @@ function (x, type = "fuzzy", method = "direct", thresholds = NA,
             stop(simpleError("Threshold value(s) not specified.\n\n"))
         }
         if (is.character(thresholds) & length(thresholds) == 1) {
-            thresholds <- splitstr(thresholds)
+            thresholds <- admisc::splitstr(thresholds)
         }
-        if (possibleNumeric(thresholds)) {
+        if (admisc::possibleNumeric(thresholds)) {
             nmsths <- NULL
             if (!is.null(names(thresholds))) {
                 nmsths <- names(thresholds)
             }
-            thresholds <- asNumeric(thresholds)
+            thresholds <- admisc::asNumeric(thresholds)
             names(thresholds) <- nmsths
         }
         else {
@@ -290,6 +296,7 @@ function (x, type = "fuzzy", method = "direct", thresholds = NA,
             for (i in seq(length(thresholds))) {
                 y[x > thresholds[i]] = values[i + 1]
             }
+            x[x == 0] <- 0.00001
             fracpol <- glm(y ~ log(x) + I(x^(1/2)) + I(x^1) + I(x^2), family = quasibinomial(logit))
             fs <- round(unname(predict(fracpol, type = "response")), 6)
             fs[fs < 0.0001] <- 0

@@ -12,8 +12,8 @@ assign cases to the vector space corners (the truth table rows).
 
 \usage{
 truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut = 0,
-           complete = FALSE, use.letters = FALSE, show.cases = FALSE, dcc = FALSE,
-           sort.by = "", inf.test = "", ...)
+           exclude = NULL, complete = FALSE, use.letters = FALSE, show.cases = FALSE,
+           dcc = FALSE, sort.by = "", inf.test = "", ...)
 }
 
 \arguments{
@@ -27,6 +27,8 @@ truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut
         declared as a remainder.}
   \item{pri.cut}{The minimal score for the \bold{\code{PRI}} - proportional reduction in
         inconsistency, under which a truth table row is declared as negative.}
+  \item{exclude}{A vector of (remainder) row numbers from the truth table, to code as
+        negative output configurations.}
   \item{complete}{Logical, print complete truth table.}
   \item{use.letters}{Logical, use letters instead of causal conditions' names.}
   \item{show.cases}{Logical, print case names.}
@@ -195,6 +197,10 @@ Cronqvist, L.; Berg-Schlosser, D. (2009) \dQuote{Multi-Value QCA (mvQCA)}, in
 Rihoux, B.; Ragin, C. (eds.) \emph{Configurational Comparative Methods. Qualitative
 Comparative Analysis (QCA) and Related Techniques}, SAGE.
 
+Dusa, A. (2019) \emph{QCA with R. A Comprehensive Resource}. 
+Springer International Publishing, DOI:
+\href{http://dx.doi.org/10.1007/978-3-319-75668-4}{10.1007/978-3-319-75668-4}.
+
 Lipset, S.M. (1959) \dQuote{Some Social Requisites of Democracy: Economic Development
 and Political Legitimacy}, \emph{American Political Science Review} vol.53, pp.69-105.
 
@@ -211,9 +217,6 @@ Analysis to Study Causal Order: Comment on Caren and Panofsky (2005).}
 Schneider, C.Q.; Wagemann, C. (2012) \emph{Set-Theoretic Methods 
 for the Social Sciences: A Guide to Qualitative Comparative Analysis (QCA)}. 
 Cambridge: Cambridge University Press.
-
-Thiem, A.; Dusa, A. (2013) \emph{Qualitative Comparative Analysis with R: 
-A User's Guide}. New York: Springer.
 }
 
 \seealso{\code{\link{minimize}}}
@@ -221,7 +224,6 @@ A User's Guide}. New York: Springer.
 \examples{
 # -----
 # Lipset binary crisp data
-data(LC)
 ttLC <- truthTable(LC, "SURV")
 
 # inspect the truth table
@@ -246,7 +248,6 @@ truthTable(LC, "SURV", complete = TRUE, sort.by = "incl-, n+")
 
 # -----
 # Lipset multi-value crisp data (Cronqvist & Berg-Schlosser 2009, p.80)
-data(LM)
 truthTable(LM, "SURV", sort.by = "incl")
 
 # using a frequency cutoff equal to 2 cases
@@ -254,12 +255,11 @@ ttLM <- truthTable(LM, "SURV", n.cut = 2, sort.by = "incl")
 ttLM
 
 # the observed combinations coded as remainders
-ttLM$excluded
+ttLM$removed
 
 
 # -----
 # Cebotari & Vink fuzzy data
-data(CVF)
 ttCVF <- truthTable(CVF, "PROTEST", incl.cut = 0.8, sort.by = "incl")
 
 # view the Venn diagram for this truth table
@@ -278,8 +278,6 @@ truthTable(CVF, "PROTEST", incl.cut = c(0.8, 0.75), sort.by = "incl")
 
 # -----
 # Ragin and Strand data with temporal QCA
-data(RS)
-
 # truth table containing the "-" placeholder as a "don't care"
 truthTable(RS, "REC")
 

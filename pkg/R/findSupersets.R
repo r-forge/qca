@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,9 +24,9 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `findSupersets` <-
-function (input, noflevels, ...) {
+function (input, noflevels = NULL, ...) {
     other.args <- list(...)
-        if ("input.combs" %in% names(other.args)) {
+        if (is.element("input.combs", names(other.args))) {
             input <- other.args$input.combs
         }
     if (!is.matrix(input)) {

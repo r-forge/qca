@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>calibrate. QCA 3.4-2</title>
+<title>calibrate. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -316,7 +316,8 @@ plot(x, cx, main=&quot;Binary crisp set using 1 threshold&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;, yaxt=&quot;n&quot;)
 axis(2, at = 0:1)
 </div>
-<p><img src='calibrate-3.svgz' alt='' width='400' height='400' /></p>
+
+<p><img src='img/calibrate-3.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 cx &lt;- calibrate(x, type = &quot;crisp&quot;, thresholds = c(170, 180))
@@ -324,7 +325,7 @@ plot(x, cx, main=&quot;3 value crisp set using 2 thresholds&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;, yaxt=&quot;n&quot;)
 axis(2, at = 0:2)
 </div>
-<p><img src='calibrate-6.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-6.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # calibrate to an increasing, s-shaped fuzzy-set
@@ -332,7 +333,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e=165, c=175, i=185&quot;)
 plot(x, cx, main = &quot;Membership scores in the set of tall people&quot;, 
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-8.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-8.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
      
 # calibrate to a decreasing, s-shaped fuzzy-set
@@ -340,7 +341,7 @@ cx &lt;- calibrate(x, thresholds = &quot;i=165, c=175, e=185&quot;)
 plot(x, cx, main = &quot;Membership scores in the set of short people&quot;, 
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-10.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-10.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # when not using the logistic function, linear increase
@@ -348,7 +349,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e=165, c=175, i=185&quot;, logistic = F
 plot(x, cx, main = &quot;Membership scores in the set of tall people&quot;, 
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-12.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-12.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # tweaking the parameters &quot;below&quot; and &quot;above&quot; the crossover,
@@ -358,7 +359,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e=155, c=175, i=195&quot;,
 plot(x, cx, main = &quot;Membership scores in the set of tall people&quot;, 
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-14.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-14.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # calibrate to a bell-shaped fuzzy set
@@ -367,7 +368,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e1=155, c1=165, i1=175, i2=175, c2=185,
 plot(x, cx, main = &quot;Membership scores in the set of average height&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-16.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-16.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # calibrate to an inverse bell-shaped fuzzy set
@@ -376,7 +377,7 @@ cx &lt;- calibrate(x, thresholds = &quot;i1=155, c1=165, e1=175, e2=175, c2=185,
 plot(x, cx, main = &quot;Membership scores in the set of non-average height&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-18.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-18.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # the default values of &quot;below&quot; and &quot;above&quot; will produce a triangular shape
@@ -384,7 +385,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e1=155, c1=165, i1=175, i2=175, c2=185,
 plot(x, cx, main = &quot;Membership scores in the set of average height&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-20.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-20.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # different thresholds to produce a linear trapezoidal shape
@@ -392,7 +393,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e1=156, c1=164, i1=172, i2=179, c2=187,
 plot(x, cx, main = &quot;Membership scores in the set of average height&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-21.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-21.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # larger values of above and below will increase membership in or out of the set
@@ -401,7 +402,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e1=155, c1=165, i1=175, i2=175, c2=185,
 plot(x, cx, main = &quot;Membership scores in the set of average height&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-22.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-22.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 
 # while extremely large values will produce virtually crisp results
@@ -412,7 +413,7 @@ plot(x, cx, main = &quot;Binary crisp scores in the set of average height&quot;,
 axis(2, at = 0:1)
 abline(v = c(165, 185), col = &quot;red&quot;, lty = 2)
 </div>
-<p><img src='calibrate-26.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-26.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 # check if crisp
 cx
@@ -430,7 +431,7 @@ cx &lt;- calibrate(x, thresholds = &quot;e=155, c=175, i=195&quot;, logistic = F
 plot(x, cx, main = &quot;Membership scores in the set of tall people&quot;, 
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
-<p><img src='calibrate-30.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-30.svg' alt='' width='400' height='400' /></p>
 
 <div class='input'>
 
@@ -446,7 +447,7 @@ plot(inc, cinc, main = &quot;Membership scores in the set of high income&quot;,
      xlab = &quot;Raw data&quot;, ylab = &quot;Calibrated data&quot;)
 </div>
 
-<p><img src='calibrate-31.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/calibrate-31.svg' alt='' width='400' height='400' /></p>
 
 
 <div class='input'>
@@ -457,34 +458,29 @@ TFR <- calibrate(values, method = "TFR")
 
 table(round(TFR, 3))
 </div>
-
+<div class='output'></div>
     0 0.151 0.314 0.477 0.605 0.814     1 
    14    13    14    14    11    18    16
 </div>
-</pre>
-
-</div>
-  <div class="span4">
-    <!-- <ul>
-      <li>calibrate</li>
-    </ul>
-    <ul>
-      <li>functions</li>
-    </ul> -->
-      
-    
-    <h2>Author</h2>
-    
+<div class="span4">
+  <!-- <ul>
+    <li>factorize</li>
+  </ul>
+  <ul>
+    <li>functions</li>
+  </ul> -->
+  
+  <h2>Author</h2>
+  
 Adrian Dusa
-
-    
-  </div>
+  
 </div>
-      
-      <footer>
-      <p class="pull-right"><a href="#">Back to top</a></p>
+</div>
+    
+    <footer>
+    <p class="pull-right"><a href="#">Back to top</a></p>
 <p>Built by <a href="https://github.com/hadley/staticdocs">staticdocs</a>. Styled with <a href="https://getbootstrap.com/2.0.4/">bootstrap</a>.</p>
-      </footer>
-    </div>
-  </body>
+    </footer>
+  </div>
+</body>
 </html>

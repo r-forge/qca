@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>modelFit. QCA 3.4-2</title>
+<title>modelFit. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -73,7 +73,7 @@ expresison) and the solutions found by function
         <tr>
             <td valign="top"><b><code>model</code></b></td>
             <td></td><td></td><td></td>
-            <td>A minimization object of class <code>&quot;qca&quot;</code>.</td>
+            <td>A minimization object of class <code>&quot;QCA_min&quot;</code>.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>theory</code></b></td>
@@ -100,9 +100,9 @@ be produced using a single theoretical expression.</p>
       <h2>Value</h2>
 
 <p><dl>
-A list containing objects of class <code>&quot;pof&quot;</code> with the parameters of fit. For a
+A list containing objects of class <code>&quot;QCA_pof&quot;</code> with the parameters of fit. For a
 single theoretical expression and a single model, the object is a simple
-<code>&quot;pof&quot;</code> object.
+<code>&quot;QCA_pof&quot;</code> object.
 </dl></p>
   
     </div>
@@ -123,7 +123,7 @@ Berkeley: University of California Press.</p>
 <pre class="examples">
 
 <div class='input'># Lipset fuzzy version data
-data(LF)
+
 ttLF &lt;- truthTable(LF, outcome = &quot;SURV&quot;, incl.cut = 0.8)
 
 
@@ -133,24 +133,24 @@ pLF &lt;- minimize(ttLF, include = &quot;?&quot;)
 modelFit(model = pLF, theory = &quot;DEV*STB&quot;)
 </div>
 <div class='output'>
-MODEL:        DEV*ind + URB*STB
-THEORY:       DEV*STB
-MODEL*THEORY: DEV*ind*STB + DEV*URB*STB
-MODEL*theory: dev*URB*STB + DEV*ind*stb
-model*THEORY: DEV*urb*IND*STB
-model*theory: dev*urb + dev*stb + IND*stb
+model:          DEV*~IND + URB*STB
+theory:         DEV*STB
+model*theory:   DEV*URB*STB + DEV*~IND*STB
+model*~theory:  ~DEV*URB*STB + DEV*~IND*~STB
+~model*theory:  DEV*~URB*IND*STB
+~model*~theory: ~DEV*~URB + ~DEV*~STB + IND*~STB
 
-                 inclS  PRI    covS  
------------------------------------- 
-1  DEV*ind       0.815  0.721  0.284 
-2  URB*STB       0.874  0.845  0.520 
-3  MODEL         0.850  0.819  0.714 
-4  THEORY        0.869  0.848  0.824 
-5  MODEL*THEORY  0.866  0.839  0.660 
-6  MODEL*theory  0.688  0.422  0.191 
-7  model*THEORY  0.709  0.634  0.237 
-8  model*theory  0.234  0.057  0.255 
------------------------------------- 
+                   inclS   PRI   covS  
+-------------------------------------- 
+1  DEV*~IND        0.815  0.721  0.284 
+2  URB*STB         0.874  0.845  0.520 
+3  model           0.850  0.819  0.714 
+4  theory          0.869  0.848  0.824 
+5  model*theory    0.866  0.839  0.660 
+6  model*~theory   0.688  0.422  0.191 
+7  ~model*theory   0.709  0.634  0.237 
+8  ~model*~theory  0.234  0.057  0.255 
+-------------------------------------- 
 </div>
 
 <div class='input'>
@@ -161,46 +161,25 @@ iLF &lt;- minimize(ttLF, include = &quot;?&quot;, dir.exp = &quot;1,0,0,0,0&quot
 modelFit(iLF, &quot;DEV*STB&quot;)
 </div>
 <div class='output'>
-M1-C1P1
-MODEL:        DEV*urb*ind + DEV*URB*STB
-THEORY:       DEV*STB
-MODEL*THEORY: DEV*URB*STB + DEV*urb*ind*STB
-MODEL*theory: DEV*urb*ind*stb
-model*THEORY: DEV*urb*IND*STB
-model*theory: dev + URB*stb + IND*stb
+M-C1P1
+model:          DEV*URB*STB + DEV*~URB*~IND
+theory:         DEV*STB
+model*theory:   DEV*URB*STB + DEV*~URB*~IND*STB
+model*~theory:  DEV*~URB*~IND*~STB
+~model*theory:  DEV*~URB*IND*STB
+~model*~theory: ~DEV + URB*~STB + ~URB*IND*~STB
 
-                 inclS  PRI    covS  
------------------------------------- 
-1  DEV*urb*ind   0.806  0.719  0.268 
-2  DEV*URB*STB   0.901  0.879  0.468 
-3  MODEL         0.866  0.839  0.662 
-4  THEORY        0.869  0.848  0.824 
-5  MODEL*THEORY  0.866  0.839  0.660 
-6  MODEL*theory  0.671  0.311  0.122 
-7  model*THEORY  0.709  0.634  0.237 
-8  model*theory  0.254  0.091  0.295 
------------------------------------- 
-
-
-M2-C1P1
-MODEL:        DEV*URB*STB + DEV*ind*STB
-THEORY:       DEV*STB
-MODEL*THEORY: DEV*URB*STB + DEV*ind*STB
-MODEL*theory: -
-model*THEORY: DEV*urb*IND*STB
-model*theory: dev + stb
-
-                 inclS  PRI    covS  
------------------------------------- 
-1  DEV*URB*STB   0.901  0.879  0.468 
-2  DEV*ind*STB   0.814  0.721  0.282 
-3  MODEL         0.866  0.839  0.660 
-4  THEORY        0.869  0.848  0.824 
-5  MODEL*THEORY  0.866  0.839  0.660 
-6  MODEL*theory    -      -      -   
-7  model*THEORY  0.709  0.634  0.237 
-8  model*theory  0.253  0.091  0.295 
-------------------------------------
+                   inclS   PRI   covS  
+-------------------------------------- 
+1  DEV*URB*STB     0.901  0.879  0.468 
+2  DEV*~URB*~IND   0.806  0.719  0.268 
+3  model           0.866  0.839  0.662 
+4  theory          0.869  0.848  0.824 
+5  model*theory    0.866  0.839  0.660 
+6  model*~theory   0.671  0.311  0.122 
+7  ~model*theory   0.709  0.634  0.237 
+8  ~model*~theory  0.254  0.091  0.295 
+--------------------------------------
 </div>
 
 </pre>

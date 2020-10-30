@@ -1,3 +1,97 @@
+Version 3.10
+    o Major rewrite of the core C code, to prevent any possible memory leaks
+      and segmentation faults
+    o New: argument "max.comb" in function minimize(), to limit the size of the
+      PI chart to the number of PIs at that complexity level where the possible
+      number of combinations does not exceed a maximum value
+    o New: argument "first.min" in function minimize(), to return the very first
+      minimal model found, provided the PI chart can be solved
+    o Changed: argument "min.pin" no longer cares if the PIs at the next
+      level of complexity contribute or not to the number of minimal models;
+      instead, it strictly returns the PIs at the first level of complexity
+      where the PI chart can be minimally solved
+    o New: arguments "max.comb" and "first.min" in function solveChart(), to
+      mirror those from function minimize()
+      
+Version 3.9
+    o Function export() moved to package admisc
+    o Fixed: row numbers bigger than the total number of rows in a truth
+      table are now ignored from the "exclude" argument
+      (thanks to Philipp Bentz for the report)
+    o Fixed: minor bug diplaying additional parameters of fit in function pof()
+    o Changed: function minimize() no longer returns with an error when 
+      including remainders on saturated truth tables
+      (thanks to Michael Baumgartner for the suggestion)
+    o Fixed: minor bug in when dealing with a single column PI chart
+      (thanks to Michael Baumgartner and Martyna Swiatczak for the report)
+      
+Version 3.8
+    o New: package QCA now accepts unquoted strings for SOP expressions,
+      as well as to specify the outcome and conditions, in functions:
+      findRows(), generate(), makeChart(), minimize(), modelFit(), pof(),
+      pofind(), superSubset(), truthTable() and XYplot()
+    o New: implemented a custom version of lpSolve to find exact disjunctive
+      solutions for very large and sparse PI charts
+    o Fixed: bug in XYplot() when using a vector produced by fuzzyor()
+      (thanks to Ian Greener for the report)
+    o Fixed: bug affecting the case names in the parameters of fit when
+      excluding remainders (thanks to Ian Greener for the report)
+    o Fixed: bug leading to a C error when simplifying assumptions do not exist
+      for some intermediate models (thanks to Oliver Klein for the report)
+    o Changed: function minimize() now gives an error when including remainders
+      but all possile configurations are observed
+    o Changed: reverted back to using the easy counterfactuals method for the
+      intermediate solution, since it is not always possible to restrict it
+      to a single model (thanks to Max Netherworlds for the example)
+    o Changed: notation for multi-value conditions now uses square brackets
+      instead of curly brackets, but the later are still recognized
+    o Changed: the sufficiency and necessity relations are now denoted using
+      the simpler notation -> and <- instead of => and <=
+
+Version 3.7
+    o New: useful functions added to the companion package admisc, among which
+      one called invert() that changes a SOP to a POS expression and back
+      (thanks to Charles Ragin for the suggestion)
+    o New: function generate() for the corresponding data of an arbitrary data
+      generating structure (DGS), supplied as a SOP expression
+    o Changed: major modification (and *not* backwards compatible) relative to
+      denoting negations. Using upper and lower case letters for presence and
+      absence is no longer supported, a tilde being the only and the default
+      method to signal a negation (thanks to Charles Ragin for making the point)
+    o Changed: argument "all.sol" no longer deactivates argument "min.pin", as
+      they can be combined to find all PIs that minimally solve the PI chart,
+      but not all PIs. The "min.pin" argument without "all.sol" will find only
+      the simpler PIs that minimally solve the chart, with increased speed.
+    o Changed: removed deprecated argument "use.tilde" from all functions
+    o Changed: minimization output now always uses a star sign "*" to denote a
+      conjunction, even when the conditions are single letters
+    o Changed: argument "exclude" was moved from function minimize() to function
+      truthTable()
+    o Changed: all printing classes to avoid possible namespace collision with
+      package admisc, where a number of functions were moved
+    o Changed: printing minimization objects no longer display the truth table
+      but only the parameters of fit, when argument "details" is activated
+      (thanks to Christian Rupietta for the suggestion)
+    o Changed: dialogs for truth table and minimization in the GUI, to reflect
+      the current changes
+    o Improved: new method of deriving the intermediate solution, without
+      using any counterfactuals. This restricts the intermediate solution
+      to only one model for each combination of conservative and parsimonious
+      models
+    o Improved: error messages for function calibrate()
+      (thanks to Karen Elliott for the suggestion)
+    o Improved: function findRows() now also work with negated truth tables
+      (thanks to Ian Greener for the suggestion)
+    o Fixed: segmentation fault for extremely complex PI charts
+      (thanks to Albert Chiu and Yiqing Xu for the report)
+
+Version 3.6
+    o Solved bug related to starting the Graphical User Interface, which
+      failed to load the required package admisc
+    o Functions compute(), factorize(), intersection(), negate()
+      and simplify() moved to package admisc, with no visible effects on
+      the users' side
+
 Version 3.5
     o New: first implementation of conjunctural directional expectations
       (thanks to Carsten Schneider for insisting)
@@ -6,9 +100,6 @@ Version 3.5
     o Improved: to avoid infinite running times for very complex PI charts,
       only the first exact solution is returned, with a warning message
       (thanks to Konan Seny Kan for the example)
-    o Changed: function pof() no longer evaluates matrices of implicants
-      and line numbers from the implicants matrix, this became obsolete
-      after introducing DNF expressions.
       
 Version 3.4
     o New: function findRows() gains a three dots argument "..." to allow
@@ -440,7 +531,7 @@ Version 1.0-0
       when truth table object passed (object of class "tt") 
     o Changed: functions prettyTable() and createString() now internalized
     o Renamed: function findPrimes() to findSubsets()
-    o Dropped: function qmcc() (fully replaced by function eqmcc())
+    o Dropped: function qmcc(), fully replaced by function eqmcc()
     o Dropped: truth table columns "freq0" and "freq1" 
 
 Version 0.6-5
@@ -491,7 +582,7 @@ Version 0.5-4
       (thanks to B. Monroe)
 
 Version 0.5-3
-    o New: Function truthTable() now allows multivalent data in conditions
+    o New: function truthTable() now allows multivalent data in conditions
     o Fixed: in function truthTable(); columns incorrectly arranged with respect 
       to outcome values
 
@@ -501,7 +592,7 @@ Version 0.5-2
 
 Version 0.5-1
     o Improved: function descriptions
-    o Changed: functions is.tt() and print.tt() now accessible to user
+    o Changed: functions is.tt() and print.tt() now user accessible
     o Fixed: function rowDominance2(); matrix dropped dimensions
     o Fixed: function eqmcc() for complete truth tables (thanks to R. Huang)
 

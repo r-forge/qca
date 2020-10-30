@@ -33,11 +33,12 @@ The number of groups to split depends on the number of thresholds: one
 thresholds splits into two groups, two thresholds splits into three groups etc.
 
 For more details about how many groups can be formed with how many thresholds,
-see \code{?cutree}.
+see \bold{\code{\link[stats]{cutree}()}}.
 
 More details about the clustering techniques used in this function are found
-using \code{?hclust}, and also more details about different distance measures
-can be found with \code{?dist}. This function uses their default values.
+using \bold{\code{\link[stats]{hclust}()}}, and also more details about different
+distance measures can be found with \bold{\code{\link[stats]{dist}()}}. This
+function uses their default values.
 
 }
 

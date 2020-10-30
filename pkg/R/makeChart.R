@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,11 +24,15 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `makeChart` <-
-function(primes = "", configs = "", snames = "", mv = FALSE,
-         use.tilde = FALSE, collapse = "*", ...) {
+function(primes = "", configs = "", snames = "", mv = FALSE, collapse = "*", ...) {
+    primes <- admisc::recreate(substitute(primes))
+    configs <- admisc::recreate(substitute(configs))
+    snames <- admisc::recreate(substitute(snames))
     prmat <- is.matrix(primes)
     comat <- is.matrix(configs)
     other.args <- list(...)
+    curly <- other.args$curly
+    if (is.null(curly)) curly <- FALSE
     if (prmat & comat) {
         if (!(is.numeric(primes) & is.numeric(configs))) {
             cat("\n")
@@ -38,7 +42,7 @@ function(primes = "", configs = "", snames = "", mv = FALSE,
             cat("\n")
             stop(simpleError("Matrix values have to be non-negative.\n\n"))
         }
-        if (!is.element("getSolution", unlist(lapply(lapply(sys.calls(), as.character), "[[", 1)))) {
+        if (!is.element("getSolution", names(other.args))) {
             if (any(apply(primes, 1, sum) == 0) | any(apply(configs, 1, sum) == 0)) {
                 cat("\n")
                 stop(simpleError("Matrices have to be specified at implicants level.\n\n"))
@@ -61,27 +65,27 @@ function(primes = "", configs = "", snames = "", mv = FALSE,
             else {
                 mtrx <- t(mtrx)
             }
-            rownames(mtrx) <- writePrimeimp(primes, mv = mv, use.tilde = use.tilde, collapse = collapse)
+            rownames(mtrx) <- admisc::writePrimeimp(primes, mv = mv, collapse = collapse, curly = curly)
         }
-        colnames(mtrx) <- writePrimeimp(configs, mv = mv, use.tilde = use.tilde, collapse = collapse)
+        colnames(mtrx) <- admisc::writePrimeimp(configs, mv = mv, collapse = collapse, curly = curly)
         class(mtrx) <- c("matrix", "pic")
         return(mtrx)
     }
     else if (!prmat & !comat) {
         if (!identical(snames, "")) {
             if (length(snames) == 1 & is.character(snames)) {
-                snames <- splitstr(snames)
+                snames <- admisc::splitstr(snames)
             }
         }
         noflevels <- rep(2, length(snames))
         if (is.element("noflevels", names(other.args))) {
             noflevels <- other.args$noflevels
         }
-        tconfigs <- attr(translate(configs, snames, noflevels), "retlist")
+        tconfigs <- attr(admisc::translate(configs, snames, noflevels, retlist = TRUE), "retlist")
         if (identical(snames, "")) {
             snames <- names(tconfigs[[1]])
         }
-        tprimes <- attr(translate(primes, snames, noflevels), "retlist")
+        tprimes <- attr(admisc::translate(primes, snames, noflevels, retlist = TRUE), "retlist")
         mtrx <- matrix(FALSE, nrow = length(tprimes), ncol = length(tconfigs))
         for (i in seq(nrow(mtrx))) {
             for (j in seq(ncol(mtrx))) {
@@ -98,7 +102,7 @@ function(primes = "", configs = "", snames = "", mv = FALSE,
         }
         colnames(mtrx) <- names(tconfigs)
         rownames(mtrx) <- names(tprimes)
-        class(mtrx) <- c("matrix", "pic")
+        class(mtrx) <- c("matrix", "QCA_pic")
         return(mtrx)
     }
     else {

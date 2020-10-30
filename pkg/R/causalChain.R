@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -41,7 +41,7 @@ function(data, ordering = NULL, strict = FALSE, ...) {
         allargs$incl.cut <- 0.5
     }
     verify.qca(data)
-    noflevels  <- getLevels(data)
+    noflevels  <- admisc::getInfo(data)$noflevels
     mv <- noflevels > 2
     names(noflevels) <- names(mv) <- colnames(data)
     if (class(ordering) == "character") {
@@ -55,15 +55,16 @@ function(data, ordering = NULL, strict = FALSE, ...) {
                 stop(simpleError("Causal ordering character \"<\" requires a single string.\n\n"))
             }
         }
-        ordering <- lapply(ordering, splitstr)
+        ordering <- lapply(ordering, admisc::splitstr)
     }
     if (length(allout <- unlist(ordering)) > 0) {
-        if (length(setdiff(toupper(allout), toupper(colnames(data)))) > 0) {
+        if (length(setdiff(allout, colnames(data))) > 0) {
             cat("\n")
             stop(simpleError("Some elements in the \"ordering\" argument not found in the data.\n\n"))
         }
     }
     allargs <- c(list(input = data), allargs)
+    allargs$causalChain <- TRUE
     checkpos <- function(x, arg) {
         pos <- pmatch(names(allargs), arg)
         return(pos[!is.na(pos)])
@@ -81,9 +82,7 @@ function(data, ordering = NULL, strict = FALSE, ...) {
         allargs$SA <- FALSE
     }
     minimizeit <- function(allargs) {
-        tc <- tryCatch(do.call("minimize", allargs), error = function(e) e)
-        if (inherits(tc, "error")) return(NA)
-        return(tc)
+        return(tryCatch(do.call("minimize", allargs), error = function(e) NA))
     }
     allargs$enter <- FALSE
     minimize.list <- list()
@@ -106,7 +105,7 @@ function(data, ordering = NULL, strict = FALSE, ...) {
                             uniqv <- sort(unique(data[, nextcols[j]]))
                             for (v in seq(noflevels[nextcols[j]] - 1)) {
                                 if (is.element(v, uniqv)) {
-                                    allargs$outcome <- sprintf("%s{%s}", nextcols[j], v)
+                                    allargs$outcome <- sprintf("%s[%s]", nextcols[j], v)
                                     minimize.list[[allargs$outcome]] <- minimizeit(allargs)
                                 }
                             }
@@ -133,7 +132,7 @@ function(data, ordering = NULL, strict = FALSE, ...) {
                         uniqv <- sort(unique(data[, nextcols[j]]))
                         for (v in seq(noflevels[nextcols[j]] - 1)) {
                             if (is.element(v, uniqv)) {
-                                allargs$outcome <- sprintf("%s{%s}", nextcols[j], v)
+                                allargs$outcome <- sprintf("%s[%s]", nextcols[j], v)
                                 minimize.list[[allargs$outcome]] <- minimizeit(allargs)
                             }
                         }
@@ -152,7 +151,7 @@ function(data, ordering = NULL, strict = FALSE, ...) {
                 uniqv <- sort(unique(data[, x]))
                 for (v in seq(noflevels[x] - 1)) {
                     if (is.element(v, uniqv)) {
-                        allargs$outcome <- sprintf("%s{%s}", x, v)
+                        allargs$outcome <- sprintf("%s[%s]", x, v)
                         minimize.list[[allargs$outcome]] <- minimizeit(allargs)
                     }
                 }
@@ -164,5 +163,5 @@ function(data, ordering = NULL, strict = FALSE, ...) {
         }
     }
     attr(minimize.list, "call") <- metacall
-    return(structure(minimize.list, class = "chain"))
+    return(structure(minimize.list, class = "QCA_chain"))
 }

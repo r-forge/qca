@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -31,6 +31,10 @@
         cat("\n")
         stop(simpleError("Argument x is mandatory.\n\n"))
     }
+    x <- admisc::recreate(substitute(x))
+    if (!missing(y)) {
+        y <- admisc::recreate(substitute(y))
+    }
     via.web <- FALSE
     if (length(testarg <- which(names(other.args) == "via.web")) > 0) {
         via.web <- other.args$via.web
@@ -39,40 +43,8 @@
     negated <- logical(2)
     xname <- yname <- ""
     minus <- rawToChar(as.raw(c(226, 128, 147)))
-    testit <- capture.output(tryCatch(eval(x), error = function(e) e))
-    if (length(testit) == 1 & is.character(testit)) {
-        if (grepl("Error", testit)) {
-            x <- as.vector(funargs["x"])
-        }
-    }
     if (is.vector(x) & is.character(x) & any(grepl("\\$solution", funargs["x"]))) {
         x <- list(x)
-    }
-    if (is.character(x)) {
-        if (x == tolower(x) & x != toupper(x)) {
-            if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", toupper(x))), n = 1)) {
-                conds <- toupper(x)
-                x <- 1 - eval.parent(parse(text = sprintf("get(\"%s\")", toupper(x))), n = 1)
-                negated[1] <- TRUE
-            }
-        }
-    }
-    else {
-        testit <- capture.output(tryCatch(eval(x), error = function(e) e))
-        if (length(testit) == 1 & is.character(testit)) {
-            if (grepl("Error", testit)) {
-                x <- as.vector(deparse(funargs["x"]))
-            }
-            else if (hastilde(testit)) {
-                negated[1] <- TRUE
-                if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", notilde(testit))), n = 1)) {
-                    x <- 1 - eval.parent(parse(text = sprintf("get(\"%s\")", notilde(testit))), n = 1)
-                }
-                else {
-                    x <- testit
-                }
-            }
-        }
     }
     if (is.list(x)) {
         if (any(grepl("\\$solution", funargs["x"]))) {
@@ -93,50 +65,24 @@
                 y <- as.vector(funargs["y"])
             }
         }
-        if (!is.character(y)) {
-            testit <- capture.output(tryCatch(eval(y), error = function(e) e))
-            if (length(testit) == 1 & is.character(testit)) {
-                if (grepl("Error", testit)) {
-                    y <- deparse(funargs["y"])
-                }
-                else if (hastilde(testit)) {
-                    negated[2] <- TRUE
-                    if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", notilde(testit))), n = 1)) {
-                        y <- 1 - eval.parent(parse(text = sprintf("get(\"%s\")", notilde(testit))), n = 1)
-                    }
-                    else {
-                        y <- testit
-                    }
-                }
-            }
-        }
-        else {
-            if (y == tolower(y) & y != toupper(y)) {
-                if (eval.parent(parse(text = sprintf("is.element(\"%s\", ls())", toupper(y))), n = 1)) {
-                    conds <- toupper(y)
-                    y <- 1 - eval.parent(parse(text = sprintf("get(\"%s\")", toupper(y))), n = 1)
-                    negated[2] <- TRUE
-                }
-            }
-        }
     }
     if (is.character(x)) {
         if (length(x) == 1) {
-            x <- splitstr(x)
+            x <- admisc::splitstr(x)
         }
         if (length(x) == 1) {
-            x <- unlist(strsplit(x, split = "=>"))
+            x <- unlist(strsplit(x, split = "->|=>"))
             if (length(x) == 1) {
-                x <- unlist(strsplit(x, split = "<="))
+                x <- unlist(strsplit(x, split = "<-|<="))
                 if (length(x) > 1) {
                     relation <- "necessity"
-                    y <- trimstr(x[2])
-                    x <- trimstr(x[1])
+                    y <- admisc::trimstr(x[2])
+                    x <- admisc::trimstr(x[1])
                 }
             }
             else {
-                y <- trimstr(x[2])
-                x <- trimstr(x[1])
+                y <- admisc::trimstr(x[2])
+                x <- admisc::trimstr(x[1])
             }
             if (missing(y)) {
                 cat("\n")
@@ -144,7 +90,7 @@
             }
             else if (!is.character(y)) {
                 cat("\n")
-                stop(simpleError("x and y should be both column names from the data.\n\n"))
+                stop(simpleError("Unknown x and/or y arguments.\n\n"))
             }
         }
         else {
@@ -174,8 +120,8 @@
             cat("\n")
             stop(simpleError(paste("Incorrect expression in \"", paste(c(x, y)[checks], collapse = "\" and \""), "\".\n\n", sep = "")))
         }
-        x <- compute(x, data = data)
-        y <- compute(y, data = data)
+        x <- admisc::compute(x, data = data)
+        y <- admisc::compute(y, data = data)
         negated <- logical(2)
     }
     else if (is.data.frame(x) | is.matrix(x)) {
@@ -192,32 +138,32 @@
     else if (!missing(y)) {
         if (length(x) > 1 & is.numeric(x)) { 
             oneminus <- identical(unname(substring(gsub("[[:space:]]", "", funargs[1]), 1, 2)), "1-")
-            if (any((hastilde(funargs[1])    & !tilde1st(funargs[1])) | 
+            if (any((admisc::hastilde(funargs[1])    & !admisc::tilde1st(funargs[1])) | 
                     (grepl("1-", funargs[1]) & !oneminus)
                    )) {
                 cat("\n")
                 stop(simpleError(paste("Incorrect expression in \"", funargs[1], "\".\n\n", sep = "")))
             }
-            negated[1] <- oneminus | tilde1st(funargs[1])
+            negated[1] <- oneminus | admisc::tilde1st(funargs[1])
             xname <- "X"
             tc <- capture.output(tryCatch(getName(funargs[1]), error = function(e) e, warning = function(w) w))
             if (!grepl("simpleError", tc)) {
-                xname <- notilde(getName(funargs[1]))
+                xname <- admisc::notilde(getName(funargs[1]))
             }
         }
         if (length(y) > 1 & is.numeric(y)) { 
             oneminus <- identical(unname(substring(gsub("[[:space:]]", "", funargs[2]), 1, 2)), "1-")
-            if (any((hastilde(funargs[2])    & !tilde1st(funargs[2])) | 
+            if (any((admisc::hastilde(funargs[2])    & !admisc::tilde1st(funargs[2])) | 
                     (grepl("1-", funargs[2]) & !oneminus)
                    )) {
                 cat("\n")
                 stop(simpleError(paste("Incorrect expression in \"", funargs[2], "\".\n\n", sep = "")))
             }
-            negated[2] <- oneminus | tilde1st(funargs[2])
+            negated[2] <- oneminus | admisc::tilde1st(funargs[2])
             yname <- "Y"
             tc <- capture.output(tryCatch(getName(funargs[2]), error = function(e) e, warning = function(w) w))
             if (!grepl("simpleError", tc)) {
-                yname <- notilde(getName(funargs[2]))
+                yname <- admisc::notilde(getName(funargs[2]))
             }
         }
         if (length(y) == 1 & is.character(y)) {
@@ -235,7 +181,7 @@
                 cat("\n")
                 stop(simpleError(paste("Incorrect expression in \"", y, "\".\n\n", sep = "")))
             }
-            y <- compute(y, data = data)
+            y <- admisc::compute(y, data = data)
             negated[2] <- FALSE
         }
     }
@@ -249,6 +195,12 @@
     }
     xcopy <- x
     ycopy <- y
+    if (is.element("QCA_fuzzy", class(xcopy))) {
+        attributes(xcopy) <- NULL
+    }
+    if (is.element("QCA_fuzzy", class(ycopy))) {
+        attributes(ycopy) <- NULL
+    }
     jitfactor <- 0.01
     jitamount <- 0.01
     cexaxis <- 0.8

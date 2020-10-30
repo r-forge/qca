@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -73,7 +73,7 @@
         row.names(x) <- rownms
         x <- rebuild(as.data.frame(x, stringsAsFactors = FALSE),
                      classes[colnames(x)], clevels[colnames(x)], cordered[colnames(x)])
-        class(x) <- c("panel", "data.frame")
+        class(x) <- c("QCA_panel", "data.frame")
     }
     return(x)
 }
@@ -84,7 +84,7 @@
     x <- as.matrix(x)
     setRownames(x, value)
     x <- rebuild(as.data.frame(x, stringsAsFactors = FALSE), classes, clevels, cordered)
-    class(x) <- c("panel", "data.frame")
+    class(x) <- c("QCA_panel", "data.frame")
     return(x)
 }
 `rebuild` <- function(x, classes, clevels, cordered) {

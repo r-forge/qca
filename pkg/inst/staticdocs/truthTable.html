@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>truthTable. QCA 3.4-2</title>
+<title>truthTable. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -65,8 +65,8 @@ combinations of causal conditions).</p>
     </div>
     
     <h2>Usage</h2>
-<pre><div>truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1,
-           complete = FALSE, use.letters = FALSE, show.cases = FALSE,
+<pre><div>truthTable(data, outcome = "", conditions = "", incl.cut = 1, n.cut = 1, pri.cut = 0,
+           exclude = NULL, complete = FALSE, use.letters = FALSE, show.cases = FALSE,
            dcc = FALSE, sort.by = "", inf.test = "", ...)</div></pre>
     
     <h2>Arguments</h2>
@@ -98,6 +98,17 @@ combinations of causal conditions).</p>
             <td></td><td></td><td></td>
             <td>The minimum number of cases under which a truth table row is 
         declared as a remainder.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>pri.cut</code></b></td>
+            <td></td><td></td><td></td>
+            <td>The minimal score for the <b><code>PRI</code></b> - proportional reduction in
+        inconsistency, under which a truth table row is declared as negative.</td>
+        </tr>
+        <tr>
+            <td valign="top"><b><code>exclude</code></b></td>
+            <td></td><td></td><td></td>
+            <td>A vector of row numbers from the truth table, to code as negative output configurations.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>complete</code></b></td>
@@ -336,7 +347,10 @@ An object of class &#147;tt&#148;, a list containing the following components:</
       <p>Cronqvist, L.; Berg-Schlosser, D. (2009) &#147;Multi-Value QCA (mvQCA)&#148;, in
 Rihoux, B.; Ragin, C. (eds.) <em>Configurational Comparative Methods. Qualitative
 Comparative Analysis (QCA) and Related Techniques</em>, SAGE.</p>
-  
+
+      <p>Dusa, A. (2019) <em>QCA with R. A Comprehensive Resource</em>.
+Springer International Publishing.</p>
+        
       <p>Lipset, S.M. (1959) &#147;Some Social Requisites of Democracy: Economic Development
 and Political Legitimacy&#148;, <em>American Political Science Review</em> vol.53, pp.69-105.</p>
   
@@ -354,15 +368,11 @@ Analysis to Study Causal Order: Comment on Caren and Panofsky (2005).&#148;
 for the Social Sciences: A Guide to Qualitative Comparative Analysis (QCA)</em>. 
 Cambridge: Cambridge University Press.</p>
   
-      <p>Thiem, A.; Dusa, A. (2013) <em>Qualitative Comparative Analysis with R: 
-A User's Guide</em>. New York: Springer.</p>
-  
     </div>
     
     <h2 id="examples">Examples</h2>
     <pre class="examples"><div class='input'># -----
 # Lipset binary crisp data
-data(LC)
 ttLC &lt;- truthTable(LC, &quot;SURV&quot;)
 
 # inspect the truth table
@@ -588,7 +598,6 @@ truthTable(LC, &quot;SURV&quot;, complete = TRUE, sort.by = &quot;incl-, n+&quot
 
 # -----
 # Lipset multi-value crisp data (Cronqvist &amp; Berg-Schlosser 2009, p.80)
-data(LM)
 truthTable(LM, &quot;SURV&quot;, sort.by = &quot;incl&quot;)
 </div>
 <div class='output'>
@@ -630,7 +639,7 @@ ttLM
 </div>
 <div class='input'>
 # the observed combinations coded as remainders
-ttLM$excluded
+ttLM$removed
 </div>
 <div class='output'>    DEV URB LIT IND STB OUT n  incl  PRI   cases
  6   0   0   1   0   1   ?  1  0.000 0.000  EE  
@@ -644,19 +653,18 @@ ttLM$excluded
 
 # -----
 # Cebotari &amp; Vink fuzzy data
-data(CVF)
 ttCVF &lt;- truthTable(CVF, &quot;PROTEST&quot;, incl.cut = 0.8, sort.by = &quot;incl&quot;)
 
 # view the Venn diagram for this truth table
 library(venn)
 venn(ttCVF)
 </div>
-<p><img src='truthTable-20.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/truthTable-20.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 # each intersection transparent by its inclusion score
 venn(ttCVF, transparency = ttCVF$tt$incl)
 </div>
-<p><img src='truthTable-22.svgz' alt='' width='400' height='400' /></p>
+<p><img src='img/truthTable-22.svg' alt='' width='400' height='400' /></p>
 <div class='input'>
 # the truth table negating the outcome
 truthTable(CVF, &quot;~PROTEST&quot;, incl.cut = 0.8, sort.by = &quot;incl&quot;)
@@ -720,8 +728,6 @@ truthTable(CVF, &quot;PROTEST&quot;, incl.cut = c(0.8, 0.75), sort.by = &quot;in
 
 # -----
 # Ragin and Strand data with temporal QCA
-data(RS)
-
 # truth table containing the &quot;-&quot; placeholder as a &quot;don&#39;t care&quot;
 truthTable(RS, &quot;REC&quot;)
 </div>
@@ -754,7 +760,7 @@ truthTable(RS, &quot;REC&quot;)
     </ul> -->
       
     <h2>See also</h2>
-    <code><a href='eqmcc.html'>eqmcc</a></code>
+    <b><code><a href='minimize.html'>minimize</a></code></b>
     
     <h2>Author</h2>
     

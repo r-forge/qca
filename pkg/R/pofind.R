@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,12 +24,33 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `pofind` <-
-function(data, outcome = "", conditions = "", relation = "necessity",
-         use.tilde = FALSE, ...) {
-    funargs <- lapply(match.call(), deparse)
+function(data, outcome = "", conditions = "", relation = "necessity", ...) {
     if (missing(data)) {
         cat("\n")
         stop(simpleError("Data is missing.\n\n"))
+    }
+    funargs <- lapply(match.call(), deparse)
+    outcome <- admisc::recreate(substitute(outcome), colnames(data))
+    conditions <- admisc::recreate(substitute(conditions), colnames(data))
+    enter <- if (is.element("enter", names(list(...)))) "" else "\n" 
+    if (identical(conditions, "")) {
+        conditions <- setdiff(colnames(data), admisc::notilde(outcome))
+    }
+    else {
+        if (is.character(conditions) & length(conditions) == 1) {
+            conditions <- admisc::splitstr(conditions)
+            if (length(conditions) == 1) {
+                if (grepl(":", conditions)) {
+                    nms <- colnames(data)
+                    cs <- unlist(strsplit(conditions, split = ":"))
+                    if (!all(is.element(cs, nms))) {
+                        cat(enter)
+                        stop(simpleError(paste0("Inexisting condition(s) in the sequence.", enter, enter)))
+                    }
+                    conditions <- nms[seq(which(nms == cs[1]), which(nms == cs[2]))]
+                }
+            }
+        }
     }
     if (identical(outcome, "")) {
         cat("\n")
@@ -41,18 +62,19 @@ function(data, outcome = "", conditions = "", relation = "necessity",
     verify.qca(data)
     for (i in seq(ncol(data))) {
         if (!is.numeric(data[, i])) {
-            if (possibleNumeric(data[, i])) {
-                data[, i] <- asNumeric(data[, i])
+            if (admisc::possibleNumeric(data[, i])) {
+                data[, i] <- admisc::asNumeric(data[, i])
             }
         }
     }
-    colnames(data) <- toupper(colnames(data))
-    if (!is.element(outcome, c(tolower(outcome), toupper(outcome)))) {
-        cat("\n")
-        stop(simpleError("The outcome name should not contain both lower and upper case letters.\n\n"))
-    }
     origoutcome <- outcome
-    outcome <- toupper(notilde(curlyBrackets(outcome, outside = TRUE)))
+    if (grepl("\\{", outcome)) {
+        outcome <- admisc::curlyBrackets(outcome, outside = TRUE)
+    }
+    else {
+        admisc::squareBrackets(outcome, outside = TRUE)
+    }
+    outcome <- admisc::notilde(outcome)
     if (!is.element(outcome, colnames(data))) {
         cat("\n")
         stop(simpleError("Outcome not found in the data.\n\n"))
@@ -61,27 +83,26 @@ function(data, outcome = "", conditions = "", relation = "necessity",
         conditions <- setdiff(colnames(data), outcome)
     }
     else {
-        conditions <- toupper(splitstr(conditions))
-        if (any(!is.element(conditions, colnames(data)))) {
-            cat("\n")
-            stop(simpleError("Conditions not found in the data.\n\n"))
+        conditions <- admisc::splitstr(conditions)
+        verify.data(data, outcome, conditions)
+        if (length(conditions) == 1) {
+            if (grepl(":", conditions)) {
+                nms <- colnames(data)
+                cs <- unlist(strsplit(conditions, split = ":"))
+                conditions <- nms[seq(which(nms == cs[1]), which(nms == cs[2]))]
+            }
         }
     }
     data <- data[, c(conditions, outcome)]
-    noflevels <- getLevels(data[, conditions, drop = FALSE])
+    noflevels <- admisc::getInfo(data[, conditions, drop = FALSE])$noflevels
     if (any(noflevels > 2)) { 
         expression <- paste(unlist(lapply(seq(length(conditions)), function(x) {
             values <- sort(unique(data[, conditions[x]]))
-            return(paste(conditions[x], "{", values, "}", sep = ""))
+            return(paste(conditions[x], "[", values, "]", sep = ""))
         })), collapse = "+")
     }
     else {
-        if (use.tilde) {
-            negconditions <- paste("~", conditions, sep = "")
-        }
-        else {
-            negconditions <- tolower(conditions)
-        }
+        negconditions <- paste("~", conditions, sep = "")
         expression <- paste(negconditions, conditions, sep = "+", collapse = "+")
     }
     pofargs <- list(setms = expression,
@@ -89,15 +110,13 @@ function(data, outcome = "", conditions = "", relation = "necessity",
                     data = data,
                     relation = relation,
                     ... = ...)
-    result <- do.call("pof", pofargs)
+    result <- do.call(pof, pofargs)
     result$incl.cov <- result$incl.cov[-nrow(result$incl.cov), , drop = FALSE]
     result$options$setms <- result$options$setms[, -ncol(result$options$setms), drop = FALSE]
     if (is.element("covU", colnames(result$incl.cov))) {
         result$incl.cov <- result$incl.cov[, setdiff(colnames(result$incl.cov), "covU")]
     }
-    if (use.tilde) {
-        rownames(result$incl.cov)[seq(length(conditions))] <- paste("", rownames(result$incl.cov)[seq(length(conditions))])
-    }
+    rownames(result$incl.cov)[seq(length(conditions))] <- paste("", rownames(result$incl.cov)[seq(length(conditions))])
     result$options$data <- funargs$data
     return(result)
 }

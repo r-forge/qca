@@ -1,4 +1,4 @@
-# Copyright (c) 2019, Adrian Dusa
+# Copyright (c) 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -24,10 +24,10 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `createMatrix` <-
-function(noflevels, ...) {
+function(noflevels = NULL, ...) {
     other.args <- list(...)
     RAM <- 2
-    if ("RAM" %in% names(other.args)) {
+    if (is.element("RAM", names(other.args))) {
         if (length(other.args$RAM) == 1) {
             if (is.numeric(other.args$RAM) & other.args$RAM > 0) {
                 RAM <- other.args$RAM
@@ -35,11 +35,11 @@ function(noflevels, ...) {
         }
     }
     arrange <- FALSE
-    if ("arrange" %in% names(other.args)) {
+    if (is.element("arrange", names(other.args))) {
         arrange <- other.args$arrange
     }
     depth <- length(noflevels)
-    if ("depth" %in% names(other.args)) {
+    if (is.element("depth", names(other.args))) {
         if (!is.null(other.args$depth)) {
             if (is.numeric(other.args$depth)) {
                 depth <- other.args$depth
@@ -61,9 +61,9 @@ function(noflevels, ...) {
         cat("\n")
         stop(simpleError("The argument depth has to be an integer number."))
     }
-    if ((mem <- prod(noflevels)*length(levels)*8/1024^3) > RAM) {
+    if ((mem <- prod(noflevels) * length(levels) * 8 / 1024^3) > RAM) {
         cat("\n")
-        stop(simpleError(paste("Too much memory needed (", round(mem, 1), " Gb) to create the matrix.", sep="")))
+        stop(simpleError(paste("Too much memory needed (", round(mem, 1), " Gb) to create the matrix.", sep = "")))
     }
     noflevels <- as.integer(abs(noflevels))
     arrange <- as.integer(arrange * 1)

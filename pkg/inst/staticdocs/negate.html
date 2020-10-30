@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>negate. QCA 3.4-2</title>
+<title>negate. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -57,20 +57,21 @@ Adrian Dusa
     <div class="Description">
       <h2>Description</h2>
 
-      <p>Function to negate a SOP expression.</p>
+      <p>Functions to negate a DNF/SOP expression, or to invert SOP to POS or POS to SOP.</p>
   
     </div>
     
     <h2>Usage</h2>
-<pre><div>negate(expression, snames = "", noflevels, use.tilde = FALSE)</div></pre>
+<pre><div>negate(input, snames = "", noflevels, simplify = TRUE)</div>
+<div>invert(input, snames = "", noflevels)</div></pre>
     
     <h2>Arguments</h2>
     <table>
         <tr>
-            <td valign="top"><b><code>expression</code></b></td>
+            <td valign="top"><b><code>input</code></b></td>
             <td></td><td></td><td></td>
             <td>A string representing a SOP expresson, or a minimization
-        object of class <code>&quot;qca&quot;</code>.</td>
+        object of class <code>&quot;QCA_min&quot;</code>.</td>
         </tr>
         <tr>
             <td valign="top"><b><code>snames</code></b></td>
@@ -83,9 +84,10 @@ Adrian Dusa
             <td>Numerical vector containing the number of levels for each set.</td>
         </tr>
         <tr>
-            <td valign="top"><b><code>use.tilde</code></b></td>
+            <td valign="top"><b><code>simplify</code></b></td>
             <td></td><td></td><td></td>
-            <td>Logical, use tilde for negation with bivalent variables.</td>
+            <td>Logical, allow users to choose between the raw negation or
+              its simplest form.</td>
         </tr>
     </table>
 
@@ -121,26 +123,18 @@ letters in alphabetical order, unless they are specified via <b><code>snames</co
   
       <p>To negate multilevel expressions, the argument <b><code>noflevels</code></b> is required.</p>
   
-      <p></p>
+      <p>It is entirely possible to obtain multiple negations of a single expression, since the
+          result of the negation is passed to function <b><code><a href='SOPexpression.html'>simplify()</a></code></b>.</p>
   
+      <p></p>
     </div>
 
     <div class="Value">
       <h2>Value</h2>
 
       <p><dl>
-A list with the following two components:</p>
-  
-      <p><table><tr><td>
-  <b>initial</b> </td>
-</tr><tr><td> The initial expression.</td>
-</tr><tr><td>
-  <b>negated</b> </td>
-</tr><tr><td> The negation of the initial expression.</td>
-</tr></table></p>
-  
-      <p>If <b><code>expression</code></b> is an object of type <code>&quot;qca&quot;</code>, the
-result is a list of solutions.
+          A character vector when the input is a SOP expresison, or a named list for minimization
+          input objects, each component containing all possible negations of the model(s).
 </dl></p>
   
     </div>
@@ -157,11 +151,18 @@ and Quantitative Strategies</em>. Berkeley: University of California Press.</p>
 <pre class="examples">
 
 <div class='input'># example from Ragin (1987, p.99)
-negate(&quot;AC + B~C&quot;, snames = &quot;A, B, C&quot;)
+negate(&quot;AC + B~C&quot;, simplify = FALSE)
 </div>
 <div class='output'>
-S1: AC + B~C
-  N1: ~A~B + ~AC + ~B~C 
+N1: ~A~B + ~AC + ~B~C
+</div>
+
+
+<div class='input'># the simplified, logically equivalent negation
+  negate(&quot;AC + B~C&quot;)
+</div>
+<div class='output'>
+N1: ~AC + ~B~C
 </div>
 
 <div class='input'>
@@ -169,21 +170,28 @@ S1: AC + B~C
 negate(&quot;AB*EF + ~CD*EF&quot;)
 </div>
 <div class='output'>
-S1: AB*EF + ~CD*EF
-  N1: ~EF + ~AB*CD 
+N1: ~EF + ~AB*CD 
+
+</div>
+
+<div class='input'>
+# invert to POS
+invert(&quot;a*b + ~c*d&quot;)
+</div>
+<div class='output'>
+N1: (~a + ~b)*(c + ~d)
 
 </div>
 <div class='input'>
 
 # using an object of class &quot;qca&quot; produced with minimize()
-data(LC)
-cLC &lt;- minimize(LC, outcome = &quot;SURV&quot;, include = &quot;?&quot;)
+cLC &lt;- minimize(LC, outcome = &quot;SURV&quot;)
 
 negate(cLC)
 </div>
 <div class='output'>
-S1: DEV*urb*LIT*STB + DEV*LIT*IND*STB
-  N1: dev + lit + stb + URB*ind
+M1: DEV*~URB*LIT*STB + DEV*LIT*IND*STB 
+  N1: ~DEV + ~LIT + ~STB + URB*~IND
 
 </div>
 <div class='input'>
@@ -194,8 +202,8 @@ pLC &lt;- minimize(LC, outcome = &quot;SURV&quot;, include = &quot;?&quot;)
 negate(pLC)
 </div>
 <div class='output'>
-S1: DEV*STB
-  N1: dev + stb
+M1: DEV*STB
+  N1: ~DEV + ~STB
 
 </div></pre>
   </div>

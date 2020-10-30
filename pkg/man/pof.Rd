@@ -13,14 +13,14 @@ of the \bold{\code{pof()}} function, to calculate parameters of fit for single c
 
 \usage{
 pof(setms, outcome, data, relation = "necessity", inf.test = "",
-    incl.cut = c(0.75, 0.5), add = NULL, ...)
-pofind(data, outcome, conditions, relation = "necessity",
-    use.tilde = FALSE, ...)
+    incl.cut = c(0.75, 0.5), add, ...)
+    
+pofind(data, outcome, conditions, relation = "necessity", ...)
 }
 
 \arguments{
   \item{setms}{A data frame or a single vector of (calibrated) set memberships, or an
-        expression written in disjunctive normal form.}
+        expression written in sum of products form.}
   \item{outcome}{The name of the outcome column from a calibrated data frame, or
         the actual numerical column from the data frame, representing the outcome.}
   \item{data}{A calibrated data frame.}
@@ -36,7 +36,6 @@ pofind(data, outcome, conditions, relation = "necessity",
         output, or a vector of length 2, the second for the absence of the output. Used
         only in conjunction with the argument \bold{\code{inf.test}}}
   \item{add}{A function, or a list containing functions, to add more parameters of fit.}
-  \item{use.tilde}{Logical, use tilde to signal the absence of conditions.}
   \item{...}{Other arguments to be passed to the main function.}
 }
 
@@ -68,10 +67,10 @@ More generally, \bold{\code{setms}} can be a numerical vector of line numbers fr
 implicant matrix (see function \bold{\code{\link{createMatrix}()}}), which are automatically
 transformed into their corresponding set membership scores. 
 
-The argument \bold{\code{setms}} can also be a string expression, written in disjunctive
-normal form (DNF, also known as SOP - sum or products).
+The argument \bold{\code{setms}} can also be a string expression, written in SOP - sum of
+products form.
 
-For all situation when \bold{\code{setms}} is something else than a data frame, it
+For all other situations when \bold{\code{setms}} is something else than a data frame, it
 requires the original \bold{\code{data}} to generate the set memberships.
 
 If character, the argument \bold{\code{outcome}} is the name of the column from the
@@ -116,18 +115,12 @@ The negation of both \bold{\code{setms}} and \bold{\code{outcome}} is accepted a
 recognized using the Boolean subtraction from 1. If the names of the conditions are
 provided via an optional (undocumented) argument \bold{\code{conditions}}, the
 column names of the \bold{\code{setms}} object are negated using the function
-\bold{\code{\link{negate}()}}.
+\bold{\code{\link[admisc]{negate}()}}.
 
 The logical argument \bold{\code{neg.out}} is deprecated, but backwards compatible.
 \bold{\code{neg.out = TRUE}} and a tilde \bold{\code{~}} in the outcome name don't
 cancel each other out, either one (or even both) signaling if the \bold{\code{outcome}}
 should be negated.
-
-When argument \bold{\code{setms}} is a SOP expression, it is the only situation when
-everything (including the \bold{\code{outcome}}) can be negated using lower case letters,
-with or without a tilde. Lower case letters and a tilde do cancel each other out, for
-example \bold{\code{~X}} is interpreted as \bold{\code{x}}, while \bold{\code{~x}} is
-interpreted as \bold{\code{X}}.
 
 The arguments from function \bold{\code{pofind()}} are passed to the main function
 \bold{\code{pof()}} to calculate parameters of fit.
@@ -142,19 +135,17 @@ Adrian Dusa
 Cebotari, V.; Vink, M.P. (2013) \dQuote{A Configurational Analysis of Ethnic
 Protest in Europe}. \emph{International Journal of Comparative Sociology}
 vol.54, no.4, pp.298-324, DOI: 
-\href{https://doi.org/10.1177/0020715213508567}{10.1177/0020715213508567}
+\href{http://dx.doi.org/10.1177/0020715213508567}{10.1177/0020715213508567}
 
 Schneider, C. and Wagemann, C. (2012) \emph{Set-Theoretic Metods for the Social Sciences.
 A Guide to Qualitative Comparative Analysis}. Cambridge: Cambridge University Press.
 }
 
-\seealso{\code{\link{minimize}}, \code{\link{superSubset}}, \code{\link{translate}}}
+\seealso{\code{\link{minimize}}, \code{\link{superSubset}}, \code{\link[admisc]{translate}}}
 
 \examples{
-
 # -----
 # Cebotari & Vink (2013) fuzzy data
-data(CVF) 
 
 conds <- CVF[, 1:5]
 PROTEST <- CVF$PROTEST
@@ -178,7 +169,7 @@ pof(conds, 1 - PROTEST, relation = "suf")
 # -----
 # standard analysis of necessity
 # using the "coms" component from superSubset()
-nCVF <- superSubset(CVF, outcome = "PROTEST", incl.cut = 0.90, cov.cut = 0.6)
+nCVF <- superSubset(CVF, outcome = PROTEST, incl.cut = 0.90, cov.cut = 0.6)
 
 # also checking their necessity inclusion score in the negated outcome
 pof(nCVF$coms, 1 - PROTEST)
@@ -189,7 +180,7 @@ pof(nCVF$coms, 1 - PROTEST)
 # using the "pims" component from minimize()
 
 # conservative solution
-cCVF <- minimize(CVF, outcome = "PROTEST", incl.cut = 0.8, details = TRUE)
+cCVF <- minimize(CVF, outcome = PROTEST, incl.cut = 0.8, details = TRUE)
 
 # verify if their negations are also sufficient for the outcome
 pof(1 - cCVF$pims, PROTEST, relation = "sufficiency")
@@ -198,17 +189,13 @@ pof(1 - cCVF$pims, PROTEST, relation = "sufficiency")
 # -----
 # using a SOP expression, translated using the function translate()
 
-# notice that lower case letters mean the absence of a causal condition
-pof("natpride + GEOCON => PROTEST", data = CVF)
+pof(~NATPRIDE + GEOCON -> PROTEST, data = CVF)
 
 # same for the negation of the outcome
-pof("natpride + GEOCON => ~PROTEST", data = CVF)
-
-# same using lower letters for the negation
-pof("natpride + GEOCON => protest", data = CVF)
+pof(~NATPRIDE + GEOCON -> ~PROTEST, data = CVF)
 
 # necessity is indicated by the reverse arrow
-pof("natpride + GEOCON <= PROTEST", data = CVF)
+pof(~NATPRIDE + GEOCON <- PROTEST, data = CVF)
 
 
 # -----
@@ -216,10 +203,10 @@ pof("natpride + GEOCON <= PROTEST", data = CVF)
 
 inclH <- function(x, y) {
     sum(fuzzyand(x, y)) /
-    sum(fuzzyand(x, y) + sqrt(fuzzyor(x - y, 0)*x))
+    sum(fuzzyand(x, y) + sqrt(fuzzyor(x - y, 0) * x))
 }
 
-pof("natpride + GEOCON => protest", data = CVF, add = inclH)
+pof(~NATPRIDE + GEOCON -> ~PROTEST, data = CVF, add = inclH)
 
 }
 

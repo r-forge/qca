@@ -7,16 +7,16 @@
 Function to enable theory evaluation, as introduced by Ragin (1987, p.118) 
 and extended Schneider & Wageman (2012, p.295), by producing parameters of fit
 for all possible intersections between a given theoretical statement (a SOP
-expresison) and the solutions found by function \code{minimize()}.
+expresison) and the solutions found by function \bold{\code{\link[QCA]{minimize}()}}.
 
 }
 
 \usage{
-modelFit(model, theory)
+modelFit(model, theory = "")
 }
 
 \arguments{
-  \item{model}{A minimization object of class \code{"qca"}.}
+  \item{model}{A minimization object of class \code{"QCA_min"}.}
   \item{theory}{Character, a SOP expression.}
 }
 
@@ -26,7 +26,7 @@ a theoretical expectation with a model resulting from a minimization process.
 
 There are in fact four intersections: presence - presence, presence - absence,
 absence - presence and absence - absence, where by \dQuote{absence} is actually
-meant a negation of an expression using the function \bold{\code{\link{negate}()}}.
+meant a negation of an expression using the function \bold{\code{\link[admisc]{negate}()}}.
 
 When multiple models exist, all of them are automatically detected, negated and
 intersection with the theory. Intersections and parameters of fit are going to
@@ -34,9 +34,9 @@ be produced using a single theoretical expression.
 }
 
 \value{
-A list containing objects of class \code{"pof"} with the parameters of fit. For a
+A list containing objects of class \code{"QCA_pof"} with the parameters of fit. For a
 single theoretical expression and a single model, the object is a simple
-\code{"pof"} object.
+\code{"QCA_pof"} object.
 }
 
 
@@ -58,8 +58,8 @@ Cambridge: Cambridge University Press.
 
 \examples{
 # Lipset fuzzy version data
-data(LF)
-ttLF <- truthTable(LF, outcome = "SURV", incl.cut = 0.8)
+
+ttLF <- truthTable(LF, outcome = SURV, incl.cut = 0.8)
 
 
 # parsimonious solution

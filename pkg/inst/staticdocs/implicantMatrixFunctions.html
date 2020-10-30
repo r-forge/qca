@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-<title>Implicant matrix functions: allExpressions, createMatrix, getRow. QCA 3.4-2</title>
+<title>Implicant matrix functions: allExpressions, createMatrix, getRow. QCA 3.10.1</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="author" content="
 Adrian Dusa
@@ -34,7 +34,7 @@ Adrian Dusa
     <div class="navbar">
   <div class="navbar-inner">
     <div class="container">
-      <a class="brand" href="#">QCA 3.4-2</a>
+      <a class="brand" href="#">QCA 3.10.1</a>
       <div class="nav">
         <ul class="nav">
           <li><a href="index.html"><i class="icon-home icon-white"></i> Index</a></li>
@@ -67,7 +67,7 @@ of values (either binary or multi-value).</p>
     </div>
     
     <h2>Usage</h2>
-<pre><div>allExpressions(noflevels, arrange = FALSE, depth = NULL, raw = FALSE, ...)</div>
+<pre><div>allExpressions(noflevels, arrange = FALSE, depth, raw = FALSE, ...)</div>
 <div>createMatrix(noflevels, ...)</div>
 <div>getRow(noflevels, row.no, zerobased = FALSE)</div></pre>
     
@@ -243,33 +243,32 @@ allExpressions(noflevels)
 allExpressions(noflevels, arrange = TRUE)
 </div>
 <div class='output'>
- 1                
- 2              0 
- 3              1 
- 4         0      
- 5         1      
- 6    0           
- 7    1           
- 8         0    0 
- 9         0    1 
-10         1    0 
-11         1    1 
-12    0         0 
-13    0         1 
-14    0    0      
-15    0    1      
-16    1         0 
-17    1         1 
-18    1    0      
-19    1    1      
-20    0    0    0 
-21    0    0    1 
-22    0    1    0 
-23    0    1    1 
-24    1    0    0 
-25    1    0    1 
-26    1    1    0 
-27    1    1    1 
+1    0           
+2    1           
+3         0      
+4         1      
+5              0 
+6              1 
+7    0    0      
+8    0    1      
+9    1    0      
+10    1    1      
+11    0         0 
+12    0         1 
+13    1         0 
+14    1         1 
+15         0    0 
+16         0    1 
+17         1    0 
+18         1    1 
+19    0    0    0 
+20    0    0    1 
+21    0    1    0 
+22    0    1    1 
+23    1    0    0 
+24    1    0    1 
+25    1    1    0 
+26    1    1    1 
 
 </div>
 <div class='input'>
@@ -402,7 +401,7 @@ createMatrix(c(2, 3, 2))
 
 # deriving rows
 rows &lt;- c(2, 4, 5, 7, 8, 10, 11, 13, 14, 16, 17)
-mat &lt;- getRow(noflevels + 1, rows) # note the +1
+mat &lt;- getRow(rows, noflevels + 1) # note the +1
 rownames(mat) &lt;- rows
 colnames(mat) &lt;- c(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;)
 mat
@@ -424,17 +423,17 @@ mat
 # implicant matrix     normal values
 
 #      A  B  C    |       A  B  C       
-#   2  0  0  1    |    2  -  -  0       c      
-#   4  0  1  0    |    4  -  0  -       b
-#   5  0  1  1    |    5  -  0  0       bc
+#   2  0  0  1    |    2  -  -  0       ~C      
+#   4  0  1  0    |    4  -  0  -       ~B
+#   5  0  1  1    |    5  -  0  0       ~B~C
 #   7  0  2  0    |    7  -  1  -       B
-#   8  0  2  1    |    8  -  1  0       Bc
-#  10  1  0  0    |   10  0  -  -       a  
-#  11  1  0  1    |   11  0  -  0       ac                 
-#  13  1  1  0    |   13  0  0  -       ab   
-#  14  1  1  1    |   14  0  0  0       abc
-#  16  1  2  0    |   16  0  1  -       aB
-#  17  1  2  1    |   17  0  1  0       aBc
+#   8  0  2  1    |    8  -  1  0       B~C
+#  10  1  0  0    |   10  0  -  -       ~A  
+#  11  1  0  1    |   11  0  -  0       ~A~C                 
+#  13  1  1  0    |   13  0  0  -       ~A~B   
+#  14  1  1  1    |   14  0  0  0       ~A~B~C
+#  16  1  2  0    |   16  0  1  -       ~AB
+#  17  1  2  1    |   17  0  1  0       ~AB~C
                           
 </div></pre>
   </div>
