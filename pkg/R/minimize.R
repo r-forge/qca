@@ -1,4 +1,4 @@
-# Copyright (c) 2020, Adrian Dusa
+# Copyright (c) 2016 - 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -91,8 +91,8 @@ function(input, include = "", dir.exp = NULL, details = FALSE, all.sol = FALSE,
     inf.test    <- if (is.element("inf.test",    names(dots))) dots$inf.test     else ""
     relation    <- if (is.element("relation",    names(dots))) dots$relation     else "sufficiency"
     neg.out     <- if (is.element("neg.out",     names(dots))) dots$neg.out      else FALSE
-    procedure   <- if (is.element("procedure",   names(dots))) dots$procedure    else 0
     exclude     <- if (is.element("exclude",     names(dots))) dots$exclude      else NULL
+    keep.trying <- if (is.element("keep.trying", names(dots))) dots$keep.trying  else FALSE
     if (is.null(exclude)) {
         if (is.element("omit", names(dots))) {
             exclude <- dots$omit
@@ -328,7 +328,8 @@ function(input, include = "", dir.exp = NULL, details = FALSE, all.sol = FALSE,
                             sol.cov = sol.cov,
                             fs = tt$fs,
                             max.comb = max.comb,
-                            first.min = first.min),
+                            first.min = first.min,
+                            keep.trying = keep.trying),
                             PACKAGE = "QCA")
         }
         callist$expressions <- expressions

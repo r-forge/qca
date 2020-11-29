@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2020, Adrian Dusa
+Copyright (c) 2016 - 2020, Adrian Dusa
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -282,6 +282,9 @@ void CCubes(const int p_tt[],
                 }
             }
             free(p_sorted);
+            if (keeptrying) {
+                find_models(p_tempic, posrows, foundPI, false, k + 1, maxcomb, true, &p_solutions, &nr, &nc);
+            }
         }
     }
     else if (foundPI > 0) { 

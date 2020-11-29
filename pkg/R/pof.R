@@ -1,4 +1,4 @@
-# Copyright (c) 2020, Adrian Dusa
+# Copyright (c) 2016 - 2020, Adrian Dusa
 # All rights reserved.
 # 
 # Redistribution and use in source and binary forms, with or without
@@ -94,6 +94,19 @@ function(setms = NULL, outcome = NULL, data = NULL, relation = "necessity",
         relation <- ifelse(grepl("=|-", x), ifelse(grepl("=>|->", x), "suf", "nec"), NA)
         x <- gsub("<=|=>|<-|->", "@", gsub("[[:space:]]", "", x))
         x <- unlist(strsplit(x, split = "@"))
+        if (grepl("\\+|\\*", x[2])) {
+            if (grepl("\\+|\\*", x[1])) {
+                cat("\n")
+                stop(simpleError("Incorrect output in the right hand side.\n\n"))
+            }
+            x <- rev(x)
+            if (relation == "nec") {
+                relation <- "suf"
+            }
+            else if (relation == "suf") {
+                relation <- "nec"
+            }
+        }
         if (identical(snames, "") & !is.null(data)) {
             snames <- colnames(data)
         }
