@@ -50,7 +50,7 @@ void find_consistent_models(
     int **solutions,
     int *nr,
     int *nc) {
-    int estimsol = 100;
+    int estimsol = 1000;
     int maxk = posrows;
     if (foundPI < maxk) {
         maxk = foundPI;

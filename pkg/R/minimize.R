@@ -25,7 +25,6 @@
 
 `minimize` <-
 function(input, include = "", dir.exp = NULL, details = FALSE, all.sol = FALSE,
-        pi.cons = 0, pi.depth = 0, sol.cons = 0, sol.cov = 1, sol.depth = 0,
         row.dom = FALSE, min.pin = FALSE, max.comb = 0, first.min = FALSE,
         method = "CCubes", ...) {
     metacall <- match.call()
@@ -91,6 +90,11 @@ function(input, include = "", dir.exp = NULL, details = FALSE, all.sol = FALSE,
     inf.test    <- if (is.element("inf.test",    names(dots))) dots$inf.test     else ""
     relation    <- if (is.element("relation",    names(dots))) dots$relation     else "sufficiency"
     neg.out     <- if (is.element("neg.out",     names(dots))) dots$neg.out      else FALSE
+    pi.cons     <- if (is.element("pi.cons",     names(dots))) dots$pi.cons      else 0
+    pi.depth    <- if (is.element("pi.depth",    names(dots))) dots$pi.depth     else 0
+    sol.cons    <- if (is.element("sol.cons",    names(dots))) dots$sol.cons     else 0
+    sol.cov     <- if (is.element("sol.cov",     names(dots))) dots$sol.cov      else 1
+    sol.depth   <- if (is.element("sol.depth",   names(dots))) dots$sol.depth    else 0
     exclude     <- if (is.element("exclude",     names(dots))) dots$exclude      else NULL
     keep.trying <- if (is.element("keep.trying", names(dots))) dots$keep.trying  else FALSE
     if (is.null(exclude)) {
@@ -314,7 +318,7 @@ function(input, include = "", dir.exp = NULL, details = FALSE, all.sol = FALSE,
                 extended.data <- rbind(extended.data, cbind(excl.matrix, 0))
             }
             if (sol.cons > 0 & all.sol & sol.depth == 0) {
-                sol.depth <- 5
+                sol.depth <- 7
             }
             expressions <- .Call("C_Cubes", list(
                             tt = cbind(rbind(pos.matrix, neg.matrix) - 1, rep(c(1, 0), c(nrow(pos.matrix), nrow(neg.matrix)))),

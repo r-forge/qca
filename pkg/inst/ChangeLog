@@ -2,6 +2,8 @@ Version 3.11
     o Improved: error trapping in function pof()
     o Fixed: occasional (but non-disruptive) R level error messages, likely
       related to the C communication (thanks to Ian Greener for the report)
+    o Arguments "pi.cons", "pi.depth", "sol.cons", "sol.cov", and "sol.depth"
+      moved from function minimize() to function causalChain()
       
 Version 3.10
     o Major rewrite of the core C code, to prevent any possible memory leaks

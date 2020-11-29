@@ -10,7 +10,8 @@ necessary and sufficient solutions for all possible outcomes in a specific datas
 }
 
 \usage{
-causalChain(data, ordering, strict = FALSE, ...)
+causalChain(data, ordering = NULL, strict = FALSE, pi.cons = 0, pi.depth = 0,
+      sol.cons = 0, sol.cov = 1, sol.depth = 0, ...)
 }
 
 \arguments{
@@ -19,6 +20,16 @@ causalChain(data, ordering, strict = FALSE, ...)
         the causal ordering of the causal conditions.}
   \item{strict}{Logical, prevents causal conditions on the same temporal level to
         act as outcomes for each other.}
+  \item{pi.cons}{Numerical fuzzy value between 0 and 1, minimal consistency
+        threshold for a prime implicant to be declared as sufficient.}
+  \item{pi.depth}{Integer, a maximum number of causal conditions to be used
+        when searching for conjunctive prime implicants.}
+  \item{sol.cons}{Numerical fuzzy value between 0 and 1, minimal consistency 
+        threshold for a model to be declared as sufficient.}
+  \item{sol.cov}{Numerical fuzzy value between 0 and 1, minimal coverage 
+        threshold for a model to be declared as necessary.}
+  \item{sol.depth}{Integer, a maximum number of prime implicants to be used when
+        searching for disjunctive models.}
   \item{...}{Other arguments to be passed to functions \code{\link{minimize}()}
         and \code{\link{truthTable}()}.}
 }
@@ -75,8 +86,8 @@ neither D nor E can be causally related to each other.
 Although the two functions reach the same results, they follow different methods. The input
 for the minimization behind the function \bold{\code{cna()}} is a coincidence list,
 while in package \pkg{QCA} the input for the minimization procedure is a truth table. The
-difference is subtle but important, with the most important difference that package \pkg{cna}
-is not exhaustive.
+difference is subtle but important, with the most important difference that package
+\pkg{cna} is not exhaustive.
 
 To find a set of solutions in a reasonable time, the formal choice in package \pkg{cna} is
 to deliberately stop the search at certain (default) depths of complexity. Users are free
@@ -85,16 +96,29 @@ guarantee the results will be exhaustive.
 
 On the other hand, the function \bold{\code{causalChain()}} and generally all related
 functions from package \pkg{QCA} are spending more time to make sure the search is
-exhaustive. Depths can be set via the arguments \bold{\code{pi.depth}} and \bold{\code{sol.depth}}
-from the arguments in function \bold{\code{\link{minimize}()}}, but unlike package \pkg{cna}
-these are not mandatory.
+exhaustive. Depths can be set via the arguments \bold{\code{pi.depth}} and
+\bold{\code{sol.depth}}, but unlike package \pkg{cna} these are not mandatory.
 
-Exhaustiveness is guaranteed in package \pkg{QCA} precisely because it uses a truth table as
-an input for the minimization procedure. The only exception is the option of finding solutions
-based on their consistency, with the argument \bold{\code{sol.cons}}: for large PI charts,
-time can quickly increase to infinity. If not otherwise specified in the argument
-\bold{\code{sol.depth}} the function \bold{\code{causalChain()}} silently sets a complexity
-level of 5 prime implicants per solution.
+The argument \bold{\code{sol.cons}} introduces another method of solving the PI chart.
+Normally, once the solution models are found among all possible combinations of
+\bold{\code{k}} prime implicants, consistencies and coverages are subsequently
+calculated. When \bold{\code{sol.cons}} is lower than 1, then models are searched
+based on their consistencies, which should be at least equal to this threshold.
+
+Exhaustiveness is guaranteed in package \pkg{QCA} precisely because it uses a truth table
+as an input for the minimization procedure. The only exception is the option of finding
+solutions based on their consistency, with the argument \bold{\code{sol.cons}}: for large
+PI charts, time can quickly increase to infinity, to identify all possible irredundant
+(disjunctions that are not subsets of previously found) disjunctive models. In such a
+situation, the number of combinations of all possible numbers of prime implicants is
+potentially too large to be solved in a polynomial time and if not otherwise specified in
+the argument \bold{\code{sol.depth}} the function \bold{\code{causalChain()}} silently
+sets a complexity level of 7 prime implicants per model.
+
+When minimizing a dataset instead of a truth table, unless otherwise specified, the 
+argument \bold{\code{incl.cut}} is automatically set to the minimum value between
+\bold{\code{pi.cons}} and \bold{\code{sol.cons}}, then passed to the function
+\bold{\code{truthTable()}}.
 }
 
 \value{

@@ -24,7 +24,8 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 `causalChain` <-
-function(data, ordering = NULL, strict = FALSE, ...) {
+function(data, ordering = NULL, strict = FALSE, pi.cons = 0, pi.depth = 0,
+        sol.cons = 0, sol.cov = 1, sol.depth = 0, ...) {
     metacall <- match.call(expand.dots = TRUE)
     allargs <- as.list(metacall)[-1]
     allargs <- allargs[-which(is.element(c("data", "ordering", "strict"), names(allargs)))]

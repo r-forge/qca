@@ -1,5 +1,5 @@
 Package: QCA
-Version: 3.10.1
+Version: 3.10.2
 Date: 2020-11-29
 Title: Qualitative Comparative Analysis
 Authors@R: c(person(given = "Adrian", family = "Dusa",
@@ -25,7 +25,7 @@ Authors@R: c(person(given = "Adrian", family = "Dusa",
                     comment = "raphael-paragraph.js library"),
              person("Alrik", "Thiem", role = "aut",
                     comment = "from version 1.0-0 up to version 1.1-3"))
-Depends: R (>= 4.0.0), admisc (>= 0.10)
+Depends: R (>= 3.5.0), admisc (>= 0.10)
 LazyData: yes
 Imports: methods, shiny, venn
 Description: An extensive set of functions to perform Qualitative Comparative Analysis:
@@ -36,7 +36,7 @@ Description: An extensive set of functions to perform Qualitative Comparative An
              minimal causal combination that explains a given phenomenon.
 License: GPL (>= 3)
 NeedsCompilation: yes
-Packaged: 2020-11-29 02:00:26 UTC; dusadrian
+Packaged: 2020-11-29 02:36:56 UTC; dusadrian
 Author: Adrian Dusa [aut, cre, cph] (<https://orcid.org/0000-0002-3525-9253>),
   Ciprian Paduraru [ctb] (<https://orcid.org/0000-0002-4518-374X>),
   jQuery Foundation [cph] (jQuery library and jQuery UI library),

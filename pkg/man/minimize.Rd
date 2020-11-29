@@ -19,7 +19,6 @@ and \href{http://dx.doi.org/10.1080/0022250X.2014.897949}{Dusa and Thiem (2015)}
 
 \usage{
 minimize(input, include = "", dir.exp = NULL, details = FALSE, all.sol = FALSE,
-        pi.cons = 0, pi.depth = 0, sol.cons = 0, sol.cov = 1, sol.depth = 0,
         row.dom = FALSE, min.pin = FALSE, max.comb = 0, first.min = FALSE,
         method = "CCubes", ...)
 }
@@ -33,16 +32,6 @@ minimize(input, include = "", dir.exp = NULL, details = FALSE, all.sol = FALSE,
         intermediate solution.}
   \item{details}{Logical, print more details about the solution.}
   \item{all.sol}{Logical, search for all possible models, including the non-minimal.}
-  \item{pi.cons}{Numerical fuzzy value between 0 and 1, minimal consistency
-        threshold for a prime implicant to be declared as sufficient.}
-  \item{pi.depth}{Integer, a maximum number of causal conditions to be used
-        when searching for conjunctive prime implicants.}
-  \item{sol.cons}{Numerical fuzzy value between 0 and 1, minimal consistency 
-        threshold for a model to be declared as sufficient.}
-  \item{sol.cov}{Numerical fuzzy value between 0 and 1, minimal coverage 
-        threshold for a model to be declared as necessary.}
-  \item{sol.depth}{Integer, a maximum number of prime implicants to be used when
-        searching for disjunctive models.}
   \item{row.dom}{Logical, perform row dominance in the prime implicants' chart to
         eliminate redundant prime implicants.}
   \item{min.pin}{Logical, terminate the search at the depth where newly found
@@ -143,24 +132,6 @@ irrelevant prime implicants when solving the PI chart, applying the principle of
 dominance: if a prime implicant A covers the same (intial) positive output
 configurations as another prime implicant B and in the same time covers
 other configurations which B does not cover, then B is irrelevant and eliminated.
-
-Depending on the complexity of the PI chart, it sometimes may take a very long time
-to identify all possible irredundant (disjunctions that are not subsets of
-previously found) disjunctive models. In such a situation, the number of
-combinations of all possible numbers of prime implicants is potentially too large to be
-solved in a polynomial time and if not otherwise specified, the depth for the disjunctive
-models is automatically bounded to 5 prime implicants.
-
-If minimizing a dataset instead of a truth table, unless otherwise specified the 
-argument \bold{\code{incl.cut}} is automatically set to the minimum value between
-\bold{\code{pi.cons}} and \bold{\code{sol.cons}}, then passed to the function
-\bold{\code{truthTable()}}.
-
-The argument \bold{\code{sol.cons}} introduces another method of solving the PI chart.
-Normally, once the solution models are found among all possible combinations of
-\bold{\code{k}} prime implicants, consistencies and coverages are subsequently
-calculated. When \bold{\code{sol.cons}} is lower than 1, then models are searched
-based on their consistencies, which should be at least equal to this threshold.
 
 A large number of causal conditions (i.e. over 15), combined with a large number of cases
 (i.e. hundreds) usually produce a very large number of prime implicants, resulting in a huge
